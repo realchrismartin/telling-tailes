@@ -10,7 +10,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TellingTailes">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.UserSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ReadStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StoryFeedActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PublishStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateStoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CreateAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
