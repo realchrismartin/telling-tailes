@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "639847522747",
+    "firebase_url": "https://tellingtailes-default-rtdb.firebaseio.com",
+    "project_id": "tellingtailes",
+    "storage_bucket": "tellingtailes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639847522747:android:0ae88f96b18f0197f8a49e",
+        "android_client_info": {
+          "package_name": "com.telling.tailes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639847522747-gffu1qbn1frp0mo8pe087m69ksbd25h6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4XoJrSgSWxq7nVK69Tm7ln0_V8I_ul3g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639847522747-gffu1qbn1frp0mo8pe087m69ksbd25h6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
