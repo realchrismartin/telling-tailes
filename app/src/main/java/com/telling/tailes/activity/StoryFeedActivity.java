@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +24,7 @@ import com.telling.tailes.card.StoryRviewCard;
 
 import java.util.ArrayList;
 
+import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.FeedStory;
 
 public class StoryFeedActivity extends AppCompatActivity {
@@ -61,7 +63,19 @@ public class StoryFeedActivity extends AppCompatActivity {
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
         storyRviewAdapter = new StoryRviewAdapter(storyCardList);
-        //TODO: handle click listeners
+
+        StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
+            @Override
+            public void onStoryClick(int position) {
+                Toast.makeText(StoryFeedActivity.this,
+                        "Story clicked!",
+                        Toast.LENGTH_SHORT)
+                        .show();
+            }
+        };
+        storyRviewAdapter.setOnStoryClickListener(storyClickListener);
+
+
         storyRview.setAdapter(storyRviewAdapter);
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
