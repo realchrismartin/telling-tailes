@@ -1,9 +1,11 @@
 package com.telling.tailes.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.telling.tailes.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +42,7 @@ public class GPTUtils {
             conn.setDoOutput(true);
 
             JSONObject body = new JSONObject();
+
             try {
                 body.put("prompt",prompt);
                 body.put("max_tokens",length);
@@ -53,9 +56,41 @@ public class GPTUtils {
             outputStream.write(body.toString().getBytes());
             outputStream.close();
 
-            //TODO: parse json here
-            return readString(conn.getInputStream());
+            String result =  readString(conn.getInputStream());
+            JSONObject responseObject;
 
+           try {
+               responseObject = new JSONObject(result);
+           } catch (JSONException e)
+           {
+               e.printStackTrace();
+               return "";
+           }
+
+           JSONArray choices = new JSONArray();
+
+           try {
+                choices = responseObject.getJSONArray("choices");
+           } catch(JSONException e) {
+                e.printStackTrace();
+           }
+
+           if(choices.length() <= 0)
+           {
+               Log.e("GPTUtils","Response had no choices");
+               return "";
+           }
+
+            try {
+
+                //TODO: perhaps don't return the first choice only?
+                JSONObject choice = choices.getJSONObject(0);
+                String story = choice.getString("text");
+
+                return story;
+            } catch (JSONException e) {
+               e.printStackTrace();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

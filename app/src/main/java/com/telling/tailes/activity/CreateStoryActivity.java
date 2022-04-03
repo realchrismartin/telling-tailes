@@ -8,7 +8,8 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.telling.tailes.R;
 import com.telling.tailes.util.GPTUtils;
@@ -20,6 +21,10 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
+
+    private SeekBar lengthSeekBar;
+    private TextView promptView;
+    private TextView storyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +38,9 @@ public class CreateStoryActivity extends AppCompatActivity {
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                //TODO: Add handling for web request completed tasks
-                Log.e("CreateStoryActivity","We got a message " + msg.toString());
-
-                String story = msg.getData().getString("Story");
-                Log.e("SS",story);
+                //TODO: Change to nav to preview and send intent
+                String display = promptView.getText().toString() + " " + msg.getData().getString("Story");
+                storyView.setText(display);
             }
         };
 
@@ -47,6 +50,14 @@ public class CreateStoryActivity extends AppCompatActivity {
                 handleCreateStory();
             }
         });
+
+        lengthSeekBar = findViewById(R.id.lengthSlider);
+        storyView = findViewById(R.id.storyView); //TODO: remove and replace with intent passing
+        promptView = findViewById(R.id.promptView);
+
+        //Set maximum etc
+        lengthSeekBar.setMin(5);
+        lengthSeekBar.setMax(2048);
     }
 
     /*
@@ -55,8 +66,8 @@ public class CreateStoryActivity extends AppCompatActivity {
     private void handleCreateStory()
     {
 
-        String prompt = "This is a test that";
-        int length = 5;
+        String prompt = promptView.getText().toString().trim();
+        int length = lengthSeekBar.getProgress();
 
         if(prompt.length() <= 0 || length <= 0 || length > 2048)
         {
@@ -68,10 +79,9 @@ public class CreateStoryActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                int resultCode = 0;
-
                 //Do the API call
-                String story = GPTUtils.getStory(getApplicationContext(),prompt,length);
+                String story = GPTUtils.getStory(getApplicationContext(), prompt, length);
+                int resultCode = story.length() <= 0 ? 1 : 0;
 
                 Bundle resultData = new Bundle();
                 resultData.putInt("Result", resultCode);
