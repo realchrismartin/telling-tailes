@@ -3,6 +3,8 @@ package com.telling.tailes.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -16,16 +18,30 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
+import com.telling.tailes.adapter.StoryRviewAdapter;
+import com.telling.tailes.card.StoryRviewCard;
+
+import java.util.ArrayList;
+
+import com.telling.tailes.model.FeedStory;
 
 public class StoryFeedActivity extends AppCompatActivity {
 
     private DatabaseReference testRef;
+
+    private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private RecyclerView storyRview;
+    private StoryRviewAdapter storyRviewAdapter;
+    private RecyclerView.LayoutManager storyRviewLayoutManager;
+
     private TextView testText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
+
+        createStoryRecyclerView();
 
         testRef = FirebaseDatabase.getInstance().getReference().child("will_test");
 
@@ -40,6 +56,16 @@ public class StoryFeedActivity extends AppCompatActivity {
         });
     }
 
+    private void createStoryRecyclerView() {
+        storyRviewLayoutManager = new LinearLayoutManager(this);
+        storyRview = findViewById(R.id.story_recycler_view);
+        storyRview.setHasFixedSize(true);
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList);
+        //TODO: handle click listeners
+        storyRview.setAdapter(storyRviewAdapter);
+        storyRview.setLayoutManager(storyRviewLayoutManager);
+    }
+
     private void loadStoryData() {
         Task<DataSnapshot> storyDataGetTask = testRef.get();
 
@@ -47,8 +73,15 @@ public class StoryFeedActivity extends AppCompatActivity {
             testRef.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    testText.setText(snapshot.getValue().toString());
+                    //testText.setText(snapshot.getValue().toString());
+                    FeedStory story = snapshot.getValue(FeedStory.class);
+                    storyCardList.add(0, new StoryRviewCard(
+                            story.getVal()
+                    ));
+                    storyRviewAdapter.notifyItemChanged(0);
+
                     int i = 4;
+
                 }
 
                 @Override
