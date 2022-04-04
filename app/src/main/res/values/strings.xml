@@ -2,4 +2,8 @@
     <string name="app_name">TellingTailes</string>
     <string name="gpt_api_uri">https://api.openai.com/v1/engines/text-davinci-002/completions</string>
     <string name="gpt_api_token">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</string>
+    <string name="length_selector_min_text">Hemingway</string>
+    <string name="length_selector_max_text">Dostoyevsky</string>
+    <string name="create_story_button_text">Tell a Taile</string>
+    <string name="create_story_prompt_hint">Enter a story prompt</string>
 </resources>

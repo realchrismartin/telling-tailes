@@ -16,11 +16,31 @@
         app:layout_constraintVertical_bias="0.48"
         tools:layout_editor_absoluteX="164dp" />
 
+    <TextView
+        android:id="@+id/lengthSelectorMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/length_selector_min_text"
+        app:layout_constraintEnd_toStartOf="@+id/lengthSelectorMax"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lengthSlider" />
+
+    <TextView
+        android:id="@+id/lengthSelectorMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/length_selector_max_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/lengthSelectorMin"
+        app:layout_constraintTop_toBottomOf="@+id/lengthSlider" />
+
     <Button
         android:id="@+id/createStoryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:text="@string/create_story_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +71,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="start|top"
-        android:hint="Enter a prompt here"
+        android:hint="@string/create_story_prompt_hint"
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
         app:layout_constraintEnd_toEndOf="parent"
