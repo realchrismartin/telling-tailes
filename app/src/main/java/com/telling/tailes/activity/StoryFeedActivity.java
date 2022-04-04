@@ -26,17 +26,23 @@ import java.util.ArrayList;
 
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.FeedStory;
+import com.telling.tailes.util.EndlessScrollListener;
 
 public class StoryFeedActivity extends AppCompatActivity {
 
     private DatabaseReference testRef;
 
+    private EndlessScrollListener scrollListener;
+
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
-    private RecyclerView.LayoutManager storyRviewLayoutManager;
+//    private RecyclerView.LayoutManager storyRviewLayoutManager;
+    private LinearLayoutManager storyRviewLayoutManager;
 
     private TextView testText;
+
+    private int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +56,27 @@ public class StoryFeedActivity extends AppCompatActivity {
         testText = findViewById(R.id.testTextView);
 
         Button testButton = findViewById(R.id.testButton);
-        testButton.setOnClickListener(new View.OnClickListener() {
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                loadStoryData();
+//            }
+//        });
+
+        counter = 0;
+
+        for (int i = 0; i < 10; i ++) {
+            storyCardList.add(0, new StoryRviewCard(counter++));
+            storyRviewAdapter.notifyItemInserted(0);
+        }
+
+        scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
-            public void onClick(View view) {
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 loadStoryData();
             }
-        });
+        };
+        storyRview.addOnScrollListener(scrollListener);
     }
 
     private void createStoryRecyclerView() {
@@ -80,7 +101,11 @@ public class StoryFeedActivity extends AppCompatActivity {
     }
 
     private void loadStoryData() {
-        Task<DataSnapshot> storyDataGetTask = testRef.get();
+        for (int i = 0; i < 10; i ++) {
+            storyCardList.add(0, new StoryRviewCard(counter++));
+            storyRviewAdapter.notifyItemInserted(0);
+        }
+        /*Task<DataSnapshot> storyDataGetTask = testRef.get();
 
         storyCardList.add(0, new StoryRviewCard(1));
         storyRviewAdapter.notifyItemInserted(0);
@@ -122,6 +147,6 @@ public class StoryFeedActivity extends AppCompatActivity {
 
                 }
             });
-        });
+        });*/
     }
 }
