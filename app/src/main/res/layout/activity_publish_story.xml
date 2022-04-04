@@ -6,4 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".model.PublishStoryActivity">
 
+    <TextView
+        android:id="@+id/storyTextView"
+        android:layout_width="331dp"
+        android:layout_height="574dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="40dp" />
+
+    <EditText
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter a Story Title"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/storyTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
