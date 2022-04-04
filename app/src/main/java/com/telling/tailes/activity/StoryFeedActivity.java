@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,8 @@ import com.telling.tailes.util.EndlessScrollListener;
 
 public class StoryFeedActivity extends AppCompatActivity {
 
+    private static final String storyDBKey = "will_test"; //TODO
+
     private DatabaseReference testRef;
 
     private EndlessScrollListener scrollListener;
@@ -49,9 +52,10 @@ public class StoryFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
 
+
         createStoryRecyclerView();
 
-        testRef = FirebaseDatabase.getInstance().getReference().child("will_test");
+        testRef = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
 
         testText = findViewById(R.id.testTextView);
 
@@ -77,6 +81,13 @@ public class StoryFeedActivity extends AppCompatActivity {
             }
         };
         storyRview.addOnScrollListener(scrollListener);
+
+        findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCreateStory();
+            }
+        });
     }
 
     private void createStoryRecyclerView() {
@@ -148,5 +159,11 @@ public class StoryFeedActivity extends AppCompatActivity {
                 }
             });
         });*/
+    }
+
+    private void goToCreateStory() {
+        Intent intent = new Intent(this,CreateStoryActivity.class);
+
+        startActivity(intent);
     }
 }
