@@ -26,7 +26,7 @@ public class HTwoTestActivity extends AppCompatActivity {
         //toolbar.setNavigationIcon(R.drawable.ic_launcher_background);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_android_black_24dp;
+        getSupportActionBar().setLogo(R.drawable.ic_launcher_background);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
 
     }
