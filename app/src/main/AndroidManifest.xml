@@ -11,6 +11,8 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".activity.HTestActivity"
             android:exported="false"/>
+        <activity android:name=".activity.HTwoTestActivity"
+            android:exported="false"/>
         <activity
             android:name=".activity.UserSettingsActivity"
             android:exported="false" />
