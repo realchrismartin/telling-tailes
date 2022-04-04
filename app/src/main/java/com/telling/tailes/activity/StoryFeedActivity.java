@@ -60,7 +60,7 @@ public class StoryFeedActivity extends AppCompatActivity {
 
     private void createStoryRecyclerView() {
         storyRviewLayoutManager = new LinearLayoutManager(this);
-        storyRview = findViewById(R.id.story_recycler_view);
+        storyRview = findViewById((R.id.story_recycler_view));
         storyRview.setHasFixedSize(true);
         storyRviewAdapter = new StoryRviewAdapter(storyCardList);
 
@@ -75,13 +75,15 @@ public class StoryFeedActivity extends AppCompatActivity {
         };
         storyRviewAdapter.setOnStoryClickListener(storyClickListener);
 
-
         storyRview.setAdapter(storyRviewAdapter);
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
     private void loadStoryData() {
         Task<DataSnapshot> storyDataGetTask = testRef.get();
+
+        storyCardList.add(0, new StoryRviewCard(1));
+        storyRviewAdapter.notifyItemInserted(0);
 
         storyDataGetTask.addOnCompleteListener(task -> {
             testRef.addChildEventListener(new ChildEventListener() {
@@ -92,7 +94,7 @@ public class StoryFeedActivity extends AppCompatActivity {
                     storyCardList.add(0, new StoryRviewCard(
                             story.getVal()
                     ));
-                    storyRviewAdapter.notifyItemChanged(0);
+                    storyRviewAdapter.notifyItemInserted(0);
 
                     int i = 4;
 
