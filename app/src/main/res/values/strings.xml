@@ -6,4 +6,11 @@
     <string name="length_selector_max_text">Dostoyevsky</string>
     <string name="create_story_button_text">Tell a Taile</string>
     <string name="create_story_prompt_hint">Enter a story prompt</string>
+    <string name="publish_story_button_text">Publish</string>
+    <string name="publish_story_title_hint">Enter a story title</string>
+    <string name="publish_story_draft_saved_notification">Saving a draft of this taile…</string>
+    <string name="length_long_error_notification">Story length is too long, try selecting a shorter length</string>
+    <string name="length_short_error_notification">Story length is too short, try selecting a longer length</string>
+    <string name="create_in_progress_notification">Please wait while our trained robot monkeys create neo-Shakespeare for you…</string>
+    <string name="generic_error_notification">Something went wrong, and it\'s really not your fault. It\'s us. Try again later, maybe?</string>
 </resources>

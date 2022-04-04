@@ -21,9 +21,20 @@ import java.util.concurrent.Executors;
 
 public class CreateStoryActivity extends AppCompatActivity {
 
+    //Length requirements for validation
     private static final int promptMinCharacters = 30;
     private static final int lengthMin = 40;
     private static final int lengthMax = 2048;
+
+    //Bundle data keys
+    private static final String resultKey = "Result";
+    private static final String storyKey = "Story";
+
+    //Notification string resources
+    private String genericErrorNotification;
+    private String lengthTooLongNotification;
+    private String lengthTooShortNotification;
+    private String createInProgressNotification;
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -31,15 +42,21 @@ public class CreateStoryActivity extends AppCompatActivity {
     private SeekBar lengthSeekBar;
     private TextView promptView;
     private ProgressBar loadingWheel;
-
     private Toast toast;
 
+    //Whether background data is loading or not currently
     private boolean loading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_story);
+
+        //Set up string resources
+        genericErrorNotification = getString(R.string.generic_error_notification);
+        lengthTooLongNotification = getString(R.string.length_long_error_notification);
+        lengthTooShortNotification = getString(R.string.length_short_error_notification);
+        createInProgressNotification = getString(R.string.create_in_progress_notification);
 
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
@@ -52,9 +69,9 @@ public class CreateStoryActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 hideLoadingWheel();
-                if(validateCreatedStory(msg.getData().getInt("Result")))
+                if(validateCreatedStory(msg.getData().getInt(resultKey)))
                 {
-                    goToPublish(promptView.getText().toString() + " " + msg.getData().getString("Story"));
+                    goToPublish(promptView.getText().toString() + " " + msg.getData().getString(storyKey));
                 }
             }
         };
@@ -111,25 +128,28 @@ public class CreateStoryActivity extends AppCompatActivity {
         String prompt = promptView.getText().toString().trim();
         int length = lengthSeekBar.getProgress();
 
-        //TODO: extract string resources
         if(prompt.length() <= promptMinCharacters)
         {
+            //TODO: extract string resources
            error = "Please enter a prompt that is at least " + promptMinCharacters + " character(s) long (currently using " + prompt.length() + " character(s))";
         }
 
-        if(length <= lengthMin)
+        if(length < lengthMin)
         {
-           error += "\nThe length selected is too short. Try changing the slider.";
+            if(error.length() > 0) { error += "\n"; }
+            error += lengthTooShortNotification;
         }
 
         if(length > lengthMax)
         {
-            error += "\nThe length selected is too long. Try changing the slider.";
+            if(error.length() > 0) { error += "\n"; }
+            error += lengthTooLongNotification;
         }
 
         if(loading)
         {
-            error += "\nPlease wait while our tireless robot monkeys draft Shakespeare for you...";
+            if(error.length() > 0) { error += "\n"; }
+            error += createInProgressNotification;
         }
 
         if(error.length() > 0)
@@ -153,7 +173,7 @@ public class CreateStoryActivity extends AppCompatActivity {
 
        if(resultCode != 0)
        {
-          error = "Something went wrong, and it's our fault. Maybe try again later?";
+          error = genericErrorNotification;
        }
 
        if(error.length() > 0)
@@ -182,8 +202,8 @@ public class CreateStoryActivity extends AppCompatActivity {
                 //Set up a bundle
                 //Result code != 0 means something in GPT failed
                 Bundle resultData = new Bundle();
-                resultData.putInt("Result", resultCode);
-                resultData.putString("Story", story);
+                resultData.putInt(resultKey, resultCode);
+                resultData.putString(storyKey, story);
 
                 Message resultMessage = new Message();
                 resultMessage.setData(resultData);
