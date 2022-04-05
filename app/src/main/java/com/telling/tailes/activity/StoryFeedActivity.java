@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.telling.tailes.R;
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
@@ -36,6 +39,8 @@ public class StoryFeedActivity extends AppCompatActivity {
     private DatabaseReference testRef;
 
     private EndlessScrollListener scrollListener;
+    private Query initialQuery;
+    private int queryIndex;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
     private RecyclerView storyRview;
@@ -55,7 +60,7 @@ public class StoryFeedActivity extends AppCompatActivity {
 
         createStoryRecyclerView();
 
-        testRef = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
+        testRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         testText = findViewById(R.id.testTextView);
 
@@ -69,11 +74,35 @@ public class StoryFeedActivity extends AppCompatActivity {
 
         counter = 0;
 
-        for (int i = 0; i < 10; i ++) {
-            int pos = storyCardList.size();
-            storyCardList.add(pos, new StoryRviewCard(counter++));
-            storyRviewAdapter.notifyItemInserted(pos);
-        }
+//        for (int i = 0; i < 10; i ++) {
+//            int pos = storyCardList.size();
+//            storyCardList.add(pos, new StoryRviewCard(counter++));
+//            storyRviewAdapter.notifyItemInserted(pos);
+//        }
+
+        initialQuery = testRef.orderByChild("Val").limitToFirst(10);
+        queryIndex = 10;
+        initialQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    int pos = storyCardList.size();
+                    FeedStory story = snapshot.getValue(FeedStory.class);
+                    storyCardList.add(pos, new StoryRviewCard(
+                            story.getVal()
+                    ));
+                    storyRviewAdapter.notifyItemInserted(pos);
+                    int i = 4;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.d("loadTest:onCancelled", "AUGH");
+                // ...
+            }
+        });
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -112,12 +141,41 @@ public class StoryFeedActivity extends AppCompatActivity {
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
+
+
     private void loadStoryData() {
-        int pos = storyCardList.size();
-        for (int i = 0; i < 10; i ++) {
-            storyCardList.add(pos, new StoryRviewCard(counter++));
-            storyRviewAdapter.notifyItemInserted(pos);
-        }
+//        int pos = storyCardList.size();
+//        for (int i = 0; i < 10; i ++) {
+//            storyCardList.add(pos, new StoryRviewCard(counter++));
+//            storyRviewAdapter.notifyItemInserted(pos);
+//        }
+
+
+        Query newQuery = initialQuery.startAfter(queryIndex);
+        queryIndex += 10;
+        newQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    int pos = storyCardList.size();
+                    FeedStory story = snapshot.getValue(FeedStory.class);
+                    storyCardList.add(pos, new StoryRviewCard(
+                            story.getVal()
+                    ));
+                    storyRviewAdapter.notifyItemInserted(pos);
+                    int i = 4;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.d("loadTest:onCancelled", "AUGH");
+                // ...
+            }
+        });
+
+
         /*Task<DataSnapshot> storyDataGetTask = testRef.get();
 
         storyCardList.add(0, new StoryRviewCard(1));
