@@ -65,49 +65,13 @@ public class StoryFeedActivity extends AppCompatActivity {
         testText = findViewById(R.id.testTextView);
 
         Button testButton = findViewById(R.id.testButton);
-//        testButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                loadStoryData();
-//            }
-//        });
 
-        counter = 0;
-
-//        for (int i = 0; i < 10; i ++) {
-//            int pos = storyCardList.size();
-//            storyCardList.add(pos, new StoryRviewCard(counter++));
-//            storyRviewAdapter.notifyItemInserted(pos);
-//        }
-
-        initialQuery = testRef.orderByChild("Val").limitToFirst(10);
-        queryIndex = 10;
-        initialQuery.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    int pos = storyCardList.size();
-                    FeedStory story = snapshot.getValue(FeedStory.class);
-                    storyCardList.add(pos, new StoryRviewCard(
-                            story.getVal()
-                    ));
-                    storyRviewAdapter.notifyItemInserted(pos);
-                    int i = 4;
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.d("loadTest:onCancelled", "AUGH");
-                // ...
-            }
-        });
+        loadFirstStories();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadStoryData();
+                loadNextStories();
             }
         };
         storyRview.addOnScrollListener(scrollListener);
@@ -141,22 +105,19 @@ public class StoryFeedActivity extends AppCompatActivity {
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
+    private void loadFirstStories() {
+        initialQuery = testRef.orderByChild("Val").limitToFirst(10);
+        loadStoryData(initialQuery);
+    }
 
-
-    private void loadStoryData() {
-//        int pos = storyCardList.size();
-//        for (int i = 0; i < 10; i ++) {
-//            storyCardList.add(pos, new StoryRviewCard(counter++));
-//            storyRviewAdapter.notifyItemInserted(pos);
-//        }
-
-
-        // isntead of index
-        // get VALUE of last item, pass that as Start After
+    private void loadNextStories() {
         double val = storyCardList.get(storyCardList.size()-1).getVal();
         Query newQuery = initialQuery.startAfter(val);
-//        queryIndex += 10;
-        newQuery.addValueEventListener(new ValueEventListener() {
+        loadStoryData(newQuery);
+    }
+
+    private void loadStoryData(Query query) {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
@@ -166,7 +127,6 @@ public class StoryFeedActivity extends AppCompatActivity {
                             story.getVal()
                     ));
                     storyRviewAdapter.notifyItemInserted(pos);
-                    int i = 4;
                 }
             }
 
@@ -177,51 +137,6 @@ public class StoryFeedActivity extends AppCompatActivity {
                 // ...
             }
         });
-
-
-        /*Task<DataSnapshot> storyDataGetTask = testRef.get();
-
-        storyCardList.add(0, new StoryRviewCard(1));
-        storyRviewAdapter.notifyItemInserted(0);
-
-        storyDataGetTask.addOnCompleteListener(task -> {
-            testRef.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    //testText.setText(snapshot.getValue().toString());
-                    FeedStory story = snapshot.getValue(FeedStory.class);
-                    storyCardList.add(0, new StoryRviewCard(
-                            story.getVal()
-                    ));
-                    storyRviewAdapter.notifyItemInserted(0);
-
-                    int i = 4;
-
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    //TODO: if story is liked by user
-                    //TODO: if story is bookmarked by user
-                    //TODO: if story is liked by OTHER user?
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                    //TODO: if story is deleted or author is deleted
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        });*/
     }
 
     private void goToCreateStory() {
