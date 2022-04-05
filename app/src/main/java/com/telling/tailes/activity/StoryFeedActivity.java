@@ -70,8 +70,9 @@ public class StoryFeedActivity extends AppCompatActivity {
         counter = 0;
 
         for (int i = 0; i < 10; i ++) {
-            storyCardList.add(0, new StoryRviewCard(counter++));
-            storyRviewAdapter.notifyItemInserted(0);
+            int pos = storyCardList.size();
+            storyCardList.add(pos, new StoryRviewCard(counter++));
+            storyRviewAdapter.notifyItemInserted(pos);
         }
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
@@ -112,9 +113,10 @@ public class StoryFeedActivity extends AppCompatActivity {
     }
 
     private void loadStoryData() {
+        int pos = storyCardList.size();
         for (int i = 0; i < 10; i ++) {
-            storyCardList.add(0, new StoryRviewCard(counter++));
-            storyRviewAdapter.notifyItemInserted(0);
+            storyCardList.add(pos, new StoryRviewCard(counter++));
+            storyRviewAdapter.notifyItemInserted(pos);
         }
         /*Task<DataSnapshot> storyDataGetTask = testRef.get();
 
