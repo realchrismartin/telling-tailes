@@ -35,7 +35,8 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     @Override
     public void onBindViewHolder(StoryRviewHolder holder, int position) {
         StoryRviewCard currentItem = storyCardList.get(position);
-        holder.testText.setText(currentItem.getVal() + "");
+        holder.titleText.setText(currentItem.getID());
+        holder.authorText.setText(currentItem.getAuthorId());
     }
 
     @Override

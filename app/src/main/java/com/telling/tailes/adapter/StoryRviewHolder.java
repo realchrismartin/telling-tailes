@@ -10,11 +10,13 @@ import com.telling.tailes.R;
 import com.telling.tailes.card.StoryRviewCardClickListener;
 
 public class StoryRviewHolder extends RecyclerView.ViewHolder {
-    public TextView testText;
+    public TextView titleText;
+    public TextView authorText;
 
     public StoryRviewHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
         super(itemView);
-        testText = itemView.findViewById(R.id.testTextValue);
+        titleText = itemView.findViewById(R.id.storyCardTitle);
+        authorText = itemView.findViewById(R.id.storyCardAuthor);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override

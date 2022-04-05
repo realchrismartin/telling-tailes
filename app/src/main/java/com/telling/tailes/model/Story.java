@@ -3,16 +3,18 @@ package com.telling.tailes.model;
 public class Story {
 
     private String id;
-    private String authorId;
+    private String authorID;
     private String title;
     private String storyText;
     private boolean isDraft;
+
+    public Story() {};
 
     public Story(String id, String authorID, boolean isDraft, String title, String storyText)
     {
         this.id = id;
         this.isDraft = isDraft;
-        this.authorId = authorID;
+        this.authorID = authorID;
         this.title = title;
         this.storyText = storyText;
     }
@@ -39,6 +41,6 @@ public class Story {
 
     public String getAuthorID()
     {
-        return authorId;
+        return authorID;
     }
 }

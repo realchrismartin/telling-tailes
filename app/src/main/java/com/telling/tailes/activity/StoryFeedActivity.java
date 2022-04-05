@@ -30,11 +30,12 @@ import java.util.ArrayList;
 
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.FeedStory;
+import com.telling.tailes.model.Story;
 import com.telling.tailes.util.EndlessScrollListener;
 
 public class StoryFeedActivity extends AppCompatActivity {
 
-    private static final String storyDBKey = "will_test"; //TODO
+    private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
     private DatabaseReference testRef;
 
@@ -111,8 +112,8 @@ public class StoryFeedActivity extends AppCompatActivity {
     }
 
     private void loadNextStories() {
-        double val = storyCardList.get(storyCardList.size()-1).getVal();
-        Query newQuery = initialQuery.startAfter(val);
+        String id = storyCardList.get(storyCardList.size()-1).getID();
+        Query newQuery = initialQuery.startAfter(id);
         loadStoryData(newQuery);
     }
 
@@ -122,9 +123,11 @@ public class StoryFeedActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     int pos = storyCardList.size();
-                    FeedStory story = snapshot.getValue(FeedStory.class);
+                    Story story = snapshot.getValue(Story.class);
                     storyCardList.add(pos, new StoryRviewCard(
-                            story.getVal()
+                            story.getID(),
+                            story.getAuthorID(),
+                            story.getTitle()
                     ));
                     storyRviewAdapter.notifyItemInserted(pos);
                 }
