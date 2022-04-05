@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class StoryFeedActivity extends AppCompatActivity {
     private int queryIndex;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
@@ -58,7 +60,7 @@ public class StoryFeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
 
-
+        createStorySwipeToRefresh();
         createStoryRecyclerView();
 
         testRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
@@ -85,9 +87,23 @@ public class StoryFeedActivity extends AppCompatActivity {
         });
     }
 
+    private void createStorySwipeToRefresh() {
+        feedSwipeRefresh = findViewById(R.id.feedSwipeRefresh);
+        feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Toast.makeText(StoryFeedActivity.this,
+                        "Pulled to refresh!",
+                        Toast.LENGTH_SHORT)
+                        .show();
+                refreshStories();
+            }
+        });
+    }
+
     private void createStoryRecyclerView() {
         storyRviewLayoutManager = new LinearLayoutManager(this);
-        storyRview = findViewById((R.id.story_recycler_view));
+        storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
         storyRviewAdapter = new StoryRviewAdapter(storyCardList);
 
@@ -130,7 +146,9 @@ public class StoryFeedActivity extends AppCompatActivity {
                             story.getTitle()
                     ));
                     storyRviewAdapter.notifyItemInserted(pos);
+
                 }
+                feedSwipeRefresh.setRefreshing(false);
             }
 
             @Override
@@ -140,6 +158,13 @@ public class StoryFeedActivity extends AppCompatActivity {
                 // ...
             }
         });
+    }
+
+    private void refreshStories() {
+        storyCardList.clear();
+        storyRviewAdapter.notifyDataSetChanged();
+        scrollListener.resetState();
+        loadFirstStories();
     }
 
     private void goToCreateStory() {
