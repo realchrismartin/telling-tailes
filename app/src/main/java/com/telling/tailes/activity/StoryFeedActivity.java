@@ -123,11 +123,15 @@ public class StoryFeedActivity extends AppCompatActivity {
     }
 
     private void loadFirstStories() {
-        initialQuery = testRef.orderByChild("Val").limitToFirst(10);
+        initialQuery = testRef.orderByChild("id").limitToFirst(10);
         loadStoryData(initialQuery);
     }
 
     private void loadNextStories() {
+        Toast.makeText(StoryFeedActivity.this,
+                "Loading more stories",
+                Toast.LENGTH_SHORT)
+                .show();
         String id = storyCardList.get(storyCardList.size()-1).getID();
         Query newQuery = initialQuery.startAfter(id);
         loadStoryData(newQuery);
