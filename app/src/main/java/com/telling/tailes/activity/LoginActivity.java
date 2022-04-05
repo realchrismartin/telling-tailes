@@ -45,10 +45,10 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void goToH2Test() {
-        Intent intent = new Intent(this, HTwoTestActivity.class);
-        startActivity(intent);
-    }
+//    private void goToH2Test() {
+//        Intent intent = new Intent(this, HTwoTestActivity.class);
+//        startActivity(intent);
+//    }
 
     public void goToFeed()
     {
