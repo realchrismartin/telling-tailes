@@ -151,8 +151,11 @@ public class StoryFeedActivity extends AppCompatActivity {
 //        }
 
 
-        Query newQuery = initialQuery.startAfter(queryIndex);
-        queryIndex += 10;
+        // isntead of index
+        // get VALUE of last item, pass that as Start After
+        double val = storyCardList.get(storyCardList.size()-1).getVal();
+        Query newQuery = initialQuery.startAfter(val);
+//        queryIndex += 10;
         newQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
