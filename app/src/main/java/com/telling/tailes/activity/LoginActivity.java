@@ -34,16 +34,16 @@ public class LoginActivity extends AppCompatActivity {
 
         findViewById(R.id.testMenuButton).setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View view) {goToH2Test();}
+            public void onClick(View view) {goToHTest();}
         });
 
     }
 
 
-//    private void goToHTest() {
-//        Intent intent = new Intent(this, HTestActivity.class);
-//        startActivity(intent);
-//    }
+    private void goToHTest() {
+        Intent intent = new Intent(this, HTestActivity.class);
+        startActivity(intent);
+    }
 
     private void goToH2Test() {
         Intent intent = new Intent(this, HTwoTestActivity.class);

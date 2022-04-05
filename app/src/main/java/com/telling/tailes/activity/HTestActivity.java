@@ -1,6 +1,7 @@
 package com.telling.tailes.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,11 +11,16 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 
 import com.telling.tailes.R;;
 
-//Each activity owns its toolbar. to make this toolbar apply to other activities:
-//use lines 25-26; functions: onCreateOptionsMenu(), onOptionsItemSelected();
+//Each activity owns its toolbar. title set within in case we want to tell users where they are
+//
+//reference for toolbar impl: https://code.luasoftware.com/tutorials/android/android-setup-appbar-actionbar/
+//reference for applying toolbar to real activities:
+// https://stackoverflow.com/questions/40929686/constraintlayout-vs-coordinator-layout
+
 
 public class HTestActivity extends AppCompatActivity {
     Toolbar mainToolbar;
@@ -25,8 +31,11 @@ public class HTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_h_test); //this should be the specific activity
 
         Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        mainToolbar.setTitle("");
         setSupportActionBar(mainToolbar);
 
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_hamburger_menu);
+        mainToolbar.setOverflowIcon(drawable);
         }
 
     @Override

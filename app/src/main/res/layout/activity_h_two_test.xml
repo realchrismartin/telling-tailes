@@ -21,6 +21,7 @@
             android:background="@color/white"
             android:minHeight="?attr/actionBarSize"
             android:icon="@drawable/ic_hamburger_menu"
+            android:onClick="showMenu"
             android:theme="@style/Theme.PopupOverlay">
         </androidx.appcompat.widget.Toolbar>
 
