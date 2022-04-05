@@ -2,9 +2,10 @@ package com.telling.tailes.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,6 +16,7 @@ import com.telling.tailes.R;
 
 public class HTwoTestActivity extends AppCompatActivity {
     Toolbar toolbar;
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +25,33 @@ public class HTwoTestActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        //toolbar.setNavigationIcon(R.drawable.ic_launcher_background);
+        toolbar.setNavigationIcon(R.drawable.ic_hamburger_menu);
+
+
+
+        toolbar.getChildAt(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("navbar", "click");
+                //        getMenuInflater().inflate(R.menu.main_menu,menu);
+            }
+        });
+
+
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_launcher_background);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        //getSupportActionBar().setLogo(R.drawable.ic_launcher_background);
+        //getSupportActionBar().setDisplayUseLogoEnabled(true);
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
 
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.main_menu,menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
