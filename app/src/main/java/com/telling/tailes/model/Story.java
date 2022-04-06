@@ -50,7 +50,6 @@ public class Story {
 
     public ArrayList<String> getLoves() {
         if (loves == null) { //TODO: is there a better way to check if this exists?
-            int i = 4;
             return new ArrayList<String>();
         }
         return loves;

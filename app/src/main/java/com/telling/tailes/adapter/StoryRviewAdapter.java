@@ -37,8 +37,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         StoryRviewCard currentItem = storyCardList.get(position);
         holder.titleText.setText(currentItem.getID());
         holder.authorText.setText(currentItem.getAuthorId());
-        holder.loveButton.setText(currentItem.getLoves().size() + "");
-        int i = 4;
+        holder.loveButton.setText(currentItem.getLoves().size() + ""); //TODO: better way to make the int a string?
     }
 
     @Override

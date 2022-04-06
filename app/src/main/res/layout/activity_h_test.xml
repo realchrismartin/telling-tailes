@@ -37,7 +37,6 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/Theme.AppBarOverlay"
-
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
