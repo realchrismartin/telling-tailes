@@ -16,6 +16,7 @@ import com.telling.tailes.R;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class PublishStoryActivity extends AppCompatActivity {
@@ -135,6 +136,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         String title = titleView.getText().toString();
         String storyText = storyTextView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID();
+        ArrayList<String> loves = new ArrayList<String>();
 
         //Ensure that title is always entered, even if it's a draft
         if(title.length() <= 0)
@@ -142,7 +144,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
         }
 
-        Story story = new Story("testid", userId,asDraft,title,storyText); //TODO: create actual unique id for story
+        Story story = new Story("testid", userId,asDraft,title,storyText,loves); //TODO: create actual unique id for story
 
         Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
 

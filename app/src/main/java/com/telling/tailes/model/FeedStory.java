@@ -1,5 +1,6 @@
 package com.telling.tailes.model;
 
+//TODO: remove if only used in endless scroll testing
 public class FeedStory {
     private int Val;
 
