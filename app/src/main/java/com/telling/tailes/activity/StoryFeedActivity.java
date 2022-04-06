@@ -147,7 +147,8 @@ public class StoryFeedActivity extends AppCompatActivity {
                     storyCardList.add(pos, new StoryRviewCard(
                             story.getID(),
                             story.getAuthorID(),
-                            story.getTitle()
+                            story.getTitle(),
+                            story.getLoves()
                     ));
                     storyRviewAdapter.notifyItemInserted(pos);
 

@@ -16,15 +16,15 @@
 
         <Button
             android:id="@+id/storyCardLoveButton"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:text=""
             android:drawableLeft="@drawable/ic_baseline_favorite_border_24"
+            android:text=""
+            android:textColor="#283593"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="?android:attr/borderlessButtonStyle"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/storyCardTitle"
