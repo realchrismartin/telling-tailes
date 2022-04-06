@@ -20,7 +20,7 @@ import java.util.Date;
 
 public class PublishStoryActivity extends AppCompatActivity {
 
-    private static final String storyDBKey = "will_test"; //TODO
+    private static final String storyDBKey = "stories"; //TODO
     private static final int storyTextSize = 20;
     private static final int titleCharacterLength = 5;
     private String draftSaveNotification;
