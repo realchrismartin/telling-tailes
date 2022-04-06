@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Feed"
+        android:id="@+id/view_feed"
+        app:showAsAction="never" />
+
+    <item android:title="New Story"
+        android:id="@+id/create_new_story"
+        app:showAsAction="never"/>
+
+    <item android:title="My Stories"
+        android:id="@+id/view_my_stories"
+        app:showAsAction="never"/>
+
+    <item android:title="My Drafts"
+        android:id="@+id/view_my_drafts"
+        app:showAsAction="never"/>
+
+    <item android:title="Bookmarks"
+        android:id="@+id/view_my_bookmarks"
+        app:showAsAction="never"/>
+
+    <item android:title="Saved Authors"
+        android:id="@+id/view_saved_authors"
+        app:showAsAction="never"/>
+
+    <item android:title="Settings"
+        android:id="@+id/view_settings"
+        app:showAsAction="never"/>
+</menu>
