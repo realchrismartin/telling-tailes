@@ -14,6 +14,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -27,6 +31,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.core:core:1.6.0'
     def fragment_version = "1.4.1"
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation 'androidx.appcompat:appcompat:1.4.1'
