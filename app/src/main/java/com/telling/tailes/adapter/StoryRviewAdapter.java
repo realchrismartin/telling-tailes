@@ -38,12 +38,12 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         StoryRviewCard currentItem = storyCardList.get(position);
         holder.titleText.setText(currentItem.getID());
         holder.authorText.setText(currentItem.getAuthorId());
-        holder.loveButton.setText(currentItem.getLoves().size() + ""); //TODO: better way to make the int a string?
+        holder.loveButton.setText(currentItem.getLoves().size() > 0 ? currentItem.getLoves().size() + "" : ""); //TODO: better way to make the int a string?
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FBUtils.updateLove(currentItem);
-                holder.loveButton.setText(currentItem.getLoves().size() + ""); //TODO: better way to make the int a string?
+                holder.loveButton.setText(currentItem.getLoves().size() > 0 ? currentItem.getLoves().size() + "" : ""); //TODO: better way to make the int a string?
             }
         });
     }
