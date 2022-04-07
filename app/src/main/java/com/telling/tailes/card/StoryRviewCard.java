@@ -38,6 +38,10 @@ public class StoryRviewCard implements StoryRviewCardClickListener {
         loves.add(userId);
     }
 
+    public void removeLove(String userId) {
+        loves.remove(userId);
+    }
+
     @Override
     public void onStoryClick(int position) {
         Log.d("Story Card", "Story Card has been clicked");

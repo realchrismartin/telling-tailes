@@ -42,7 +42,8 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FBUtils.addLove();
+                FBUtils.updateLove(currentItem);
+                holder.loveButton.setText(currentItem.getLoves().size() + "");
             }
         });
     }
