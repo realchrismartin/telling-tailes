@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.telling.tailes.R;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
+import com.telling.tailes.util.FBUtils;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,12 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.titleText.setText(currentItem.getID());
         holder.authorText.setText(currentItem.getAuthorId());
         holder.loveButton.setText(currentItem.getLoves().size() + ""); //TODO: better way to make the int a string?
+        holder.loveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FBUtils.addLove();
+            }
+        });
     }
 
     @Override
