@@ -9,13 +9,13 @@ public class StoryRviewCard implements StoryRviewCardClickListener {
     private final String id;
     private final String authorId;
     private final String title;
-    private ArrayList<String> loves;
+    private ArrayList<String> lovers;
 
-    public StoryRviewCard(String id, String authorId, String title, ArrayList<String> loves) {
+    public StoryRviewCard(String id, String authorId, String title, ArrayList<String> lovers) {
         this.id = id;
         this.authorId = authorId;
         this.title = title;
-        this.loves = loves;
+        this.lovers = lovers;
     }
 
     public String getID() {
@@ -30,20 +30,20 @@ public class StoryRviewCard implements StoryRviewCardClickListener {
         return title;
     }
 
-    public ArrayList<String> getLoves() {
-        return loves;
+    public ArrayList<String> getLovers() {
+        return lovers;
     }
 
-    public void updateLoves(ArrayList<String> loves) {
-        this.loves = loves;
+    public void updateLovers(ArrayList<String> lovers) {
+        this.lovers = lovers;
     }
 
     public void addLove(String userId) {
-        loves.add(userId);
+        lovers.add(userId);
     }
 
     public void removeLove(String userId) {
-        loves.remove(userId);
+        lovers.remove(userId);
     }
 
     @Override

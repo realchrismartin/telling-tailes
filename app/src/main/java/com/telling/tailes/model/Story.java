@@ -9,18 +9,18 @@ public class Story {
     private String title;
     private String storyText;
     private boolean isDraft;
-    private ArrayList<String> loves;
+    private ArrayList<String> lovers;
 
     public Story() {};
 
-    public Story(String id, String authorID, boolean isDraft, String title, String storyText, ArrayList<String> loves)
+    public Story(String id, String authorID, boolean isDraft, String title, String storyText, ArrayList<String> lovers)
     {
         this.id = id;
         this.isDraft = isDraft;
         this.authorID = authorID;
         this.title = title;
         this.storyText = storyText;
-        this.loves = loves;
+        this.lovers = lovers;
     }
 
     public String getID()
@@ -48,14 +48,14 @@ public class Story {
         return authorID;
     }
 
-    public ArrayList<String> getLoves() {
-        if (loves == null) { //TODO: is there a better way to check if this exists?
+    public ArrayList<String> getLovers() {
+        if (lovers == null) { //TODO: is there a better way to check if this exists?
             return new ArrayList<String>();
         }
-        return loves;
+        return lovers;
     }
 
-    public void addLove(String userId) {
-        loves.add(userId);
+    public void addLover(String userId) {
+        lovers.add(userId);
     }
 }

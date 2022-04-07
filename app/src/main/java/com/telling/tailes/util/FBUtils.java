@@ -18,23 +18,23 @@ public class FBUtils {
     public static void updateLove(StoryRviewCard currentItem) {
         String currentUser = AuthUtils.getLoggedInUserID();
 
-        ArrayList<String> loves = currentItem.getLoves();
+        ArrayList<String> lovers = currentItem.getLovers();
 
-        if (loves.contains(currentUser)) {
+        if (lovers.contains(currentUser)) {
             Log.d("updateLove", "removing love from FB...");
-            loves.remove(currentUser);
+            lovers.remove(currentUser);
         } else {
             Log.d("updateLove", "adding love to FB...");
-            loves.add(currentUser);
+            lovers.add(currentUser);
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put("loves", loves);
+        fbUpdate.put("loves", lovers);
         Task<Void> storyLoveTask =  ref.child(currentItem.getID()).updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {
             Log.d("updateLove", "added love to FB");
-            currentItem.updateLoves(loves);
+            currentItem.updateLovers(lovers);
         });
 
         storyLoveTask.addOnFailureListener(task -> {
