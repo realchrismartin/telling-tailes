@@ -43,7 +43,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
             @Override
             public void onClick(View view) {
                 FBUtils.updateLove(currentItem);
-                holder.loveButton.setText(currentItem.getLoves().size() + "");
+                holder.loveButton.setText(currentItem.getLoves().size() + ""); //TODO: better way to make the int a string?
             }
         });
     }

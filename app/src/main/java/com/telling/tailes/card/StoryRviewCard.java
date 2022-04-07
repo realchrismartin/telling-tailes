@@ -34,6 +34,10 @@ public class StoryRviewCard implements StoryRviewCardClickListener {
         return loves;
     }
 
+    public void updateLoves(ArrayList<String> loves) {
+        this.loves = loves;
+    }
+
     public void addLove(String userId) {
         loves.add(userId);
     }

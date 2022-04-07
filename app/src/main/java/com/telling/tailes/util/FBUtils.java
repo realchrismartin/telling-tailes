@@ -2,23 +2,45 @@ package com.telling.tailes.util;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.card.StoryRviewCard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FBUtils {
+    private static final String storyDBKey = "stories"; //TODO
+    private static final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
 
     public static void updateLove(StoryRviewCard currentItem) {
-        String currentUser = "current_user"; //TODO: get current USER id
+        String currentUser = AuthUtils.getLoggedInUserID();
 
-        if (currentItem.getLoves().contains(currentUser)) {
-            Log.d("updateLove", "removing love from FB");
-            currentItem.removeLove(currentUser);
+        ArrayList<String> loves = currentItem.getLoves();
+
+        if (loves.contains(currentUser)) {
+            Log.d("updateLove", "removing love from FB...");
+            loves.remove(currentUser);
         } else {
-            Log.d("updateLove", "adding love to FB");
-            currentItem.addLove(currentUser);
+            Log.d("updateLove", "adding love to FB...");
+            loves.add(currentUser);
         }
-        //TODO: update on the server side now
+
+        Map<String, Object> fbUpdate = new HashMap<>();
+        fbUpdate.put("loves", loves);
+        Task<Void> storyLoveTask =  ref.child(currentItem.getID()).updateChildren(fbUpdate);
+
+        storyLoveTask.addOnCompleteListener(task -> {
+            Log.d("updateLove", "added love to FB");
+            currentItem.updateLoves(loves);
+        });
+
+        storyLoveTask.addOnFailureListener(task -> {
+            Log.d("updateLove", "unable to add love to FB");
+            //TODO: alert user?
+        });
     }
 
     public static void updateBookmark(StoryRviewCard currentItem) {
