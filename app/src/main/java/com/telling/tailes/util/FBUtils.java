@@ -29,7 +29,7 @@ public class FBUtils {
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put("loves", lovers);
+        fbUpdate.put("lovers", lovers);
         Task<Void> storyLoveTask =  ref.child(currentItem.getID()).updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {
