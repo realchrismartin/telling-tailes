@@ -29,24 +29,9 @@ public class LoginActivity extends AppCompatActivity {
                 goToCreate();
             }
         });
-
-        findViewById(R.id.testMenuButton).setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {goToHTest();}
-        });
-
     }
 
 
-    private void goToHTest() {
-        Intent intent = new Intent(this, HamburgerMenuFragment.class);
-        startActivity(intent);
-    }
-
-//    private void goToH2Test() {
-//        Intent intent = new Intent(this, HTwoTestActivity.class);
-//        startActivity(intent);
-//    }
 
     public void goToFeed()
     {

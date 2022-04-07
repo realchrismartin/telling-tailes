@@ -21,12 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.telling.tailes.R;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
 
-//Each activity owns its toolbar. title set within in case we want to tell users where they are
-//
-//reference for toolbar impl: https://code.luasoftware.com/tutorials/android/android-setup-appbar-actionbar/
-//reference for applying toolbar to real activities:
-// https://stackoverflow.com/questions/40929686/constraintlayout-vs-coordinator-layout
-
 
 public class HamburgerMenuFragment extends Fragment {
     private Toolbar mainToolbar;
@@ -35,16 +29,7 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // setContentView(R.layout.activity_menu); //this should be the specific activity
         setHasOptionsMenu(true);
-
-
-//        Toolbar mainToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-//        mainToolbar.setTitle("");
-//        setSupportActionBar(mainToolbar);
-//
-//        //Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_hamburger_menu);
-//        mainToolbar.setOverflowIcon(drawable);
         }
 
     @Override
@@ -60,21 +45,21 @@ public class HamburgerMenuFragment extends Fragment {
         viewBinding = null;
     }
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
 
-            viewBinding.mainToolbar.setNavigationIcon(R.drawable.ic_hamburger_menu);
-            viewBinding.mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // TODO: fix
-                    Log.d("did", "done");
-                }
-            });
-        }
+        viewBinding.mainToolbar.setNavigationIcon(R.drawable.ic_hamburger_menu);
+        viewBinding.mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: fix
+                Log.d("did", "done");
+            }
+        });
+    }
 
-        @Override
+    @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu, menu);
     }
@@ -82,7 +67,7 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.view_feed:  {
+            case R.id.view_feed: {
                 Intent intent = new Intent(getContext(), StoryFeedActivity.class);
                 startActivity(intent);
                 return true;
