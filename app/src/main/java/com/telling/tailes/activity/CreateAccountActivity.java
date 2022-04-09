@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.util.AuthUtils;
 
+import java.util.function.Consumer;
+
 public class CreateAccountActivity extends AppCompatActivity {
 
     private TextView usernameEntryView;
@@ -45,23 +47,32 @@ public class CreateAccountActivity extends AppCompatActivity {
      */
     private void createAccount() {
 
-        String errorResult = AuthUtils.createUser(usernameEntryView.getText().toString(),passwordEntryView.getText().toString(),passwordConfirmationEntryView.getText().toString());
+        AuthUtils.createUser(getApplicationContext(), usernameEntryView.getText().toString(), passwordEntryView.getText().toString(), passwordConfirmationEntryView.getText().toString(), new Consumer<String>() {
+            @Override
+            public void accept(String errorResult) {
 
-        if(errorResult.length() > 0) {
-            createToast.setText(errorResult);
-            createToast.show();
-            return;
-        }
+                if(errorResult.length() > 0) {
+                    createToast.setText(errorResult);
+                    createToast.show();
+                    return;
+                }
 
-        String loginResult = AuthUtils.logInUser(usernameEntryView.getText().toString(),passwordEntryView.getText().toString());
+                AuthUtils.logInUser(getApplicationContext(),usernameEntryView.getText().toString(),passwordEntryView.getText().toString(), new Consumer<String>() {
+                    @Override
+                    public void accept(String loginErrorResult) {
 
-        if(loginResult.length() > 0) {
-            createToast.setText(loginResult);
-            createToast.show();
-            return;
-        }
+                        if(loginErrorResult.length() > 0) {
+                            createToast.setText(loginErrorResult);
+                            createToast.show();
+                            return;
+                        }
 
-        Intent intent = new Intent(this,StoryFeedActivity.class);
-        startActivity(intent);
+                        //If all is well, redirect to the feed once logged in
+                        Intent intent = new Intent(getApplicationContext(),StoryFeedActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 }

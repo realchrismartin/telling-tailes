@@ -21,8 +21,12 @@
     <string name="username_hint">Enter your username</string>
     <string name="password_hint">Enter your password</string>
     <string name="password_confirmation_hint">Confirm your password</string>
-    <string name="password_complexity_error_notification">Password is not complex enough. Try something, uh, longer?</string>
+    <string name="username_complexity_error_notification">Enter a username that is at least 5 characters long</string>
+    <string name="password_complexity_error_notification">Password is not complex enough. Enter one at least 5 characters long</string>
     <string name="password_not_same_error_notification">Those passwords are not the same.</string>
     <string name="login_error_notification">Login failed. This account does not exist, or the password is incorrect.</string>
+    <string name="user_exists_error_notification">A user with this name exists already, try something else</string>
+    <string name="invalid_password_error_notification">Password is invalid vs. Firebase</string>
+    <string name="create_user_error_notification">Creating a user account in Firebase failed</string>
 
 </resources>
