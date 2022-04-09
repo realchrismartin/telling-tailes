@@ -33,7 +33,7 @@ public class StoryFeedActivity extends AppCompatActivity {
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
-    private DatabaseReference testRef;
+    private DatabaseReference storyRef;
 
     private EndlessScrollListener scrollListener;
     private Query initialQuery;
@@ -56,9 +56,7 @@ public class StoryFeedActivity extends AppCompatActivity {
         createStorySwipeToRefresh();
         createStoryRecyclerView();
 
-        testRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
-        testText = findViewById(R.id.testTextView);
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         Button testButton = findViewById(R.id.testButton);
 
@@ -131,7 +129,7 @@ public class StoryFeedActivity extends AppCompatActivity {
     }
 
     private void loadFirstStories() {
-        initialQuery = testRef.orderByChild("id").limitToFirst(10);
+        initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         loadStoryData(initialQuery);
     }
 
