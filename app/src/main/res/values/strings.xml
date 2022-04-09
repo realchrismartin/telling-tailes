@@ -14,5 +14,5 @@
     <string name="length_long_error_notification">Story length is too long, try selecting a shorter length</string>
     <string name="length_short_error_notification">Story length is too short, try selecting a longer length</string>
     <string name="create_in_progress_notification">Please wait while our trained robot monkeys create neo-Shakespeare for you…</string>
-    <string name="generic_error_notification">Something went wrong, and it\'s really not your fault. It\'s us. Try again later, maybe?</string>
+    <string name="generic_error_notification">Something went wrong. Check to make sure you have an internet connection. If you do... it might be our fault. Sorry!</string>
 </resources>
