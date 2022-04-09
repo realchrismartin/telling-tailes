@@ -1,6 +1,7 @@
 package com.telling.tailes.util;
 
 import android.content.Context;
+import android.util.Pair;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -73,7 +74,7 @@ public class FBUtils {
     //Returns false in callback if user doesn't exist, otherwise returns true
     public static void userExists(Context context, String username, Consumer<Boolean> callback) {
 
-        Task<DataSnapshot> getUserTask = usersRef.child("Users").child(username).get();
+        Task<DataSnapshot> getUserTask = usersRef.child(username).get();
 
         getUserTask.addOnCompleteListener(task -> {
             DataSnapshot userResult = task.getResult();
@@ -95,10 +96,11 @@ public class FBUtils {
     //Returns false in callback if user wasn't created, otherwise returns true
     public static void createUser(Context context, String username, String password, Consumer<Boolean> callback) {
 
-        String hashedPassword = AuthUtils.hashPassword(password);
+        Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
 
-        User user = new User(username,hashedPassword);
-        Task<Void> createUserTask = usersRef.child("Users").child(user.getUsername()).setValue(user);
+        User user = new User(username, hashedPieces.first,hashedPieces.second);
+
+        Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
 
         createUserTask.addOnCompleteListener(task -> {
             callback.accept(true);
@@ -111,11 +113,39 @@ public class FBUtils {
 
     //Checks if user can login with this (cleartext) password
     //Calls callback when result is determined
-    //TODO: Note that this is the function we want to "override" in order to enable "passwordless" login - just callback.accept(true)
     public static void userPasswordValid(Context context, String username, String password, Consumer<Boolean> callback) {
 
-        String hashedPassword = AuthUtils.hashPassword(password);
+        Task<DataSnapshot> getUserTask = usersRef.child(username).get();
 
-        callback.accept(true); //TODO
+        getUserTask.addOnCompleteListener(task -> {
+            DataSnapshot userResult = task.getResult();
+
+            if(!userResult.exists()) {
+                callback.accept(false);
+                return;
+            }
+
+            //Check password vs the newly provided one
+            User user = userResult.getValue(User.class);
+
+            if(user == null)
+            {
+                callback.accept(false);
+                return;
+            }
+
+            if(user.checkPassword(password))
+            {
+                callback.accept(true);
+                return;
+            }
+
+            callback.accept(false);
+
+        });
+
+        getUserTask.addOnFailureListener(task -> {
+            callback.accept(false);
+        });
     }
 }

@@ -3,6 +3,7 @@ package com.telling.tailes.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Pair;
 
 import com.telling.tailes.R;
 
@@ -127,18 +128,24 @@ public class AuthUtils {
         editor.apply();
     }
 
-    //Given a string password, return a SHA-512 hashed version of the password
-    public static String hashPassword(String password) {
-
-        String result = "insecurepassword";
+    //Given a string password, return a SHA-512 hashed version of the password and the salt used to hash the password
+    public static Pair<String,String> hashPassword(String password) {
 
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
+        String saltString = new String(salt,StandardCharsets.UTF_8);
+
+        return new Pair<String,String>(hashPassword(password,saltString),saltString);
+    }
+
+    //Given a string password and a specific salt, return a hashed version of the password using that salt
+    public static String hashPassword(String password, String salt) {
+        String result = "insecurepassword";
 
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
-            md.update(salt);
+            md.update(salt.getBytes(StandardCharsets.UTF_8));
             result = new String(md.digest(password.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
         } catch(NoSuchAlgorithmException ex) {
             Log.e("AuthUtils","Failed to hash password: " + ex.getMessage());
