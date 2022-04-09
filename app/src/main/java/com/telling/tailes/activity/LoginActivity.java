@@ -51,14 +51,10 @@ public class LoginActivity extends AppCompatActivity {
     /*
         Attempt a login to the app
         If the login is successful, redirect to the feed
+        Note: allows you to log in even if you're already logged in (i.e. change accounts)
      */
     public void login()
     {
-        if(AuthUtils.userIsLoggedIn(getApplicationContext()))
-        {
-            return; //Already logged in
-        }
-
         AuthUtils.logInUser(getApplicationContext(), usernameEntryView.getText().toString(), passwordEntryView.getText().toString(), new Consumer<String>() {
             @Override
             public void accept(String errorResult) {

@@ -3,9 +3,12 @@ package com.telling.tailes.util;
 import android.content.Context;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.telling.tailes.card.StoryRviewCard;
+import com.telling.tailes.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -69,7 +72,22 @@ public class FBUtils {
     //Calls callback when result is determined
     //Returns false in callback if user doesn't exist, otherwise returns true
     public static void userExists(Context context, String username, Consumer<Boolean> callback) {
-        callback.accept(false); //TODO
+
+        Task<DataSnapshot> getUserTask = usersRef.child("Users").child(username).get();
+
+        getUserTask.addOnCompleteListener(task -> {
+            DataSnapshot userResult = task.getResult();
+
+            if(userResult.exists()) {
+                callback.accept(true);
+            } else {
+                callback.accept(false);
+            }
+        });
+
+        getUserTask.addOnFailureListener(task -> {
+            callback.accept(false);
+        });
     }
 
     //Create a user. Assumes that the user account doesn't exist already // this has already been checked
@@ -79,7 +97,16 @@ public class FBUtils {
 
         String hashedPassword = AuthUtils.hashPassword(password);
 
-        callback.accept(false); //TODO
+        User user = new User(username,hashedPassword);
+        Task<Void> createUserTask = usersRef.child("Users").child(user.getUsername()).setValue(user);
+
+        createUserTask.addOnCompleteListener(task -> {
+            callback.accept(true);
+        });
+
+        createUserTask.addOnFailureListener(task -> {
+            callback.accept(false);
+        });
     }
 
     //Checks if user can login with this (cleartext) password
@@ -89,6 +116,6 @@ public class FBUtils {
 
         String hashedPassword = AuthUtils.hashPassword(password);
 
-        callback.accept(false); //TODO
+        callback.accept(true); //TODO
     }
 }

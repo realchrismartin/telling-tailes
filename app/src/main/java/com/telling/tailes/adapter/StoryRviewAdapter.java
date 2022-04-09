@@ -42,7 +42,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     public void onBindViewHolder(StoryRviewHolder holder, int position) {
 
         StoryRviewCard currentItem = storyCardList.get(position);
-        holder.titleText.setText(currentItem.getID());
+        holder.titleText.setText(currentItem.getTitle());
         holder.authorText.setText(currentItem.getAuthorId());
 
         if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {

@@ -123,7 +123,7 @@ public class AuthUtils {
     private static void updateLogin(Context context, String username) {
         SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("username", ""); //TODO: unhardcode
+        editor.putString("username", username); //TODO: unhardcode
         editor.apply();
     }
 
