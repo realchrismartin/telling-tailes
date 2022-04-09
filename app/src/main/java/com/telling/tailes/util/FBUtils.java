@@ -7,6 +7,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.card.StoryRviewCard;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,17 +72,23 @@ public class FBUtils {
         callback.accept(false); //TODO
     }
 
-    //Create a user. Assumes that the user has been validated - i.e. it doesn't exist already
+    //Create a user. Assumes that the user account doesn't exist already // this has already been checked
     //Calls callback when user is created, or if creation fails
     //Returns false in callback if user wasn't created, otherwise returns true
     public static void createUser(Context context, String username, String password, Consumer<Boolean> callback) {
-        callback.accept(false); //tODO
+
+        String hashedPassword = AuthUtils.hashPassword(password);
+
+        callback.accept(false); //TODO
     }
 
-    //Checks if user can login with this password
+    //Checks if user can login with this (cleartext) password
     //Calls callback when result is determined
-    //TODO: Note that this is the function we want to "override" in order to enable "passwordless" login
+    //TODO: Note that this is the function we want to "override" in order to enable "passwordless" login - just callback.accept(true)
     public static void userPasswordValid(Context context, String username, String password, Consumer<Boolean> callback) {
+
+        String hashedPassword = AuthUtils.hashPassword(password);
+
         callback.accept(false); //TODO
     }
 }

@@ -2,8 +2,14 @@ package com.telling.tailes.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.telling.tailes.R;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.function.Consumer;
 
 public class AuthUtils {
@@ -119,5 +125,25 @@ public class AuthUtils {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("username", ""); //TODO: unhardcode
         editor.apply();
+    }
+
+    //Given a string password, return a SHA-512 hashed version of the password
+    public static String hashPassword(String password) {
+
+        String result = "insecurepassword";
+
+        SecureRandom random = new SecureRandom();
+        byte[] salt = new byte[16];
+        random.nextBytes(salt);
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(salt);
+            result = new String(md.digest(password.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
+        } catch(NoSuchAlgorithmException ex) {
+            Log.e("AuthUtils","Failed to hash password: " + ex.getMessage());
+        }
+
+        return result;
     }
 }
