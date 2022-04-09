@@ -1,12 +1,9 @@
 package com.telling.tailes.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,8 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +26,6 @@ import com.telling.tailes.card.StoryRviewCard;
 import java.util.ArrayList;
 
 import com.telling.tailes.card.StoryRviewCardClickListener;
-import com.telling.tailes.model.FeedStory;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.EndlessScrollListener;
 
@@ -149,7 +143,7 @@ public class StoryFeedActivity extends AppCompatActivity {
                             story.getID(),
                             story.getAuthorID(),
                             story.getTitle(),
-                            story.getLoves()
+                            story.getLovers()
                     ));
                     storyRviewAdapter.notifyItemInserted(pos);
 
