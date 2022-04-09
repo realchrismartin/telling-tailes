@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void login()
     {
-        if(AuthUtils.userIsLoggedIn())
+        if(AuthUtils.userIsLoggedIn(getApplicationContext()))
         {
             return; //Already logged in
         }

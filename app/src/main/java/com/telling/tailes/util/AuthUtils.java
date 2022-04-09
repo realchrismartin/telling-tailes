@@ -1,6 +1,8 @@
 package com.telling.tailes.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.telling.tailes.R;
 import java.util.function.Consumer;
 
@@ -10,15 +12,16 @@ public class AuthUtils {
         Return the name of the logged in user
         If a user is not logged in, return a blank string
      */
-    public static String getLoggedInUserID() {
-        return "authortest"; //TODO
+    public static String getLoggedInUserID(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        return sharedPref.getString("username","");
     }
 
     /*
         Return true if a user is logged in, false otherwise
      */
-    public static boolean userIsLoggedIn() {
-        return false; //TODO
+    public static boolean userIsLoggedIn(Context context) {
+        return !getLoggedInUserID(context).equals(""); //TODO?
     }
 
     //Attempts to log in as the specified user
