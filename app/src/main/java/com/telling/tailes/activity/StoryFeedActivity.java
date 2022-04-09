@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.EndlessScrollListener;
 
 public class StoryFeedActivity extends AppCompatActivity {
@@ -46,14 +46,12 @@ public class StoryFeedActivity extends AppCompatActivity {
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
 
-    private TextView testText;
-
-    private int counter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
+
+        doLoginCheck();
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
@@ -80,6 +78,21 @@ public class StoryFeedActivity extends AppCompatActivity {
                 goToCreateStory();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doLoginCheck();
+    }
+
+    //Kick the user out of the Feed if they aren't logged in for some reason
+    private void doLoginCheck()
+    {
+        if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
+        {
+            goToLogin();
+        }
     }
 
     private void createStorySwipeToRefresh() {
@@ -169,7 +182,11 @@ public class StoryFeedActivity extends AppCompatActivity {
 
     private void goToCreateStory() {
         Intent intent = new Intent(this,CreateStoryActivity.class);
+        startActivity(intent);
+    }
 
+    private void goToLogin() {
+        Intent intent = new Intent(this,LoginActivity.class);
         startActivity(intent);
     }
 }

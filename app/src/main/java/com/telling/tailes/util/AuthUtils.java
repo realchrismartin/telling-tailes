@@ -14,14 +14,14 @@ public class AuthUtils {
      */
     public static String getLoggedInUserID(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        return sharedPref.getString("username","");
+        return sharedPref.getString("username",""); //TODO: unhardcode
     }
 
     /*
         Return true if a user is logged in, false otherwise
      */
     public static boolean userIsLoggedIn(Context context) {
-        return !getLoggedInUserID(context).equals(""); //TODO?
+        return !getLoggedInUserID(context).equals("");
     }
 
     //Attempts to log in as the specified user
@@ -49,12 +49,19 @@ public class AuthUtils {
                         }
 
                         //If user exists and password is valid, log the user in
-                        //TODO: actually do login step, update shared properties to store the username
+                        //Note: this could be more secure.
+                        updateLogin(context,username);
                         callback.accept(""); //Indicate that everything went ok
                     }
                 });
             }
         });
+    }
+
+    //Log out - very simply, just delete the username from shared preferences
+    public static void logOutUser(Context context, Consumer<String> callback) {
+        updateLogin(context,"");
+        callback.accept(""); //Indicate that everything went ok
     }
 
     //Attempts to create the specified user
@@ -104,5 +111,13 @@ public class AuthUtils {
                 });
             }
         });
+    }
+
+    //Called on either login or logout
+    private static void updateLogin(Context context, String username) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("username", ""); //TODO: unhardcode
+        editor.apply();
     }
 }
