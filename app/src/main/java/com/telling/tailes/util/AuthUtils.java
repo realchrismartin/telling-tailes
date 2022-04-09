@@ -23,4 +23,11 @@ public class AuthUtils {
     {
         return "There was some error"; //TODO
     }
+
+    //Attempts to create the specified user
+    //Returns a zero length string if successful, otherwise returns an error
+    public static String createUser(String username, String password, String confirmationPassword)
+    {
+        return "There was some error 2"; //TODO
+    }
 }

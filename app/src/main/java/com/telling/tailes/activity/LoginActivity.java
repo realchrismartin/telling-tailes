@@ -55,15 +55,15 @@ public class LoginActivity extends AppCompatActivity {
 
         String errorResult = AuthUtils.logInUser(usernameEntryView.getText().toString(),passwordEntryView.getText().toString());
 
-        if(errorResult.length() <= 0)
+        if(errorResult.length() > 0)
         {
-            Intent intent = new Intent(this,StoryFeedActivity.class);
-            startActivity(intent);
+            loginToast.setText(errorResult);
+            loginToast.show();
             return;
         }
 
-        loginToast.setText(errorResult);
-        loginToast.show();
+        Intent intent = new Intent(this,StoryFeedActivity.class);
+        startActivity(intent);
     }
 
     /*
@@ -72,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
     public void goToCreate()
     {
         Intent intent = new Intent(this,CreateAccountActivity.class);
-
         startActivity(intent);
     }
 }
