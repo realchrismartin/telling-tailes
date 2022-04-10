@@ -7,13 +7,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Transaction;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.model.User;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,13 +124,7 @@ public class FBUtils {
             //Check password vs the newly provided one
             User user = userResult.getValue(User.class);
 
-            if(user == null)
-            {
-                callback.accept(false);
-                return;
-            }
-
-            if(user.checkPassword(password))
+            if(user != null && user.checkPassword(password))
             {
                 callback.accept(true);
                 return;
