@@ -51,7 +51,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FBUtils.updateLove(currentItem);
+                FBUtils.updateLove(currentItem.getStory()); //TODO: this won't work properly, need to use callback and set text/update card from Story after the story is update in updateLove. Deal with this post merge!
                 holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
                 if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID())) {
                     holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);

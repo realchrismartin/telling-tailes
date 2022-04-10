@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.card.StoryRviewCard;
+import com.telling.tailes.model.Story;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,21 +16,21 @@ public class FBUtils {
     private static final String storyDBKey = "stories"; //TODO
     private static final DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
 
-    public static void updateLove(StoryRviewCard currentItem) {
+    public static void updateLove(Story story) {
         String currentUser = AuthUtils.getLoggedInUserID();
 
-        ArrayList<String> lovers = currentItem.getLovers();
+        ArrayList<String> lovers = story.getLovers();
 
         if (lovers.contains(currentUser)) {
             Log.d("updateLove", "removing love from FB...");
-            currentItem.removeLove(currentUser);
+            story.removeLover(currentUser);
         } else {
             Log.d("updateLove", "adding love to FB...");
-            currentItem.addLove(currentUser);
+            story.addLover(currentUser);
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put(currentItem.getID(),currentItem.getStory());
+        fbUpdate.put(story.getID(),story);
         Task<Void> storyLoveTask =  ref.updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {

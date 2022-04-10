@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FBUtils;
 
 public class ReadStoryActivity extends AppCompatActivity {
 
@@ -31,13 +32,14 @@ public class ReadStoryActivity extends AppCompatActivity {
 
     private String promptText;
     private String storyText;
+    private Story story;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_story);
 
-        Story story = (Story) getIntent().getSerializableExtra("story");
+        story = (Story) getIntent().getSerializableExtra("story");
 
         //Find all views
         titleTextView = findViewById(R.id.storyCardTitle);
@@ -69,14 +71,11 @@ public class ReadStoryActivity extends AppCompatActivity {
         storyText = story.getStoryText();
         promptText = story.getPromptText();
 
-        //TODO: set up love button default state based on data
-        if (story.getLovers().contains(AuthUtils.getLoggedInUserID())) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-        } else {
-           loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-        }
+        //Set love button default state
+        updateLoveButtonState();
 
-        //TODO: set up bookmark button default state
+        //Set bookmark button default state
+        updateBookmarkButtonState();
     }
 
     private void initListeners() {
@@ -84,27 +83,53 @@ public class ReadStoryActivity extends AppCompatActivity {
         bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                readStoryToast.setText("Clicked bookmark"); //TODO
-                readStoryToast.show();
+                handleClickBookmark();
             }
         });
 
         loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                readStoryToast.setText("Clicked love!"); //TODO
-                readStoryToast.show();
+                handleClickLove();
             }
         });
 
         recycleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Navigate to the Create Story activity with a recycled prompt
-                Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
-                intent.putExtra("prompt",promptText);
-                startActivity(intent);
+                handleClickRecycle();
+
             }
         });
+    }
+
+   private void updateLoveButtonState() {
+        if (story.getLovers().contains(AuthUtils.getLoggedInUserID())) {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+        } else {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+        }
+    }
+
+    private void updateBookmarkButtonState() {
+        //TODO: set the bookmark state according to the Story - like with Love button
+    }
+
+    private void handleClickBookmark() {
+        //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
+    }
+
+    private void handleClickRecycle() {
+        //Navigate to the Create Story activity with a recycled prompt
+        Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
+        intent.putExtra("prompt",promptText);
+        startActivity(intent);
+    }
+
+    private void handleClickLove() {
+        FBUtils.updateLove(story);
+
+        //TODO: doesn't handle async properly. This will not work.
+        updateLoveButtonState();
     }
 }
