@@ -143,6 +143,7 @@ public class StoryFeedActivity extends AppCompatActivity {
 
                     boolean replaced = false;
 
+                    //TODO: this could be more efficient the way it was originally
                     for(pos=0;pos<storyCardList.size();pos++) {
                         if(storyCardList.get(pos).getID().equals(story.getID())) {
                             storyCardList.set(pos, new StoryRviewCard(story));
