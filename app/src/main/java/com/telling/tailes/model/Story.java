@@ -8,18 +8,20 @@ public class Story implements Serializable {
     private String id;
     private String authorID;
     private String title;
+    private String promptText;
     private String storyText;
     private boolean isDraft;
     private ArrayList<String> lovers;
 
     public Story() {};
 
-    public Story(String id, String authorID, boolean isDraft, String title, String storyText, ArrayList<String> lovers)
+    public Story(String id, String authorID, boolean isDraft, String title, String promptText, String storyText, ArrayList<String> lovers)
     {
         this.id = id;
         this.isDraft = isDraft;
         this.authorID = authorID;
         this.title = title;
+        this.promptText = promptText;
         this.storyText = storyText;
         this.lovers = lovers;
     }
@@ -34,10 +36,9 @@ public class Story implements Serializable {
         return isDraft;
     }
 
-    public String getTitle()
-    {
-        return title;
-    }
+    public String getTitle() { return title; }
+
+    public String getPromptText() { return promptText; }
 
     public String getStoryText()
     {

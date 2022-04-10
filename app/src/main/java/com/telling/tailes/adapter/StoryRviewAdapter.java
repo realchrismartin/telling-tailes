@@ -40,11 +40,13 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         StoryRviewCard currentItem = storyCardList.get(position);
         holder.titleText.setText(currentItem.getID());
         holder.authorText.setText(currentItem.getAuthorId());
+
         if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID())) {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
         } else {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
         }
+
         holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override

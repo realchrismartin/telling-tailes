@@ -58,6 +58,8 @@ public class CreateStoryActivity extends AppCompatActivity {
         lengthTooShortNotification = getString(R.string.length_short_error_notification);
         createInProgressNotification = getString(R.string.create_in_progress_notification);
 
+
+
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
@@ -71,7 +73,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                 hideLoadingWheel();
                 if(validateCreatedStory(msg.getData().getInt(resultKey)))
                 {
-                    goToPublish(promptView.getText().toString() + " " + msg.getData().getString(storyKey));
+                    goToPublish(promptView.getText().toString(),msg.getData().getString(storyKey));
                 }
             }
         };
@@ -94,11 +96,18 @@ public class CreateStoryActivity extends AppCompatActivity {
         lengthSeekBar = findViewById(R.id.lengthSlider);
         promptView = findViewById(R.id.promptView);
         loadingWheel = findViewById(R.id.storyCreateLoadingWheel);
-        hideLoadingWheel();
+
+        //If intent includes a prompt, prepopulate the prompt
+        if(getIntent().hasExtra("prompt")) {
+            promptView.setText(getIntent().getStringExtra("prompt"));
+        }
 
         //Set seekbar min and max
         lengthSeekBar.setMin(lengthMin);
         lengthSeekBar.setMax(lengthMax);
+
+        //Finish loading
+        hideLoadingWheel();
     }
 
     private void hideLoadingWheel() {
@@ -111,9 +120,10 @@ public class CreateStoryActivity extends AppCompatActivity {
         loading = true;
     }
 
-    private void goToPublish(String story) {
+    private void goToPublish(String prompt, String story) {
         Intent intent = new Intent(this,PublishStoryActivity.class);
-        intent.putExtra(Intent.EXTRA_TEXT,story);
+        intent.putExtra("prompt",prompt);
+        intent.putExtra("story",story);
         startActivity(intent);
     }
 

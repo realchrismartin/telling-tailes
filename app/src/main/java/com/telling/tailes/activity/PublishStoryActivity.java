@@ -2,6 +2,7 @@ package com.telling.tailes.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -32,8 +33,12 @@ public class PublishStoryActivity extends AppCompatActivity {
     private TextView titleView;
     private Toast toast;
 
+    private String promptText;
+    private String storyText;
+
     private boolean published = false;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +64,9 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         //Load data from intent passed here by CreateStoryActivity
         Intent fromStoryCreate = getIntent();
-        String story = fromStoryCreate.getStringExtra(Intent.EXTRA_TEXT);
-        storyTextView.setText(story);
+        storyText = fromStoryCreate.getStringExtra("story");
+        promptText = fromStoryCreate.getStringExtra("prompt");
+        storyTextView.setText(promptText + " " + storyText);
 
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
@@ -138,7 +144,6 @@ public class PublishStoryActivity extends AppCompatActivity {
     private void handlePublishStory(boolean asDraft)
     {
         String title = titleView.getText().toString();
-        String storyText = storyTextView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID();
         ArrayList<String> lovers = new ArrayList<String>();
 
@@ -148,7 +153,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
         }
 
-        Story story = new Story("testid", userId,asDraft,title,storyText,lovers); //TODO: create actual unique id for story
+        Story story = new Story("testid", userId,asDraft,title,promptText,storyText,lovers); //TODO: create actual unique id for story
 
         Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
 
