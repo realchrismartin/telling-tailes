@@ -144,7 +144,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
         }
 
-        Story story = new Story("testid", userId,asDraft,title,storyText,lovers); //TODO: create actual unique id for story
+        Story story = new Story("testid", userId,title,storyText,asDraft,lovers); //TODO: create actual unique id for story
 
         Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
 

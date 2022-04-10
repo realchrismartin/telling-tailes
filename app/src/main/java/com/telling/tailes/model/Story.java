@@ -11,9 +11,9 @@ public class Story {
     private boolean isDraft;
     private ArrayList<String> lovers;
 
-    public Story() {};
+    private Story() {};
 
-    public Story(String id, String authorID, boolean isDraft, String title, String storyText, ArrayList<String> lovers)
+    public Story(String id, String authorID, String title, String storyText, boolean isDraft, ArrayList<String> lovers)
     {
         this.id = id;
         this.isDraft = isDraft;
@@ -23,12 +23,12 @@ public class Story {
         this.lovers = lovers;
     }
 
-    public String getID()
+    public String getId()
     {
         return id;
     }
 
-    public boolean isDraft()
+    public boolean getIsDraft()
     {
         return isDraft;
     }
