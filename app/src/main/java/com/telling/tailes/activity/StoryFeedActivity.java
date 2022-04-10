@@ -105,17 +105,17 @@ public class StoryFeedActivity extends AppCompatActivity {
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
             public void onStoryClick(int position) {
-                Toast.makeText(StoryFeedActivity.this,
-                        "Story clicked!",
-                        Toast.LENGTH_SHORT)
-                        .show();
+                goToReadStory(storyCardList.get(position).getStory());
             }
         };
+
         storyRviewAdapter.setOnStoryClickListener(storyClickListener);
 
         storyRview.setAdapter(storyRviewAdapter);
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
+
+
 
     private void loadFirstStories() {
         initialQuery = testRef.orderByChild("id").limitToFirst(10);
@@ -136,18 +136,29 @@ public class StoryFeedActivity extends AppCompatActivity {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    int pos = storyCardList.size();
-                    Story story = snapshot.getValue(Story.class);
-                    storyCardList.add(pos, new StoryRviewCard(
-                            story.getID(),
-                            story.getAuthorID(),
-                            story.getTitle(),
-                            story.getLovers()
-                    ));
-                    storyRviewAdapter.notifyItemInserted(pos);
 
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    Story story = snapshot.getValue(Story.class);
+                    int pos;
+
+                    boolean replaced = false;
+
+                    for(pos=0;pos<storyCardList.size();pos++) {
+                        if(storyCardList.get(pos).getID().equals(story.getID())) {
+                            storyCardList.set(pos, new StoryRviewCard(story));
+                            storyRviewAdapter.notifyItemChanged(pos);
+                            replaced = true;
+                        }
+                    }
+
+                    if(replaced) {
+                        continue;
+                    }
+
+                    storyCardList.add(pos, new StoryRviewCard(story));
+                    storyRviewAdapter.notifyItemInserted(pos);
                 }
+
                 feedSwipeRefresh.setRefreshing(false);
             }
 
@@ -170,6 +181,12 @@ public class StoryFeedActivity extends AppCompatActivity {
     private void goToCreateStory() {
         Intent intent = new Intent(this,CreateStoryActivity.class);
 
+        startActivity(intent);
+    }
+
+    private void goToReadStory(Story story) {
+        Intent intent = new Intent(this,ReadStoryActivity.class);
+        intent.putExtra("story",story);
         startActivity(intent);
     }
 }

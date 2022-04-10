@@ -1,53 +1,40 @@
 package com.telling.tailes.card;
 
 
-import android.util.Log;
+import com.telling.tailes.model.Story;
 
 import java.util.ArrayList;
 
-public class StoryRviewCard implements StoryRviewCardClickListener {
-    private final String id;
-    private final String authorId;
-    private final String title;
-    private ArrayList<String> lovers;
+public class StoryRviewCard {
+    private Story story;
 
-    public StoryRviewCard(String id, String authorId, String title, ArrayList<String> lovers) {
-        this.id = id;
-        this.authorId = authorId;
-        this.title = title;
-        this.lovers = lovers;
+    public StoryRviewCard(Story story) {
+        this.story = story;
     }
 
     public String getID() {
-        return id;
+        return story.getID();
     }
 
     public String getAuthorId() {
-        return authorId;
+        return story.getAuthorID();
     }
 
     public String getTitle() {
-        return title;
+        return story.getTitle();
     }
 
     public ArrayList<String> getLovers() {
-        return lovers;
-    }
-
-    public void updateLovers(ArrayList<String> lovers) {
-        this.lovers = lovers;
+        return story.getLovers();
     }
 
     public void addLove(String userId) {
-        lovers.add(userId);
+        story.addLover(userId);
     }
 
     public void removeLove(String userId) {
-        lovers.remove(userId);
+        story.removeLover(userId);
     }
 
-    @Override
-    public void onStoryClick(int position) {
-        Log.d("Story Card", "Story Card has been clicked");
-    }
+    public Story getStory() { return story; }
 }

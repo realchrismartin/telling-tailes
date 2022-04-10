@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".activity.ReadStoryActivity">
 
+    <TextView
+        android:id="@+id/readStoryTextView"
+        android:layout_width="331dp"
+        android:layout_height="574dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

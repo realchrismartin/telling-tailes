@@ -22,19 +22,18 @@ public class FBUtils {
 
         if (lovers.contains(currentUser)) {
             Log.d("updateLove", "removing love from FB...");
-            lovers.remove(currentUser);
+            currentItem.removeLove(currentUser);
         } else {
             Log.d("updateLove", "adding love to FB...");
-            lovers.add(currentUser);
+            currentItem.addLove(currentUser);
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put("lovers", lovers);
-        Task<Void> storyLoveTask =  ref.child(currentItem.getID()).updateChildren(fbUpdate);
+        fbUpdate.put(currentItem.getID(),currentItem.getStory());
+        Task<Void> storyLoveTask =  ref.updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {
             Log.d("updateLove", "added love to FB");
-            currentItem.updateLovers(lovers);
         });
 
         storyLoveTask.addOnFailureListener(task -> {

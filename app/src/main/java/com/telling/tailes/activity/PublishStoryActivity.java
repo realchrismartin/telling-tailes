@@ -42,7 +42,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        storyTextView = findViewById(R.id.storyTextView);
         titleView = findViewById(R.id.titleTextView);
 
         //Set up DB ref
@@ -51,12 +50,17 @@ public class PublishStoryActivity extends AppCompatActivity {
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
+        //Set up story text view
+        storyTextView = findViewById(R.id.publishStoryTextView);
+
         //Make story text scrollable
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
         //Load data from intent passed here by CreateStoryActivity
-        loadIntentData();
+        Intent fromStoryCreate = getIntent();
+        String story = fromStoryCreate.getStringExtra(Intent.EXTRA_TEXT);
+        storyTextView.setText(story);
 
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
@@ -160,15 +164,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         });
     }
 
-    /*
-        Load intent data and display it
-     */
-    private void loadIntentData()
-    {
-        Intent fromStoryCreate = getIntent();
-        String story = fromStoryCreate.getStringExtra(Intent.EXTRA_TEXT);
-        storyTextView.setText(story);
-    }
 
     /*
         Go back to the feed after having published a story

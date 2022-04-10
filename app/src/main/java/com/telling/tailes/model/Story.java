@@ -1,8 +1,9 @@
 package com.telling.tailes.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Story {
+public class Story implements Serializable {
 
     private String id;
     private String authorID;
@@ -48,14 +49,24 @@ public class Story {
         return authorID;
     }
 
-    public ArrayList<String> getLovers() {
+    private void initLovers() {
         if (lovers == null) { //TODO: is there a better way to check if this exists?
-            return new ArrayList<String>();
+            lovers = new ArrayList<String>();
         }
+    }
+
+    public ArrayList<String> getLovers() {
+        initLovers();
         return lovers;
     }
 
     public void addLover(String userId) {
+        initLovers();
         lovers.add(userId);
+    }
+
+    public void removeLover(String userId) {
+        initLovers();
+        lovers.remove(userId);
     }
 }
