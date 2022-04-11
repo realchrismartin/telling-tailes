@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -78,17 +79,17 @@ enum FilterType {
     //Return true if this filter includes the provided story, false otherwise
     //This is not efficient, sorry.
     //TODO: make more efficient
-    public boolean includes(Story story)
+    public boolean includes(Context context, Story story)
     {
         switch(this) {
             case MY : {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID());
+                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context));
             }
             case DRAFTS: {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID()) && story.getIsDraft(); //TODO: story is bugged loading data from DB, isDraft is not set right
+                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft(); //TODO: story is bugged loading data from DB, isDraft is not set right
             }
             case BOOKMARKS: {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID()); //TODO: This does nothing currently
+                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
             }
             default: {
                 return true;
@@ -101,7 +102,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
-    private DatabaseReference ref;
+    private DatabaseReference storyRef;
 
     private EndlessScrollListener scrollListener;
     private Query initialQuery;
@@ -129,10 +130,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
 
+        doLoginCheck();
+
         createStorySwipeToRefresh();
         createStoryRecyclerView();
 
-        ref = FirebaseDatabase.getInstance().getReference(storyDBKey);
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         createFilterSpinner();
 
@@ -152,6 +155,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doLoginCheck();
+    }
+
     private void createFilterSpinner() {
         filterSpinner = findViewById(R.id.filterSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
@@ -159,6 +168,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         filterSpinner.setAdapter(adapter);
         filterSpinner.setOnItemSelectedListener(this);
         currentFilter = FilterType.NONE;
+    }
+
+    //Kick the user out of the Feed if they aren't logged in for some reason
+    private void doLoginCheck()
+    {
+        if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
+        {
+            goToLogin();
+        }
     }
 
     private void createStorySwipeToRefresh() {
@@ -179,24 +197,25 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList);
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext());
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
             public void onStoryClick(int position) {
-                Toast.makeText(StoryFeedActivity.this,
-                        "Story clicked!",
-                        Toast.LENGTH_SHORT)
-                        .show();
+                goToReadStory(storyCardList.get(position).getStory());
             }
         };
+
         storyRviewAdapter.setOnStoryClickListener(storyClickListener);
 
         storyRview.setAdapter(storyRviewAdapter);
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
+
+
     private void loadFirstStories() {
+        initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         loadStoryData(initialQuery);
     }
 
@@ -221,8 +240,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    int pos = storyCardList.size();
                     Story story = snapshot.getValue(Story.class);
 
                     if(story == null) {
@@ -232,19 +251,29 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     //Track the last seen id, even if excluded by filter
                     lastLoadedStoryId = story.getId();
 
-                    if(!currentFilter.includes(story)) {
+                    if(!currentFilter.includes(getApplicationContext(),story)) {
                         continue;
                     }
 
-                    storyCardList.add(pos, new StoryRviewCard(
-                            story.getId(),
-                            story.getAuthorID(),
-                            story.getTitle(),
-                            story.getLovers()
-                    ));
-                    storyRviewAdapter.notifyItemInserted(pos);
+                    //TODO: this could be more efficient the way it was originally
+                    int pos;
+                    boolean replaced = false;
+                    for(pos=0;pos<storyCardList.size();pos++) {
+                        if(storyCardList.get(pos).getID().equals(story.getId())) {
+                            storyCardList.set(pos, new StoryRviewCard(story));
+                            storyRviewAdapter.notifyItemChanged(pos);
+                            replaced = true;
+                        }
+                    }
 
+                    if(replaced) {
+                        continue;
+                    }
+
+                    storyCardList.add(pos, new StoryRviewCard(story));
+                    storyRviewAdapter.notifyItemInserted(pos);
                 }
+
                 feedSwipeRefresh.setRefreshing(false);
 
                 if(storyCardList.size() <= 0 && refreshIterations < maxRefreshIterations) {
@@ -271,7 +300,17 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private void goToCreateStory() {
         Intent intent = new Intent(this,CreateStoryActivity.class);
+        startActivity(intent);
+    }
 
+    private void goToLogin() {
+        Intent intent = new Intent(this,LoginActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToReadStory(Story story) {
+        Intent intent = new Intent(this,ReadStoryActivity.class);
+        intent.putExtra("story",story);
         startActivity(intent);
     }
 
@@ -293,6 +332,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     {
         currentFilter = filter;
         refreshIterations = 0;
-        initialQuery = currentFilter.getQuery(ref);
+        initialQuery = currentFilter.getQuery(storyRef);
     }
 }

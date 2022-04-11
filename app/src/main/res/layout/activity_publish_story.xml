@@ -7,7 +7,7 @@
     tools:context=".model.PublishStoryActivity">
 
     <TextView
-        android:id="@+id/storyTextView"
+        android:id="@+id/publishStoryTextView"
         android:layout_width="331dp"
         android:layout_height="574dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,7 +22,7 @@
         android:ems="10"
         android:hint="@string/publish_story_title_hint"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/storyTextView"
+        app:layout_constraintBottom_toTopOf="@+id/publishStoryTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -33,6 +33,6 @@
         android:layout_height="wrap_content"
         android:text="@string/publish_story_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storyTextView"
+        app:layout_constraintTop_toBottomOf="@+id/publishStoryTextView"
         tools:layout_editor_absoluteX="155dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

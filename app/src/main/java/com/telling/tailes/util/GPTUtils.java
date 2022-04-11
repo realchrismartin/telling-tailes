@@ -52,9 +52,16 @@ public class GPTUtils {
                 return "";
             }
 
-            OutputStream outputStream = conn.getOutputStream();
-            outputStream.write(body.toString().getBytes());
-            outputStream.close();
+            try {
+
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(body.toString().getBytes());
+                outputStream.close();
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
+                return "";
+            }
 
             String result =  readString(conn.getInputStream());
             JSONObject responseObject;
