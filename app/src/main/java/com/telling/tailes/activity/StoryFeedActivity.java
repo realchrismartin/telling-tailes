@@ -230,14 +230,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     }
 
                     //Track the last seen id, even if excluded by filter
-                    lastLoadedStoryId = story.getID();
+                    lastLoadedStoryId = story.getId();
 
                     if(!currentFilter.includes(story)) {
                         continue;
                     }
 
                     storyCardList.add(pos, new StoryRviewCard(
-                            story.getID(),
+                            story.getId(),
                             story.getAuthorID(),
                             story.getTitle(),
                             story.getLovers()

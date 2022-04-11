@@ -146,7 +146,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         Story story = new Story("testid", userId,title,storyText,asDraft,lovers); //TODO: create actual unique id for story
 
-        Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
+        Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
         storyPublishTask.addOnCompleteListener(task -> {
             published = true;
