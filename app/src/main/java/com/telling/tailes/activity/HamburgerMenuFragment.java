@@ -30,15 +30,17 @@ public class HamburgerMenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        }
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewBinding = FragmentToolbarBinding.inflate(inflater, container, false);
+        setHasOptionsMenu(true);
         return viewBinding.getRoot();
-
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -47,14 +49,18 @@ public class HamburgerMenuFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
+//        getActivity().invalidateOptionsMenu();
+        setHasOptionsMenu(true);
+        Drawable drawable = ContextCompat.getDrawable(getContext(),
+                R.drawable.ic_hamburger_menu);
+        viewBinding.mainToolbar.setOverflowIcon(drawable);
 
         viewBinding.mainToolbar.setNavigationIcon(R.drawable.ic_hamburger_menu);
         viewBinding.mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO: fix
-                Log.d("did", "done");
+                Log.d("nav onClick", "done");
             }
         });
     }
@@ -62,6 +68,8 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu, menu);
+        setHasOptionsMenu(true);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
