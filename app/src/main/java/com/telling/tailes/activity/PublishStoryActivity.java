@@ -163,7 +163,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers);
 
-        Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
+        Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
         storyPublishTask.addOnCompleteListener(task -> {
             published = true;

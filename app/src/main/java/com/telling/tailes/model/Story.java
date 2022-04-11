@@ -13,7 +13,7 @@ public class Story implements Serializable {
     private boolean isDraft;
     private ArrayList<String> lovers;
 
-    public Story() {};
+    private Story() {};
 
     public Story(String id, String authorID, boolean isDraft, String title, String promptText, String storyText, ArrayList<String> lovers)
     {
@@ -26,12 +26,12 @@ public class Story implements Serializable {
         this.lovers = lovers;
     }
 
-    public String getID()
+    public String getId()
     {
         return id;
     }
 
-    public boolean isDraft()
+    public boolean getIsDraft()
     {
         return isDraft;
     }

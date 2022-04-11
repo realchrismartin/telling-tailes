@@ -45,7 +45,7 @@ public class FBUtils {
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put(story.getID(),story);
+        fbUpdate.put(story.getId(),story);
         Task<Void> storyLoveTask =  storiesRef.updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {

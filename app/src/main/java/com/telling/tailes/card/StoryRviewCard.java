@@ -13,7 +13,7 @@ public class StoryRviewCard {
     }
 
     public String getID() {
-        return story.getID();
+        return story.getId();
     }
 
     public String getAuthorId() {
