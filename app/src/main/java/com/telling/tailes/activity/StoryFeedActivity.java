@@ -68,8 +68,6 @@ public class StoryFeedActivity extends AppCompatActivity {
 
         testText = findViewById(R.id.testTextView);
 
-        Button testButton = findViewById(R.id.testButton);
-
         loadFirstStories();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
