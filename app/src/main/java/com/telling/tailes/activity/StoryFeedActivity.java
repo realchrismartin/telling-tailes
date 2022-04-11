@@ -83,13 +83,13 @@ enum FilterType {
     {
         switch(this) {
             case MY : {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context));
+                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && !story.getIsDraft();
             }
             case DRAFTS: {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft(); //TODO: story is bugged loading data from DB, isDraft is not set right
+                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft();
             }
             case BOOKMARKS: {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
+                return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
             }
             default: {
                 return true;
