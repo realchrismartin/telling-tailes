@@ -1,6 +1,6 @@
 package com.telling.tailes.adapter;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +15,16 @@ import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     private ArrayList<StoryRviewCard> storyCardList;
     private StoryRviewCardClickListener listener;
+    private Context context;
 
-    public StoryRviewAdapter(ArrayList<StoryRviewCard> storyCardList) {
+    public StoryRviewAdapter(ArrayList<StoryRviewCard> storyCardList, Context context) {
         this.storyCardList = storyCardList;
+        this.context = context;
     }
 
     public void setOnStoryClickListener(StoryRviewCardClickListener listener) {
@@ -37,25 +40,40 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
 
     @Override
     public void onBindViewHolder(StoryRviewHolder holder, int position) {
+
         StoryRviewCard currentItem = storyCardList.get(position);
-        holder.titleText.setText(currentItem.getID());
+        holder.titleText.setText(currentItem.getTitle());
         holder.authorText.setText(currentItem.getAuthorId());
-        if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID())) {
+
+        if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
         } else {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
         }
-        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
+
+        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? Integer.toString(currentItem.getLovers().size()) : "");
+
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FBUtils.updateLove(currentItem);
-                holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
-                if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID())) {
-                    holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-                } else {
-                    holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-                }
+                FBUtils.updateLove(context, currentItem, new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) {
+
+                        if(!result)
+                        {
+                            return; //TODO: indicate to user that love failed?
+                        }
+
+                        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? Integer.toString(currentItem.getLovers().size()) : "");
+
+                        if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+                        } else {
+                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+                        }
+                    }
+                });
             }
         });
     }

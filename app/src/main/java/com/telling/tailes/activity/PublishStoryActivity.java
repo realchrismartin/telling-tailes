@@ -133,18 +133,25 @@ public class PublishStoryActivity extends AppCompatActivity {
      */
     private void handlePublishStory(boolean asDraft)
     {
-        String title = titleView.getText().toString();
-        String storyText = storyTextView.getText().toString();
-        String userId = AuthUtils.getLoggedInUserID();
-        ArrayList<String> lovers = new ArrayList<String>();
 
-        //Ensure that title is always entered, even if it's a draft
-        if(title.length() <= 0)
+        if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
         {
-            title = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+            return;
         }
 
-        Story story = new Story("testid", userId,asDraft,title,storyText,lovers); //TODO: create actual unique id for story
+        String title = titleView.getText().toString();
+        String storyText = storyTextView.getText().toString();
+        String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
+        ArrayList<String> lovers = new ArrayList<String>();
+
+        String storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+
+        //Ensure that title is always entered, even if it's a draft
+        if(title.length() <= 0) {
+            title = storyId; //TODO: make this nicer?
+        }
+
+        Story story = new Story(storyId,userId,asDraft,title,storyText,lovers);
 
         Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
 
