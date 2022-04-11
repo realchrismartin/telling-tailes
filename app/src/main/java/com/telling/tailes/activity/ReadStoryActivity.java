@@ -17,6 +17,8 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
+import java.util.function.Consumer;
+
 public class ReadStoryActivity extends AppCompatActivity {
 
     private static final int storyTextSize = 20;
@@ -104,7 +106,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
    private void updateLoveButtonState() {
-        if (story.getLovers().contains(AuthUtils.getLoggedInUserID())) {
+        if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
             loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
         } else {
             loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
@@ -127,7 +129,12 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void handleClickLove() {
-        FBUtils.updateLove(story);
+        FBUtils.updateLove(getApplicationContext(), story, new Consumer<Boolean>() {
+            @Override
+            public void accept(Boolean aBoolean) {
+               //TODO
+            }
+        });
 
         //TODO: doesn't handle async properly. This will not work.
         updateLoveButtonState();

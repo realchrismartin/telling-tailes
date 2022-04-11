@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -27,13 +26,14 @@ import java.util.ArrayList;
 
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.EndlessScrollListener;
 
 public class StoryFeedActivity extends AppCompatActivity {
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
-    private DatabaseReference testRef;
+    private DatabaseReference storyRef;
 
     private EndlessScrollListener scrollListener;
     private Query initialQuery;
@@ -46,21 +46,17 @@ public class StoryFeedActivity extends AppCompatActivity {
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
 
-    private TextView testText;
-
-    private int counter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
 
+        doLoginCheck();
+
         createStorySwipeToRefresh();
         createStoryRecyclerView();
 
-        testRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
-        testText = findViewById(R.id.testTextView);
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         Button testButton = findViewById(R.id.testButton);
 
@@ -82,6 +78,21 @@ public class StoryFeedActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doLoginCheck();
+    }
+
+    //Kick the user out of the Feed if they aren't logged in for some reason
+    private void doLoginCheck()
+    {
+        if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
+        {
+            goToLogin();
+        }
+    }
+
     private void createStorySwipeToRefresh() {
         feedSwipeRefresh = findViewById(R.id.feedSwipeRefresh);
         feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,7 +111,7 @@ public class StoryFeedActivity extends AppCompatActivity {
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList);
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext());
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -118,7 +129,7 @@ public class StoryFeedActivity extends AppCompatActivity {
 
 
     private void loadFirstStories() {
-        initialQuery = testRef.orderByChild("id").limitToFirst(10);
+        initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         loadStoryData(initialQuery);
     }
 
@@ -181,7 +192,11 @@ public class StoryFeedActivity extends AppCompatActivity {
 
     private void goToCreateStory() {
         Intent intent = new Intent(this,CreateStoryActivity.class);
+        startActivity(intent);
+    }
 
+    private void goToLogin() {
+        Intent intent = new Intent(this,LoginActivity.class);
         startActivity(intent);
     }
 
