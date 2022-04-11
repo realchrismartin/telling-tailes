@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
@@ -23,13 +24,16 @@ import com.telling.tailes.databinding.FragmentToolbarBinding;
 
 
 public class HamburgerMenuFragment extends Fragment {
-    private Toolbar mainToolbar;
+//    private Toolbar mainToolbar;
     private FragmentToolbarBinding viewBinding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        mainToolbar = (Toolbar) viewBinding.findViewById(R.id.mainToolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(mainToolbar);
         setHasOptionsMenu(true);
+//        setMenuVisibility(true);
 
     }
 
@@ -37,7 +41,8 @@ public class HamburgerMenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewBinding = FragmentToolbarBinding.inflate(inflater, container, false);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
+//        setMenuVisibility(true);
         return viewBinding.getRoot();
     }
 
@@ -50,10 +55,23 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //        getActivity().invalidateOptionsMenu();
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
+        viewBinding.mainToolbar.inflateMenu(R.menu.main_menu);
         Drawable drawable = ContextCompat.getDrawable(getContext(),
                 R.drawable.ic_hamburger_menu);
         viewBinding.mainToolbar.setOverflowIcon(drawable);
+        /*viewBinding.mainToolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_settings:
+                    // Navigate to settings screen
+                    return true;
+                case R.id.action_done:
+                    // Save profile changes
+                    return true;
+                default:
+                    return false;
+            }
+        });*/
 
         viewBinding.mainToolbar.setNavigationIcon(R.drawable.ic_hamburger_menu);
         viewBinding.mainToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -68,8 +86,9 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.main_menu, menu);
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
         super.onCreateOptionsMenu(menu, inflater);
+//        setMenuVisibility(true);
     }
 
     @Override
