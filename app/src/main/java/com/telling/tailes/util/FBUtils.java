@@ -1,6 +1,7 @@
 package com.telling.tailes.util;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Pair;
 
 import com.google.android.gms.tasks.Task;
@@ -8,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.card.StoryRviewCard;
+import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class FBUtils {
     private static final DatabaseReference storiesRef = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
     private static final DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child(usersDBKey);
 
-    public static void updateLove(Context context, StoryRviewCard currentItem, Consumer<Boolean> callback) {
+    public static void updateLove(Context context, Story story, Consumer<Boolean> callback) {
 
         if(!AuthUtils.userIsLoggedIn(context))
         {
@@ -32,20 +34,22 @@ public class FBUtils {
 
         String currentUser = AuthUtils.getLoggedInUserID(context);
 
-        ArrayList<String> lovers = currentItem.getLovers();
+        ArrayList<String> lovers = story.getLovers();
 
         if (lovers.contains(currentUser)) {
-            lovers.remove(currentUser);
+            Log.d("updateLove", "removing love from FB...");
+            story.removeLover(currentUser);
         } else {
-            lovers.add(currentUser);
+            Log.d("updateLove", "adding love to FB...");
+            story.addLover(currentUser);
         }
 
         Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put("lovers", lovers);
-        Task<Void> storyLoveTask =  storiesRef.child(currentItem.getID()).updateChildren(fbUpdate);
+        fbUpdate.put(story.getID(),story);
+        Task<Void> storyLoveTask =  storiesRef.updateChildren(fbUpdate);
 
         storyLoveTask.addOnCompleteListener(task -> {
-            currentItem.updateLovers(lovers);
+            Log.d("updateLove", "added love to FB");
             callback.accept(true);
         });
 

@@ -143,6 +143,10 @@ public class AuthUtils {
     public static String hashPassword(String password, String salt) {
         String result = "insecurepassword";
 
+        if(salt == null) {
+            return hashPassword(password).first;
+        }
+
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-512");
             md.update(salt.getBytes(StandardCharsets.UTF_8));

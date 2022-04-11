@@ -51,17 +51,15 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
         }
 
-        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? Integer.toString(currentItem.getLovers().size()) : "");
-
+        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FBUtils.updateLove(context, currentItem, new Consumer<Boolean>() {
+                FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean result) {
 
-                        if(!result)
-                        {
+                        if (!result) {
                             return; //TODO: indicate to user that love failed?
                         }
 
@@ -73,6 +71,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
                             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
                         }
                     }
+
                 });
             }
         });

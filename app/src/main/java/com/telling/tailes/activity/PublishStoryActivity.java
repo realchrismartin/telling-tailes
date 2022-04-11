@@ -2,6 +2,7 @@ package com.telling.tailes.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -32,8 +33,12 @@ public class PublishStoryActivity extends AppCompatActivity {
     private TextView titleView;
     private Toast toast;
 
+    private String promptText;
+    private String storyText;
+
     private boolean published = false;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +47,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        storyTextView = findViewById(R.id.storyTextView);
         titleView = findViewById(R.id.titleTextView);
 
         //Set up DB ref
@@ -51,12 +55,18 @@ public class PublishStoryActivity extends AppCompatActivity {
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
+        //Set up story text view
+        storyTextView = findViewById(R.id.publishStoryTextView);
+
         //Make story text scrollable
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
         //Load data from intent passed here by CreateStoryActivity
-        loadIntentData();
+        Intent fromStoryCreate = getIntent();
+        storyText = fromStoryCreate.getStringExtra("story");
+        promptText = fromStoryCreate.getStringExtra("prompt");
+        storyTextView.setText(promptText + " " + storyText);
 
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
@@ -151,7 +161,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = storyId; //TODO: make this nicer?
         }
 
-        Story story = new Story(storyId,userId,asDraft,title,storyText,lovers);
+        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers);
 
         Task<Void> storyPublishTask = ref.child(story.getID()).setValue(story);
 
@@ -167,15 +177,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         });
     }
 
-    /*
-        Load intent data and display it
-     */
-    private void loadIntentData()
-    {
-        Intent fromStoryCreate = getIntent();
-        String story = fromStoryCreate.getStringExtra(Intent.EXTRA_TEXT);
-        storyTextView.setText(story);
-    }
 
     /*
         Go back to the feed after having published a story
