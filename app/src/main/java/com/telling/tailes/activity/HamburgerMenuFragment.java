@@ -63,6 +63,9 @@ public class HamburgerMenuFragment extends Fragment {
                 Log.d("menu onClick", "NEW STORY");
                 IntentUtils.openCreateStoryActivity(getContext());
                 return true;
+            case R.id.view_settings:
+                Log.d("menu onClick", "USER SETTINGS");
+                IntentUtils.openUserSettingsActivity(getContext());
             default:
                 Log.d("menu onClick", "default (ruh roh)");
                 return false;
