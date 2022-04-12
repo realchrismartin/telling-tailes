@@ -9,9 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activity.HTestActivity"
-            android:exported="false"/>
-        <activity android:name=".activity.HTwoTestActivity"
+        <activity android:name=".activity.HamburgerMenuFragment"
             android:exported="false"/>
         <activity
             android:name=".activity.UserSettingsActivity"

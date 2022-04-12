@@ -137,6 +137,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
+
+        loadFirstStories();
         createFilterSpinner();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
