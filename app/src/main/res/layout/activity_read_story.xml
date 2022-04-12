@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.UserSettingsActivity">
 
+
     <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container_view"
         android:name="com.telling.tailes.activity.HamburgerMenuFragment"
@@ -19,6 +20,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activity.ReadStoryActivity">
+
+        <include
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/story_card" />
+
+        <TextView
+            android:id="@+id/readStoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="573dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="0dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

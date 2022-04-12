@@ -4,31 +4,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <Button
-        android:id="@+id/feedTempButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Feed"
-        app:layout_constraintBottom_toTopOf="@+id/createTempButton"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="158dp" />
-
-    <Button
-        android:id="@+id/createTempButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Story"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feedTempButton"
-        tools:layout_editor_absoluteX="158dp" />
+    tools:context=".activity.LoginActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/appTitleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
-        tools:layout_editor_absoluteX="158dp"
-        tools:layout_editor_absoluteY="61dp" />
+        android:text="@string/login_app_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/enterUsernameView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/username_hint"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appTitleView" />
+
+    <EditText
+        android:id="@+id/enterPasswordView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/password_hint"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterUsernameView" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_button_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterPasswordView" />
+
+    <Button
+        android:id="@+id/createAccountNavButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_account_button_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
