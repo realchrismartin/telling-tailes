@@ -16,10 +16,10 @@ import androidx.fragment.app.Fragment;
 
 import com.telling.tailes.R;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
-import com.telling.tailes.util.IntentUtils;
 
 
 public class HamburgerMenuFragment extends Fragment {
+    private Intent intent;
     private FragmentToolbarBinding viewBinding;
 
     @Override
@@ -56,16 +56,20 @@ public class HamburgerMenuFragment extends Fragment {
             case R.id.view_feed:
                 // Navigate to settings screen
                 Log.d("menu onClick", "VIEW FEED");
-                IntentUtils.openStoryFeedActivity(getContext());
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.create_new_story:
                 // Save profile changes
                 Log.d("menu onClick", "NEW STORY");
-                IntentUtils.openCreateStoryActivity(getContext());
+                intent = new Intent(getContext(), CreateStoryActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.view_settings:
                 Log.d("menu onClick", "USER SETTINGS");
-                IntentUtils.openUserSettingsActivity(getContext());
+                intent = new Intent(getContext(), UserSettingsActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 Log.d("menu onClick", "default (ruh roh)");
                 return false;
