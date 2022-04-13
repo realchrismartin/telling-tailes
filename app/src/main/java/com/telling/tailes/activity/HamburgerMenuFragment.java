@@ -57,12 +57,20 @@ public class HamburgerMenuFragment extends Fragment {
                 // Navigate to settings screen
                 Log.d("menu onClick", "VIEW FEED");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "My Tailes");
                 startActivity(intent);
                 return true;
             case R.id.create_new_story:
                 // Save profile changes
                 Log.d("menu onClick", "NEW STORY");
                 intent = new Intent(getContext(), CreateStoryActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.view_my_stories:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY STORIES");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "My Tailes");
                 startActivity(intent);
                 return true;
             case R.id.view_settings:

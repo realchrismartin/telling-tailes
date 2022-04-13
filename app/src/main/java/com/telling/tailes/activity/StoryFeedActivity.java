@@ -129,17 +129,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_story_feed);
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         doLoginCheck();
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
-
-        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
+        createFilterSpinner();
 
         loadFirstStories();
-        createFilterSpinner();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -217,7 +215,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
 
     private void loadFirstStories() {
+        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            intentFilter = extras.getString("feedFilter");
+        }
+        applyFilter(FilterType.get(intentFilter));
         loadStoryData(initialQuery);
     }
 
