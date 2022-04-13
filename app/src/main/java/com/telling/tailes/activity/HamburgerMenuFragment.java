@@ -73,6 +73,13 @@ public class HamburgerMenuFragment extends Fragment {
                 intent.putExtra("feedFilter", "My Tailes");
                 startActivity(intent);
                 return true;
+            case R.id.view_my_drafts:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY DRAFTS");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "Drafts");
+                startActivity(intent);
+                return true;
             case R.id.view_settings:
                 Log.d("menu onClick", "USER SETTINGS");
                 intent = new Intent(getContext(), UserSettingsActivity.class);
