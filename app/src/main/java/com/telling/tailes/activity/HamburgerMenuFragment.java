@@ -57,7 +57,6 @@ public class HamburgerMenuFragment extends Fragment {
                 // Navigate to settings screen
                 Log.d("menu onClick", "VIEW FEED");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "My Tailes");
                 startActivity(intent);
                 return true;
             case R.id.create_new_story:
