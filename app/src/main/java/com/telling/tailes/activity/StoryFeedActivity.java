@@ -89,7 +89,7 @@ enum FilterType {
                 return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft();
             }
             case BOOKMARKS: {
-                return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
+                return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && ; //TODO: This does nothing currently
             }
             default: {
                 return true;

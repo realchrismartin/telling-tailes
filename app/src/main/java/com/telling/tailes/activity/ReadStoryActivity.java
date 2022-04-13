@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.telling.tailes.R;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
@@ -35,6 +36,8 @@ public class ReadStoryActivity extends AppCompatActivity {
     private String promptText;
     private String storyText;
     private Story story;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +118,11 @@ public class ReadStoryActivity extends AppCompatActivity {
 
     private void updateBookmarkButtonState() {
         //TODO: set the bookmark state according to the Story - like with Love button
+        if (user.getBookmarks().contains(AuthUtils.)) {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+        } else {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+        }
     }
 
     private void handleClickBookmark() {

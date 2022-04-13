@@ -58,16 +58,43 @@ public class FBUtils {
         });
     }
 
-    public static void updateBookmark(Context context, StoryRviewCard currentItem, Consumer<Boolean> callback) {
+    public static void updateBookmark(Context context, User user, StoryRviewCard currentItem, Consumer<Boolean> callback) {
 
         if(!AuthUtils.userIsLoggedIn(context))
         {
+            callback.accept(false);
             return;
         }
 
-        //TODO: implement
-        callback.accept(false); //TODO
+        String currentStory = currentItem.getID();
+
+
+        ArrayList<String> bookmarks = user.getBookmarks();
+
+
+        if (bookmarks.contains(currentStory)) {
+            Log.d("updateBookmarks", "removing bookmark from FB...");
+            user.removeBookmark(currentStory);
+        } else {
+            Log.d("updateBookmarks", "adding bookmark to FB...");
+            user.addBookmark(currentStory);
+        }
+
+        Map<String, Object> fbUpdate = new HashMap<>();
+        fbUpdate.put(story.getId(),story);
+        Task<Void> storyBookmarkTask =  usersRef.updateChildren(fbUpdate);
+
+        storyBookmarkTask.addOnCompleteListener(task -> {
+            Log.d("updateBookmark", "added bookmark to FB");
+            callback.accept(true);
+        });
+
+        storyBookmarkTask.addOnFailureListener(task -> {
+            callback.accept(false);
+        });
+
     }
+
 
     //Checks if user exists or not in Firebase
     //Calls callback when result is determined
