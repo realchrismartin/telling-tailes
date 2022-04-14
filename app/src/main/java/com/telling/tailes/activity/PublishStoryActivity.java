@@ -1,5 +1,6 @@
 package com.telling.tailes.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -62,10 +63,16 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
+        //Load data from device rotation
+        //TODO: This doesn't do anything due to lifecycle method override - turning the display saves as draft instead.
+        //We may wish to address this.
+        loadInstanceState(savedInstanceState);
+
         //Load data from intent passed here by CreateStoryActivity
-        Intent fromStoryCreate = getIntent();
-        storyText = fromStoryCreate.getStringExtra("story");
-        promptText = fromStoryCreate.getStringExtra("prompt");
+        //Note that this will override anything loaded in from save state
+        loadIntentData(getIntent());
+
+        //Set the story text to whatever the prompt and story text are, post load
         storyTextView.setText(promptText + " " + storyText);
 
         //Define click handler for publishing a story
@@ -80,6 +87,41 @@ public class PublishStoryActivity extends AppCompatActivity {
                 handlePublishStory(false);
             }
         });
+    }
+
+    //Handle saving data on device rotation
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle state) {
+        state.putString("story",storyText);
+        state.putString("prompt",promptText);
+        state.putString("title",titleView.getText().toString());
+        super.onSaveInstanceState(state);
+    }
+
+    //Handle loading data on activity creation, if any is saved
+    protected void loadInstanceState(@NonNull Bundle state) {
+
+        if(state == null) {
+            return;
+        }
+
+        storyText = state.getString("story");
+        promptText = state.getString("prompt");
+        titleView.setText(state.getString("title"));
+
+    }
+
+    //Handle loading intent data
+    protected void loadIntentData(Intent intent) {
+
+        //Only load data if extras are present
+        if(intent.hasExtra("story")) {
+            storyText = intent.getStringExtra("story");
+        }
+
+        if(intent.hasExtra("prompt")) {
+            promptText = intent.getStringExtra("prompt");
+        }
     }
 
     //Handle saving drafts on stop
