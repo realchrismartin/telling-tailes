@@ -1,5 +1,6 @@
 package com.telling.tailes.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -58,10 +59,26 @@ public class CreateStoryActivity extends AppCompatActivity {
         lengthTooShortNotification = getString(R.string.length_short_error_notification);
         createInProgressNotification = getString(R.string.create_in_progress_notification);
 
-
-
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+
+        //Set up views
+        lengthSeekBar = findViewById(R.id.lengthSlider);
+        promptView = findViewById(R.id.promptView);
+        loadingWheel = findViewById(R.id.storyCreateLoadingWheel);
+
+        //If intent includes a prompt, prepopulate the prompt
+        //Note that this will be overridden by saved intent data, if present in the bundle
+        if(getIntent().hasExtra("prompt")) {
+            promptView.setText(getIntent().getStringExtra("prompt"));
+        }
+
+        //Load saved bundle data if applicable
+        loadInstanceState(savedInstanceState);
+
+        //Set seekbar min and max
+        lengthSeekBar.setMin(lengthMin);
+        lengthSeekBar.setMax(lengthMax);
 
         //Set up background executor for handling web request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
@@ -92,22 +109,24 @@ public class CreateStoryActivity extends AppCompatActivity {
             }
         });
 
-        //Set up views
-        lengthSeekBar = findViewById(R.id.lengthSlider);
-        promptView = findViewById(R.id.promptView);
-        loadingWheel = findViewById(R.id.storyCreateLoadingWheel);
-
-        //If intent includes a prompt, prepopulate the prompt
-        if(getIntent().hasExtra("prompt")) {
-            promptView.setText(getIntent().getStringExtra("prompt"));
-        }
-
-        //Set seekbar min and max
-        lengthSeekBar.setMin(lengthMin);
-        lengthSeekBar.setMax(lengthMax);
-
         //Finish loading
         hideLoadingWheel();
+    }
+
+    /*
+         Handle saving data on device rotation
+     */
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle state) {
+        //TODO
+        super.onSaveInstanceState(state);
+    }
+
+    /*
+         Handle loading data on activity creation, if any is saved
+     */
+    protected void loadInstanceState(@NonNull Bundle state) {
+        //TODO
     }
 
     private void hideLoadingWheel() {

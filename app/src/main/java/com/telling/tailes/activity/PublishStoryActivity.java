@@ -1,5 +1,6 @@
 package com.telling.tailes.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -68,6 +69,10 @@ public class PublishStoryActivity extends AppCompatActivity {
         promptText = fromStoryCreate.getStringExtra("prompt");
         storyTextView.setText(promptText + " " + storyText);
 
+        //Load data from device rotation
+        //Note: this overrides data from the intent if there is saved intent data in the bundle
+        loadInstanceState(savedInstanceState);
+
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +85,18 @@ public class PublishStoryActivity extends AppCompatActivity {
                 handlePublishStory(false);
             }
         });
+    }
+
+    //Handle saving data on device rotation
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle state) {
+        //TODO
+        super.onSaveInstanceState(state);
+    }
+
+    //Handle loading data on activity creation, if any is saved
+    protected void loadInstanceState(@NonNull Bundle state) {
+       //TODO: ensure that we save/load the intent data as well
     }
 
     //Handle saving drafts on stop
