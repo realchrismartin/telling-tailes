@@ -69,7 +69,7 @@ public class HamburgerMenuFragment extends Fragment {
                 // Navigate to settings screen
                 Log.d("menu onClick", "VIEW MY STORIES");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "My Tailes");
+                intent.putExtra("feedFilter", "My T(ai)les");
                 startActivity(intent);
                 return true;
             case R.id.view_my_drafts:
