@@ -89,10 +89,10 @@ public class LoginActivity extends AppCompatActivity {
             passwordEntryView.setText(state.getString("password"));
         }
     }
-t
+
     /*
         Attempt a login to the app
-        If the login is successful, redirect to the feed
+       If the login is successful, redirect to the feed
         Note: allows you to log in even if you're already logged in (i.e. change accounts)
      */
     public void login()

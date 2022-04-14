@@ -118,7 +118,8 @@ public class CreateStoryActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        //TODO
+        state.putString("prompt",promptView.getText().toString());
+        state.putInt("length",lengthSeekBar.getProgress());
         super.onSaveInstanceState(state);
     }
 
@@ -126,7 +127,12 @@ public class CreateStoryActivity extends AppCompatActivity {
          Handle loading data on activity creation, if any is saved
      */
     protected void loadInstanceState(@NonNull Bundle state) {
-        //TODO
+        if(state == null) {
+            return;
+        }
+
+        lengthSeekBar.setProgress(state.getInt("progress"));
+        promptView.setText(state.getString("prompt"));
     }
 
     private void hideLoadingWheel() {
