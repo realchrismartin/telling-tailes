@@ -49,7 +49,9 @@ public class CreateAccountActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        //TODO
+        state.putString("username",usernameEntryView.getText().toString());
+        state.putString("password",passwordEntryView.getText().toString());
+        state.putString("passwordConfirmation",passwordConfirmationEntryView.getText().toString());
         super.onSaveInstanceState(state);
     }
 
@@ -57,7 +59,13 @@ public class CreateAccountActivity extends AppCompatActivity {
         Handle loading data on activity creation, if any is saved
      */
     protected void loadInstanceState(@NonNull Bundle state) {
-        //TODO
+        if(state == null) {
+            return;
+        }
+
+        usernameEntryView.setText(state.getString("username"));
+        passwordEntryView.setText(state.getString("password"));
+        passwordConfirmationEntryView.setText(state.getString("passwordConfirmation"));
     }
 
     /*
