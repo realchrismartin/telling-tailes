@@ -46,6 +46,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
+
+    private ArrayAdapter<CharSequence> spinnerAdapter;
     private Spinner filterSpinner;
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
@@ -63,17 +65,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_story_feed);
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         doLoginCheck();
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
-
-        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
+        createFilterSpinner();
 
         loadFirstStories();
-        createFilterSpinner();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -99,9 +99,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private void createFilterSpinner() {
         filterSpinner = findViewById(R.id.filterSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filterSpinner.setAdapter(adapter);
+        spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterSpinner.setAdapter(spinnerAdapter);
         filterSpinner.setOnItemSelectedListener(this);
         currentFilter = FilterType.NONE;
     }
@@ -148,10 +148,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
-
-
     private void loadFirstStories() {
+        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            intentFilter = extras.getString("feedFilter");
+            filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+        }
+        applyFilter(FilterType.get(intentFilter));
         loadStoryData(initialQuery);
     }
 
@@ -231,7 +236,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyCardList.clear();
         storyRviewAdapter.notifyDataSetChanged();
         scrollListener.resetState();
-        loadFirstStories();
+        loadStoryData(initialQuery);
     }
 
     private void goToCreateStory() {

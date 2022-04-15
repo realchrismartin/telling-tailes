@@ -16,7 +16,7 @@ public enum FilterType {
     //Get a FilterType given a string
     public static FilterType get(String str) {
         switch (str) {
-            case ("My Tailes"): {
+            case ("My T(ai)les"): {
                 return MY;
             }
             case ("Bookmarks"): {
