@@ -24,17 +24,50 @@ public class GPTUtils {
 
     /*
         Given a prompt and length, generate a story
+        If the story is not appropriate, keep generating stories until we find an appropriate one
      */
-    public static String getStory(Context context, String prompt, int length)
-    {
+    public static String getStory(Context context, String prompt, int length) {
+
+        boolean appropriate = false;
+        int maxIterations = 5;
+        String story = "";
+        String possibleStory = "";
+
+        for (int i = 0; i < maxIterations; i++) {
+
+            //Complete the prompt and create a story
+            possibleStory = getPromptCompletion(context, prompt, length);
+
+            if (possibleStory.length() <= 0) {
+                break;
+            }
+
+            //Filter out inappropriate stories
+            appropriate = isStoryAppropriate(context, possibleStory);
+
+            if (appropriate) {
+                story = possibleStory;
+                break;
+            }
+        }
+
+        return story;
+    }
+
+    /*
+        Return true if the story is appropriate for the user's eyes
+        Otherwise, return false
+     */
+    private static boolean isStoryAppropriate(Context context, String story) {
+
         try {
             String serverToken = context.getString(R.string.gpt_api_token);
 
-            //TODO: update length to be something more realistic
-            //Probably do some math on the length value to translate it to number of tokens
-            //Example default length is 5
+            //Wrap prompt
+            story = "<|endoftext|>" + story + "\n--\nLabel:";
 
-            URL url = new URL(context.getString(R.string.gpt_api_uri));
+            URL url = new URL(context.getString(R.string.gpt_api_filter_uri));
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -44,49 +77,144 @@ public class GPTUtils {
             JSONObject body = new JSONObject();
 
             try {
-                body.put("prompt",prompt);
-                body.put("max_tokens",length);
-            } catch (JSONException e)
-            {
+                body.put("prompt", story);
+                body.put("max_tokens", 1);
+                body.put("top_p", 0);
+                body.put("logprobs", 10);
+                body.put("temperature", 0.0);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            try {
+                OutputStream outputStream = conn.getOutputStream();
+                outputStream.write(body.toString().getBytes());
+                outputStream.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return false;
+            }
+
+            String result = readString(conn.getInputStream());
+            JSONObject responseObject;
+
+            try {
+                responseObject = new JSONObject(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            JSONArray choices = new JSONArray();
+
+            try {
+                choices = responseObject.getJSONArray("choices");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (choices.length() <= 0) {
+                Log.e("GPTUtils", "Response had no choices");
+                return false;
+            }
+
+            try {
+                JSONObject filterObject = choices.getJSONObject(0);
+                int offensivenessLevel = Integer.parseInt((String) (filterObject.get("text")));
+
+                //Return true if the result is completely inoffensive
+                return offensivenessLevel < 2;
+
+                /*
+                    double toxicityThreshold = -0.355;
+                 JSONObject logProbs = filterObject.getJSONObject("logprobs");
+                 JSONArray topLogProbs = logProbs.getJSONArray("top_logprobs");
+                 JSONObject allLogProbs = topLogProbs.getJSONObject(0);
+
+                 Double prob2 = (Double)allLogProbs.get("2");
+
+                 if(prob2 < toxicityThreshold) {
+
+                     try {
+
+                         Double prob1 = (Double)allLogProbs.get("1");
+                         Double prob0 = (Double)allLogProbs.get("0");
+
+                     } catch (JSONException ex) {
+                        ex.printStackTrace();
+                        return false;
+                     }
+                }
+
+                 */
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private static String getPromptCompletion(Context context, String prompt, int length) {
+        try {
+            String serverToken = context.getString(R.string.gpt_api_token);
+
+            //TODO: update length to be something more realistic
+            //Probably do some math on the length value to translate it to number of tokens
+            //Example default length is 5
+
+            URL url = new URL(context.getString(R.string.gpt_api_completion_uri));
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", "Bearer " + serverToken);
+            conn.setDoOutput(true);
+
+            JSONObject body = new JSONObject();
+
+            try {
+                body.put("prompt", prompt);
+                body.put("max_tokens", length);
+            } catch (JSONException e) {
                 e.printStackTrace();
                 return "";
             }
 
             try {
-
                 OutputStream outputStream = conn.getOutputStream();
                 outputStream.write(body.toString().getBytes());
                 outputStream.close();
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return "";
             }
 
-            String result =  readString(conn.getInputStream());
+            String result = readString(conn.getInputStream());
             JSONObject responseObject;
 
-           try {
-               responseObject = new JSONObject(result);
-           } catch (JSONException e)
-           {
-               e.printStackTrace();
-               return "";
-           }
-
-           JSONArray choices = new JSONArray();
-
-           try {
-                choices = responseObject.getJSONArray("choices");
-           } catch(JSONException e) {
+            try {
+                responseObject = new JSONObject(result);
+            } catch (JSONException e) {
                 e.printStackTrace();
-           }
+                return "";
+            }
 
-           if(choices.length() <= 0)
-           {
-               Log.e("GPTUtils","Response had no choices");
-               return "";
-           }
+            JSONArray choices = new JSONArray();
+
+            try {
+                choices = responseObject.getJSONArray("choices");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (choices.length() <= 0) {
+                Log.e("GPTUtils", "Response had no choices");
+                return "";
+            }
 
             try {
 
@@ -96,7 +224,7 @@ public class GPTUtils {
 
                 return story;
             } catch (JSONException e) {
-               e.printStackTrace();
+                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
