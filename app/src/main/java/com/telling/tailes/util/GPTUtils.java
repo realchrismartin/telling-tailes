@@ -123,31 +123,48 @@ public class GPTUtils {
                 JSONObject filterObject = choices.getJSONObject(0);
                 int offensivenessLevel = Integer.parseInt((String) (filterObject.get("text")));
 
-                //Return true if the result is completely inoffensive
-                return offensivenessLevel < 2;
 
-                /*
-                    double toxicityThreshold = -0.355;
-                 JSONObject logProbs = filterObject.getJSONObject("logprobs");
-                 JSONArray topLogProbs = logProbs.getJSONArray("top_logprobs");
-                 JSONObject allLogProbs = topLogProbs.getJSONObject(0);
 
-                 Double prob2 = (Double)allLogProbs.get("2");
+                double toxicityThreshold = -0.355;
+                JSONObject logProbs = filterObject.getJSONObject("logprobs");
+                JSONArray topLogProbs = logProbs.getJSONArray("top_logprobs");
+                JSONObject allLogProbs = topLogProbs.getJSONObject(0);
 
-                 if(prob2 < toxicityThreshold) {
 
-                     try {
+                Double prob0 = (Double)allLogProbs.get("0");
+                Double prob1 = (Double)allLogProbs.get("1");
+                Double prob2 = (Double)allLogProbs.get("2");
 
-                         Double prob1 = (Double)allLogProbs.get("1");
-                         Double prob0 = (Double)allLogProbs.get("0");
-
-                     } catch (JSONException ex) {
-                        ex.printStackTrace();
+                switch (offensivenessLevel) {
+                    case 0:
+                        return true;
+                    case 1:
+                        return prob1 < toxicityThreshold;
+                    case 2:
+                        return prob2 < toxicityThreshold;
+                    default:
                         return false;
-                     }
                 }
 
-                 */
+                //Return true if the result is completely inoffensive
+/*                if (offensivenessLevel < 2) {
+                    return true;
+                }
+
+                if(prob2 < toxicityThreshold) {
+                    return true;
+                    try {
+
+
+                        if (prob0 >= prob1) {
+
+                        }
+                    } catch (JSONException ex) {
+                       ex.printStackTrace();
+                       return false;
+                    }
+                }*/
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
