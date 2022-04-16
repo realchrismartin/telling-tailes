@@ -1,6 +1,8 @@
 package com.telling.tailes.activity;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +11,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,13 +31,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
+import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.R;
+import com.telling.tailes.util.GPTUtils;
 
-public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnAuthorClickCallbackListener {
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
@@ -51,6 +58,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Spinner filterSpinner;
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
+
+    private AuthorProfileDialogFragment authorProfileDialogFragment;
+
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
 
     private String lastLoadedStoryId;
 
@@ -74,6 +86,33 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         createFilterSpinner();
 
         loadFirstStories();
+
+        //Set up background executor for handling author profile data request threads
+        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
+
+        //Define handling for results from the background thread
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (authorProfileDialogFragment != null) {
+                    authorProfileDialogFragment.dismiss();
+                }
+
+                if (msg.getData() == null) {
+                    return;
+                }
+
+                if (msg.getData().getInt("result") <= 0) {
+                    return; //TODO: show error
+                }
+
+                authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                authorProfileDialogFragment.setArguments(msg.getData());
+                authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+
+            }
+        };
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -133,7 +172,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext(),getSupportFragmentManager());
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext(),this);
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -274,5 +313,31 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         currentFilter = filter;
         refreshIterations = 0;
         initialQuery = currentFilter.getQuery(storyRef);
+    }
+    /*
+        Card onClick handler for opening an author profile
+     */
+    public void handleAuthorClick()
+    {
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                //TODO: do request using FBUtils and get data back
+
+                //Set up a bundle of author profile result data
+                Bundle resultData = new Bundle();
+                resultData.putString("type","authorProfile");
+                resultData.putInt("result",0); //TODO: set to result code
+                //TODO: put other data here from request - this all goes directly to the fragment
+
+                Message resultMessage = new Message();
+                resultMessage.setData(resultData);
+
+                //Notify the activity that profile data has been retrieved
+                backgroundTaskResultHandler.sendMessage(resultMessage);
+            }
+        });
     }
 }
