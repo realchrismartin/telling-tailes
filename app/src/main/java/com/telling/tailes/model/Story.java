@@ -80,10 +80,19 @@ public class Story implements Serializable {
     }
 
     private void initBookmarkers() {
-        if (bookmarkers == null) { //TODO: is there a better way to check if this exists?
+        if (bookmarkers == null) {
             bookmarkers = new ArrayList<String>();
         }
     }
 
 
+    public void removeBookmark(String userID) {
+        initBookmarkers();
+        bookmarkers.remove(userID);
+    }
+
+    public void addBookmark(String userID) {
+        initBookmarkers();
+        bookmarkers.add(userID);
+    }
 }

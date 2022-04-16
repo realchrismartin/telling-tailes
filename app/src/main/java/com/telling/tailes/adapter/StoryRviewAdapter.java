@@ -81,15 +81,30 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
             }
         });
 
-//        ArrayList<String> bookmarks = ((StoryFeedActivity) storyFeedActivity).getBookmarks();
-
-//        SharedPreferences sharedPreferences = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-//        String rawBookmarks = sharedPreferences.getString("bookmarks", "");
         if (currentItem.getBookmarkers().contains(currentUser)) {
             holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
         } else {
             holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
         }
+
+        holder.bookmarkButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                FBUtils.updateBookmark(context.getApplicationContext(), currentItem.getStory(), new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) {
+                        if (!result) {
+                            return;
+                        }
+                        if (currentItem.getBookmarkers().contains(currentUser)) {
+                            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+                        } else {
+                            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+                        }
+                    }
+                });
+            }
+        });
 
         //TODO: come back and take care of onClick for bookmark, and updating database
     }

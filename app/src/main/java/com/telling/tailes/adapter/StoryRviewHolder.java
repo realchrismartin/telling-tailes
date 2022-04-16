@@ -25,7 +25,6 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
         loveButton = itemView.findViewById(R.id.storyCardLoveButton);
         recycleButton = itemView.findViewById(R.id.storyCardRecycleButton);
         bookmarkButton = itemView.findViewById(R.id.storyCardBookmarkButton);
-
         //Note: recycle button is hidden on cards by default
         recycleButton.setVisibility(View.INVISIBLE);
 

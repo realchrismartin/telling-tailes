@@ -89,10 +89,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 //TODO: ugly!
                 if(msg.getData().containsKey("bookmarks"))  {
                     bookmarks = msg.getData().getStringArrayList("bookmarks");
-//                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = sharedPreferences.edit();
-//                    editor.putString("bookmarks", bookmarks.toString());
-//                    editor.apply();
                     loadFirstStories();
                 }
             }
@@ -214,7 +210,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadStoryData(Query query) {
-        int i = 9;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -238,10 +233,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     for(pos=0;pos<storyCardList.size();pos++) {
                         if(storyCardList.get(pos).getID().equals(story.getId())) {
                             storyCardList.set(pos, new StoryRviewCard(story));
-                            //TODO: is this story in our list of bookmarks
-//                            if (bookmarks.contains(storyCardList.get(pos).getID())) {
-//                                storyCardList.get(pos).toggleBookmarked();
-//                            }
                             storyRviewAdapter.notifyItemChanged(pos);
                             replaced = true;
                         }
