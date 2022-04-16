@@ -356,6 +356,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         refreshIterations = 0;
         initialQuery = currentFilter.getQuery(storyRef);
     }
+
     /*
         Card onClick handler for opening an author profile
      */
