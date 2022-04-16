@@ -2,14 +2,18 @@ package com.telling.tailes.card;
 
 
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
+import com.telling.tailes.util.AuthUtils;
 
 import java.util.ArrayList;
 
 public class StoryRviewCard {
     private Story story;
+    private User user;
 
     public StoryRviewCard(Story story) {
         this.story = story;
+        //this.user = AuthUtils.getLoggedInUserID();
     }
 
     public String getID() {

@@ -58,42 +58,42 @@ public class FBUtils {
         });
     }
 
-    public static void updateBookmark(Context context, User user, StoryRviewCard currentItem, Consumer<Boolean> callback) {
-
-        if(!AuthUtils.userIsLoggedIn(context))
-        {
-            callback.accept(false);
-            return;
-        }
-
-        String currentStory = currentItem.getID();
-
-
-        ArrayList<String> bookmarks = user.getBookmarks();
-
-
-        if (bookmarks.contains(currentStory)) {
-            Log.d("updateBookmarks", "removing bookmark from FB...");
-            user.removeBookmark(currentStory);
-        } else {
-            Log.d("updateBookmarks", "adding bookmark to FB...");
-            user.addBookmark(currentStory);
-        }
-
-        Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put(story.getId(),story);
-        Task<Void> storyBookmarkTask =  usersRef.updateChildren(fbUpdate);
-
-        storyBookmarkTask.addOnCompleteListener(task -> {
-            Log.d("updateBookmark", "added bookmark to FB");
-            callback.accept(true);
-        });
-
-        storyBookmarkTask.addOnFailureListener(task -> {
-            callback.accept(false);
-        });
-
-    }
+//    public static void updateBookmark(Context context, User user, StoryRviewCard currentItem, Consumer<Boolean> callback) {
+//
+//        if(!AuthUtils.userIsLoggedIn(context))
+//        {
+//            callback.accept(false);
+//            return;
+//        }
+//
+//        String currentStory = currentItem.getID();
+//
+//
+//        ArrayList<String> bookmarks = user.getBookmarks();
+//
+//
+//        if (bookmarks.contains(currentStory)) {
+//            Log.d("updateBookmarks", "removing bookmark from FB...");
+//            user.removeBookmark(currentStory);
+//        } else {
+//            Log.d("updateBookmarks", "adding bookmark to FB...");
+//            user.addBookmark(currentStory);
+//        }
+//
+//        Map<String, Object> fbUpdate = new HashMap<>();
+//        fbUpdate.put(story.getId(),story);
+//        Task<Void> storyBookmarkTask =  usersRef.updateChildren(fbUpdate);
+//
+//        storyBookmarkTask.addOnCompleteListener(task -> {
+//            Log.d("updateBookmark", "added bookmark to FB");
+//            callback.accept(true);
+//        });
+//
+//        storyBookmarkTask.addOnFailureListener(task -> {
+//            callback.accept(false);
+//        });
+//
+//    }
 
 
     //Checks if user exists or not in Firebase
@@ -168,5 +168,21 @@ public class FBUtils {
         getUserTask.addOnFailureListener(task -> {
             callback.accept(false);
         });
+    }
+
+    public static ArrayList<String> getBookmarks(Context context) {
+        ArrayList<String> bookmarks = new ArrayList<>();
+
+        String currentUser = AuthUtils.getLoggedInUserID(context);
+
+        Task<DataSnapshot> getBookmarksTask = usersRef.child(currentUser).child("bookmarks").get();
+
+        getBookmarksTask.addOnCompleteListener(task -> {
+            DataSnapshot bookmarksResult = task.getResult();
+            int i = 4;
+        });
+
+
+        return bookmarks;
     }
 }

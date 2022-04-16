@@ -32,6 +32,7 @@ import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.EndlessScrollListener;
+import com.telling.tailes.util.FBUtils;
 
 enum FilterType {
 
@@ -131,6 +132,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         maxRefreshIterations = 5; //TODO: adjust this
 
         doLoginCheck();
+
+        FBUtils.getBookmarks(getApplicationContext());
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();

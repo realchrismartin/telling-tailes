@@ -80,7 +80,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         updateLoveButtonState();
 
         //Set bookmark button default state
-        updateBookmarkButtonState();
+        //updateBookmarkButtonState();
     }
 
     private void initListeners() {
@@ -116,14 +116,14 @@ public class ReadStoryActivity extends AppCompatActivity {
         }
     }
 
-    private void updateBookmarkButtonState() {
-        //TODO: set the bookmark state according to the Story - like with Love button
-        if (user.getBookmarks().contains(AuthUtils.)) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-        } else {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-        }
-    }
+//    private void updateBookmarkButtonState() {
+//        //TODO: set the bookmark state according to the Story - like with Love button
+//        if (user.getBookmarks().contains(AuthUtils.)) {
+//            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+//        } else {
+//            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+//        }
+//    }
 
     private void handleClickBookmark() {
         //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
