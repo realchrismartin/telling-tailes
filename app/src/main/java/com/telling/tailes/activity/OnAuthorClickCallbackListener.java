@@ -1,5 +1,5 @@
 package com.telling.tailes.activity;
 
 public interface OnAuthorClickCallbackListener {
-    public void handleAuthorClick();
+    public void handleAuthorClick(String username);
 }

@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.card.StoryRviewCard;
+import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 
@@ -67,6 +68,15 @@ public class FBUtils {
 
         //TODO: implement
         callback.accept(false); //TODO
+    }
+
+    public static void getAuthorProfile(Context context, String username, Consumer<AuthorProfile> callback) {
+
+        //TODO: actually retrieve and consolidate data
+        //TODO: accept null if there's errors. it's handled downstream
+
+        callback.accept(null);
+        //callback.accept(new AuthorProfile());
     }
 
     //Checks if user exists or not in Firebase

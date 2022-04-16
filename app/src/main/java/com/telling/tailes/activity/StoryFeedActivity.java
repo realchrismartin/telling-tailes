@@ -3,6 +3,7 @@ package com.telling.tailes.activity;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,8 +33,10 @@ import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
+import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.R;
@@ -65,6 +68,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Handler backgroundTaskResultHandler;
 
     private String lastLoadedStoryId;
+    private Toast toast;
 
     private FilterType currentFilter;
 
@@ -78,6 +82,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
+        toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
         doLoginCheck();
 
@@ -90,7 +95,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         //Set up background executor for handling author profile data request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 
-        //Define handling for results from the background thread
+        //Define handling for author profile data results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -99,14 +104,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     authorProfileDialogFragment.dismiss();
                 }
 
-                if (msg.getData() == null) {
+                //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                    toast.setText(R.string.generic_error_notification);
+                    toast.show();
                     return;
                 }
 
-                if (msg.getData().getInt("result") <= 0) {
-                    return; //TODO: show error
-                }
-
+                //If all is well, show the author profile fragment with the retrieved data
                 authorProfileDialogFragment = new AuthorProfileDialogFragment();
                 authorProfileDialogFragment.setArguments(msg.getData());
                 authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
@@ -317,26 +322,35 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     /*
         Card onClick handler for opening an author profile
      */
-    public void handleAuthorClick()
+    public void handleAuthorClick(String username)
     {
 
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
 
-                //TODO: do request using FBUtils and get data back
+                FBUtils.getAuthorProfile(getApplicationContext(),username, new Consumer<AuthorProfile>() {
+                        @Override
+                        public void accept(AuthorProfile authorProfile) {
 
-                //Set up a bundle of author profile result data
-                Bundle resultData = new Bundle();
-                resultData.putString("type","authorProfile");
-                resultData.putInt("result",0); //TODO: set to result code
-                //TODO: put other data here from request - this all goes directly to the fragment
+                            //Set up a bundle of author profile result data
+                            Bundle resultData = new Bundle();
+                            resultData.putString("type", "authorProfile");
+                            resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
 
-                Message resultMessage = new Message();
-                resultMessage.setData(resultData);
+                            if (authorProfile != null) {
+                                resultData.putString("authorId", authorProfile.getAuthorId());
+                                resultData.putInt("storyCount", authorProfile.getStoryCount());
+                                resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            }
 
-                //Notify the activity that profile data has been retrieved
-                backgroundTaskResultHandler.sendMessage(resultMessage);
+                            Message resultMessage = new Message();
+                            resultMessage.setData(resultData);
+
+                            //Notify the activity that profile data has been retrieved
+                            backgroundTaskResultHandler.sendMessage(resultMessage);
+                        }
+                });
             }
         });
     }

@@ -82,7 +82,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                authorClickCallbackListener.handleAuthorClick();
+                authorClickCallbackListener.handleAuthorClick(currentItem.getAuthorId());
             }
         });
     }
