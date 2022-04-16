@@ -1,11 +1,12 @@
 package com.telling.tailes.activity;
 
+import java.util.ArrayList;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,82 +22,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.telling.tailes.R;
+
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
-
-import java.util.ArrayList;
-
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.util.FBUtils;
-
-enum FilterType {
-
-    MY,
-    BOOKMARKS,
-    DRAFTS,
-    NONE;
-
-    //Get a FilterType given a string
-    public static FilterType get(String str) {
-        switch (str) {
-            case ("My Tailes"): {
-                return MY;
-            }
-            case ("Bookmarks"): {
-                return BOOKMARKS;
-            }
-            case ("Drafts"): {
-                return DRAFTS;
-            }
-            default:
-                return NONE;
-        }
-    }
-
-    //Get a Query for this FilterType from the provided ref that is appropriate for this filter
-    //TODO: This is unused right now, but will be helpful to order by love count etc when implemented
-    public Query getQuery(DatabaseReference ref) {
-        switch(this) {
-            case MY: {
-                return ref.orderByChild("id").limitToFirst(10); //TODO: duplicates: make these appropriate for each filter
-            }
-            case DRAFTS: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
-            case BOOKMARKS: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
-            default: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
-        }
-    }
-
-    //Return true if this filter includes the provided story, false otherwise
-    //This is not efficient, sorry.
-    //TODO: make more efficient
-    public boolean includes(Context context, Story story)
-    {
-        switch(this) {
-            case MY : {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && !story.getIsDraft();
-            }
-            case DRAFTS: {
-                return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft();
-            }
-            case BOOKMARKS: {
-                return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && ; //TODO: This does nothing currently
-            }
-            default: {
-                return true;
-            }
-        }
-    }
-}
+import com.telling.tailes.R;
 
 public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -113,6 +47,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
+
+    private ArrayAdapter<CharSequence> spinnerAdapter;
     private Spinner filterSpinner;
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
@@ -130,6 +66,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_story_feed);
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
+        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         doLoginCheck();
 
@@ -137,12 +74,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
-
-        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
+        createFilterSpinner();
 
         loadFirstStories();
-        createFilterSpinner();
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -168,9 +102,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private void createFilterSpinner() {
         filterSpinner = findViewById(R.id.filterSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filterSpinner.setAdapter(adapter);
+        spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filterSpinner.setAdapter(spinnerAdapter);
         filterSpinner.setOnItemSelectedListener(this);
         currentFilter = FilterType.NONE;
     }
@@ -217,10 +151,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
-
-
     private void loadFirstStories() {
+        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            intentFilter = extras.getString("feedFilter");
+            filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+        }
+        applyFilter(FilterType.get(intentFilter));
         loadStoryData(initialQuery);
     }
 
@@ -300,7 +239,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyCardList.clear();
         storyRviewAdapter.notifyDataSetChanged();
         scrollListener.resetState();
-        loadFirstStories();
+        loadStoryData(initialQuery);
     }
 
     private void goToCreateStory() {

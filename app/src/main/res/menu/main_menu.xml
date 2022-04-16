@@ -8,11 +8,11 @@
         android:id="@+id/view_feed"
         app:showAsAction="never" />
 
-    <item android:title="New Story"
+    <item android:title="New T(ai)le"
         android:id="@+id/create_new_story"
         app:showAsAction="never"/>
 
-    <item android:title="My Stories"
+    <item android:title="My T(ai)les"
         android:id="@+id/view_my_stories"
         app:showAsAction="never"/>
 

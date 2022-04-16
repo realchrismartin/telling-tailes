@@ -1,5 +1,6 @@
 package com.telling.tailes.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -32,12 +33,39 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         createToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
+        //Load instance state data if applicable
+        loadInstanceState(savedInstanceState);
+
         findViewById(R.id.createAccountButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                createAccount();
             }
         });
+    }
+
+    /*
+         Handle saving data on device rotation
+     */
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle state) {
+        state.putString("username",usernameEntryView.getText().toString());
+        state.putString("password",passwordEntryView.getText().toString());
+        state.putString("passwordConfirmation",passwordConfirmationEntryView.getText().toString());
+        super.onSaveInstanceState(state);
+    }
+
+    /*
+        Handle loading data on activity creation, if any is saved
+     */
+    protected void loadInstanceState(@NonNull Bundle state) {
+        if(state == null) {
+            return;
+        }
+
+        usernameEntryView.setText(state.getString("username"));
+        passwordEntryView.setText(state.getString("password"));
+        passwordConfirmationEntryView.setText(state.getString("passwordConfirmation"));
     }
 
     /*

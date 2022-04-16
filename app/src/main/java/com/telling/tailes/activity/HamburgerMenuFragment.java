@@ -1,5 +1,6 @@
 package com.telling.tailes.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.telling.tailes.databinding.FragmentToolbarBinding;
 
 
 public class HamburgerMenuFragment extends Fragment {
+    private Intent intent;
     private FragmentToolbarBinding viewBinding;
 
     @Override
@@ -54,10 +56,33 @@ public class HamburgerMenuFragment extends Fragment {
             case R.id.view_feed:
                 // Navigate to settings screen
                 Log.d("menu onClick", "VIEW FEED");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.create_new_story:
                 // Save profile changes
                 Log.d("menu onClick", "NEW STORY");
+                intent = new Intent(getContext(), CreateStoryActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.view_my_stories:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY STORIES");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "My T(ai)les");
+                startActivity(intent);
+                return true;
+            case R.id.view_my_drafts:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY DRAFTS");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "Drafts");
+                startActivity(intent);
+                return true;
+            case R.id.view_settings:
+                Log.d("menu onClick", "USER SETTINGS");
+                intent = new Intent(getContext(), UserSettingsActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 Log.d("menu onClick", "default (ruh roh)");
