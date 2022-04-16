@@ -5,7 +5,7 @@ import com.telling.tailes.R;
 public class DrawableUtils {
 
     public static int profileIconCount() {
-        return 5;
+        return 3;
     }
 
     public static int getProfileIconResourceId(int profileIcon) {

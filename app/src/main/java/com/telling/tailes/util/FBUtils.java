@@ -238,7 +238,7 @@ public class FBUtils {
                               //Author doesn't exist
                               callback.accept(null);
                           } else {
-                              callback.accept(new AuthorProfile(user.getUsername(),user.getStories(),user.getLoves(),user.getProfileIcon(),following));
+                              callback.accept(new AuthorProfile(user.getUsername(),user.getProfileIcon(),user.getStories(),user.getLoves(),following));
                           }
                        }
                    });

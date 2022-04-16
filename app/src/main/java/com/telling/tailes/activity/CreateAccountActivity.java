@@ -39,10 +39,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         p.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: replace
                selectedProfileIcon += 1;
-               createToast.setText("Chose icon: " + selectedProfileIcon);
-                createToast.show();
                p.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(selectedProfileIcon)),null,null,null);
 
                if(selectedProfileIcon > DrawableUtils.profileIconCount()) {
