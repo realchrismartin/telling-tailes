@@ -215,14 +215,16 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void handleClickLove() {
-        FBUtils.updateLove(getApplicationContext(), story, new Consumer<Boolean>() {
+        FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
             @Override
-            public void accept(Boolean aBoolean) {
-               //TODO
+            public void accept(Story result) {
+                if(result == null) {
+                    readStoryToast.setText(R.string.generic_error_notification);
+                } else {
+                    story = result;
+                    updateLoveButtonState();
+                }
             }
         });
-
-        //TODO: doesn't handle async properly. This will not work.
-        updateLoveButtonState();
     }
 }

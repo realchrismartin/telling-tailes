@@ -1,5 +1,6 @@
 package com.telling.tailes.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.telling.tailes.R;
 import com.telling.tailes.activity.OnAuthorClickCallbackListener;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
+import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
@@ -41,6 +43,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         return new StoryRviewHolder(view, listener);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(StoryRviewHolder holder, int position) {
 
@@ -48,33 +51,35 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.titleText.setText(currentItem.getTitle());
         holder.authorText.setText(currentItem.getAuthorId());
 
-        if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+        if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
         } else {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
         }
 
-        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? currentItem.getLovers().size() + "" : ""); //TODO: better way to make the int a string?
+        holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
+
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Boolean>() {
+                FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
                     @Override
-                    public void accept(Boolean result) {
+                    public void accept(Story result) {
 
-                        if (!result) {
+                        if (result == null) {
                             return; //TODO: indicate to user that love failed?
                         }
 
-                        holder.loveButton.setText(currentItem.getLovers().size() > 0 ? Integer.toString(currentItem.getLovers().size()) : "");
+                        currentItem.setStory(result);
 
-                        if (currentItem.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+                        holder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
+
+                        if (result.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
                             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
                         } else {
                             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
                         }
                     }
-
                 });
             }
         });
