@@ -5,4 +5,8 @@
         <item>Drafts</item>
         <item>Bookmarks</item>
     </string-array>
+    <string-array name="author_profile_options">
+        <item>Follow</item>
+        <item>Their T(ai)les</item>
+    </string-array>
 </resources>

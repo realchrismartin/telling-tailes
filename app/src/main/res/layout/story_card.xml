@@ -39,6 +39,19 @@
             app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/storyCardAuthorProfileButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="55dp"
+            android:layout_height="47dp"
+            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.488" />
+
         <TextView
             android:id="@+id/storyCardTitle"
             android:layout_width="wrap_content"

@@ -133,7 +133,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext());
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext(),getSupportFragmentManager());
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
