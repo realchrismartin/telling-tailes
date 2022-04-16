@@ -179,9 +179,11 @@ public class FBUtils {
 
         getBookmarksTask.addOnCompleteListener(task -> {
             DataSnapshot bookmarksResult = task.getResult();
-            int i = 4;
-        });
+            for (DataSnapshot snapshot: bookmarksResult.getChildren()) {
+                bookmarks.add(snapshot.getValue().toString());
+            }
 
+        });
 
         return bookmarks;
     }
