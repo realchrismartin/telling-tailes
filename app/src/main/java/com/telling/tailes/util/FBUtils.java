@@ -70,6 +70,11 @@ public class FBUtils {
         callback.accept(false); //TODO
     }
 
+    public static void updateFollow(Context context, String username, boolean follow, Consumer<Boolean> callback) {
+        //TODO: implement
+        callback.accept(true);
+    }
+
     //Retrieves author profile data for the specified user
     //Calls callback with a new AuthorProfile instance when all data is retrieved and consolidated
     //Calls callback with null if there's some issue retrieving data

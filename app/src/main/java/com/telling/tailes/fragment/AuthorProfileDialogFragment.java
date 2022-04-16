@@ -11,12 +11,16 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.telling.tailes.R;
 import com.telling.tailes.activity.StoryFeedActivity;
+import com.telling.tailes.util.FBUtils;
+
+import java.util.function.Consumer;
 
 //Popup dialog fragment for displaying author profile data
 public class AuthorProfileDialogFragment extends DialogFragment {
@@ -31,6 +35,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String placeholderUsernameText;
     private String readUserStoriesText;
     private String readOptionText;
+    private Toast profileToast;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -56,7 +61,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         items.setAdapter(arrayAdapterItems);
         items.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        //Set up item onclick listener for dialog options
+        //Set up item onClick listener for dialog options
         items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -64,10 +69,28 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                 String option = adapterView.getItemAtPosition(i).toString();
 
                 if (option.equals(followOptionText) || option.equals(unfollowOptionText)) {
+
+                    Consumer<Boolean> callback = new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean result) {
+
+                            if(result) {
+                                profileToast.setText(R.string.author_profile_follow_notification);
+                            } else {
+                                profileToast.setText(R.string.generic_error_notification);
+                            }
+
+                            profileToast.show();
+                        }
+                    };
+
+                    //TODO: may want to run these in background threads somehow
                     if(checkView.isChecked()) {
                         checkView.setText(unfollowOptionText);
+                        FBUtils.updateFollow(getContext(),authorId,true,callback);
                     } else {
                         checkView.setText(followOptionText);
+                        FBUtils.updateFollow(getContext(),authorId,true,callback);
                     }
 
                     return;
@@ -86,7 +109,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(authorId);
         builder.setView(content);
-        builder.setIcon(R.drawable.ic_baseline_favorite_border_24);
+        builder.setIcon(R.drawable.ic_baseline_favorite_border_24); //TODO
 
         return builder.create();
     }
@@ -95,6 +118,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         Set up the dialog with data from the calling activity
      */
     private void init() {
+
+        //Set up toast
+        profileToast = Toast.makeText(getContext(),"",Toast.LENGTH_SHORT);
 
         //Set up option text
         followOptionText = getResources().getString(R.string.author_profile_follow_option);
