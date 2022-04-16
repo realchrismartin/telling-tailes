@@ -109,7 +109,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(authorId);
         builder.setView(content);
-        builder.setIcon(R.drawable.ic_baseline_favorite_border_24); //TODO
+        builder.setIcon(R.drawable.ic_baseline_profile_24);
 
         return builder.create();
     }
