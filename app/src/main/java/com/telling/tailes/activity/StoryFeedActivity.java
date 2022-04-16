@@ -3,6 +3,7 @@ package com.telling.tailes.activity;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -69,12 +70,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
-
+    boolean loadedFirstStories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
+        loadedFirstStories = false;
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
@@ -82,52 +84,40 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-                createStorySwipeToRefresh();
-                createStoryRecyclerView();
-                createFilterSpinner();
-                loadFirstStories();
-
-
-                scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
-                    @Override
-                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                        loadNextStories();
-                    }
-                };
-                storyRview.addOnScrollListener(scrollListener);
-
-                findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        goToCreateStory();
-                    }
-                });
+                //TODO: ugly!
+                if(msg.getData().containsKey("bookmarks"))  {
+                    bookmarks = msg.getData().getStringArrayList("bookmarks");
+                    loadFirstStories();
+                }
             }
         };
+
         doLoginCheck();
 
-        helpGetBookmarks();
-        int i = 6;
-//        createStorySwipeToRefresh();
-//        createStoryRecyclerView();
-//        createFilterSpinner();
-//
-//        loadFirstStories();
-//
-//        scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-//                loadNextStories();
-//            }
-//        };
-//        storyRview.addOnScrollListener(scrollListener);
-//
-//        findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                goToCreateStory();
-//            }
-//        });
+        createStorySwipeToRefresh();
+        createStoryRecyclerView();
+        createFilterSpinner();
+
+        preloadBookmarks();
+
+        scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if(!loadedFirstStories) {
+                    return;
+                }
+
+                loadNextStories();
+            }
+        };
+        storyRview.addOnScrollListener(scrollListener);
+
+        findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToCreateStory();
+            }
+        });
     }
 
     @Override
@@ -198,6 +188,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         }
         applyFilter(FilterType.get(intentFilter));
         loadStoryData(initialQuery);
+        loadedFirstStories = true;
     }
 
     private void loadNextStories() {
@@ -316,11 +307,25 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         initialQuery = currentFilter.getQuery(storyRef);
     }
 
-    private void helpGetBookmarks () {
+    private void preloadBookmarks() {
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                bookmarks = FBUtils.getBookmarks(getApplicationContext());
+                FBUtils.getBookmarks(getApplicationContext(), new Consumer<ArrayList<String>>() {
+                    @Override
+                    public void accept(ArrayList<String> bookmarks) {
+
+                        //Set up a bundle
+                        Bundle resultData = new Bundle();
+                        resultData.putStringArrayList("bookmarks",bookmarks);
+
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        //Notify the activity that bookmarks have been retrieved
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
             }
         });
     }

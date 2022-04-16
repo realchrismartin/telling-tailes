@@ -170,7 +170,7 @@ public class FBUtils {
         });
     }
 
-    public static ArrayList<String> getBookmarks(Context context) {
+    public static void getBookmarks(Context context, Consumer<ArrayList<String>> callback) {
         ArrayList<String> bookmarks = new ArrayList<>();
         String currentUser = AuthUtils.getLoggedInUserID(context);
         Task<DataSnapshot> getBookmarksTask = usersRef.child(currentUser).child("bookmarks").get();
@@ -180,7 +180,12 @@ public class FBUtils {
             for (DataSnapshot snapshot: bookmarksResult.getChildren()) {
                 bookmarks.add(snapshot.getValue().toString());
             }
+
+            callback.accept(bookmarks);
         });
-        return bookmarks;
+
+        getBookmarksTask.addOnFailureListener(task -> {
+          callback.accept(new ArrayList<>()); //TODO?
+        });
     }
 }
