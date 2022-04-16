@@ -70,11 +70,11 @@ public class FBUtils {
         callback.accept(false); //TODO
     }
 
+    //Retrieves author profile data for the specified user
+    //Calls callback with a new AuthorProfile instance when all data is retrieved and consolidated
+    //Calls callback with null if there's some issue retrieving data
     public static void getAuthorProfile(Context context, String username, Consumer<AuthorProfile> callback) {
-
-        //TODO: actually retrieve and consolidate data
-        //TODO: accept null if there's errors. it's handled downstream
-
+        //TODO
         callback.accept(null);
         //callback.accept(new AuthorProfile());
     }
