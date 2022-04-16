@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -87,6 +89,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 //TODO: ugly!
                 if(msg.getData().containsKey("bookmarks"))  {
                     bookmarks = msg.getData().getStringArrayList("bookmarks");
+//                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putString("bookmarks", bookmarks.toString());
+//                    editor.apply();
                     loadFirstStories();
                 }
             }
@@ -163,7 +169,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext());
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList, getApplicationContext());
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -198,8 +204,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if(!lastLoadedStoryId.equals(""))
-        {
+        if(!lastLoadedStoryId.equals("")) {
             Query newQuery = initialQuery.startAfter(lastLoadedStoryId);
             loadStoryData(newQuery);
             return;
@@ -209,6 +214,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadStoryData(Query query) {
+        int i = 9;
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -233,6 +239,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         if(storyCardList.get(pos).getID().equals(story.getId())) {
                             storyCardList.set(pos, new StoryRviewCard(story));
                             //TODO: is this story in our list of bookmarks
+//                            if (bookmarks.contains(storyCardList.get(pos).getID())) {
+//                                storyCardList.get(pos).toggleBookmarked();
+//                            }
                             storyRviewAdapter.notifyItemChanged(pos);
                             replaced = true;
                         }
@@ -285,7 +294,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         intent.putExtra("story",story);
         startActivity(intent);
     }
-
+//
+//    public ArrayList<String> getBookmarks() {
+//        return bookmarks;
+//    }
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -328,5 +340,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 });
             }
         });
+
     }
 }

@@ -12,10 +12,12 @@ public class Story implements Serializable {
     private String storyText;
     private boolean isDraft;
     private ArrayList<String> lovers;
+    private ArrayList<String> bookmarkers;
 
     private Story() {};
 
-    public Story(String id, String authorID, boolean isDraft, String title, String promptText, String storyText, ArrayList<String> lovers)
+    public Story(String id, String authorID, boolean isDraft, String title,
+                 String promptText, String storyText, ArrayList<String> lovers, ArrayList<String> bookmarkers)
     {
         this.id = id;
         this.isDraft = isDraft;
@@ -24,6 +26,7 @@ public class Story implements Serializable {
         this.promptText = promptText;
         this.storyText = storyText;
         this.lovers = lovers;
+        this.bookmarkers = bookmarkers;
     }
 
     public String getId()
@@ -69,6 +72,17 @@ public class Story implements Serializable {
     public void removeLover(String userId) {
         initLovers();
         lovers.remove(userId);
+    }
+
+    public ArrayList<String> getBookmarkers() {
+        initBookmarkers();
+        return bookmarkers;
+    }
+
+    private void initBookmarkers() {
+        if (bookmarkers == null) { //TODO: is there a better way to check if this exists?
+            bookmarkers = new ArrayList<String>();
+        }
     }
 
 

@@ -2,6 +2,7 @@ package com.telling.tailes.adapter;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
     public TextView authorText;
     public Button loveButton;
     public Button recycleButton;
+    public ImageButton bookmarkButton;
 
     public StoryRviewHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
         super(itemView);
@@ -22,6 +24,7 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
         authorText = itemView.findViewById(R.id.storyCardAuthor);
         loveButton = itemView.findViewById(R.id.storyCardLoveButton);
         recycleButton = itemView.findViewById(R.id.storyCardRecycleButton);
+        bookmarkButton = itemView.findViewById(R.id.storyCardBookmarkButton);
 
         //Note: recycle button is hidden on cards by default
         recycleButton.setVisibility(View.INVISIBLE);

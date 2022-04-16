@@ -45,4 +45,12 @@ public class StoryRviewCard {
     public boolean isBookmarked() {
         return bookmarked;
     }
+
+    public void toggleBookmarked() {
+        this.bookmarked = !bookmarked;
+    }
+
+    public ArrayList<String> getBookmarkers() {
+        return story.getBookmarkers();
+    }
 }
