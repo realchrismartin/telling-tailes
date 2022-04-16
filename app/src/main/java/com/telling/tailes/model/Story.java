@@ -71,4 +71,5 @@ public class Story implements Serializable {
         lovers.remove(userId);
     }
 
+
 }

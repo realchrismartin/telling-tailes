@@ -1,6 +1,8 @@
 package com.telling.tailes.activity;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +11,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,6 +49,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private int queryIndex;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private ArrayList<String> bookmarks;
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
@@ -60,6 +66,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private int refreshIterations;
     private int maxRefreshIterations;
 
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,31 +78,56 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-
-        doLoginCheck();
-
-        FBUtils.getBookmarks(getApplicationContext());
-
-        createStorySwipeToRefresh();
-        createStoryRecyclerView();
-        createFilterSpinner();
-
-        loadFirstStories();
-
-        scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
+        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextStories();
+            public void handleMessage(Message msg) {
+                createStorySwipeToRefresh();
+                createStoryRecyclerView();
+                createFilterSpinner();
+                loadFirstStories();
+
+
+                scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
+                    @Override
+                    public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                        loadNextStories();
+                    }
+                };
+                storyRview.addOnScrollListener(scrollListener);
+
+                findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        goToCreateStory();
+                    }
+                });
             }
         };
-        storyRview.addOnScrollListener(scrollListener);
+        doLoginCheck();
 
-        findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToCreateStory();
-            }
-        });
+        helpGetBookmarks();
+        int i = 6;
+//        createStorySwipeToRefresh();
+//        createStoryRecyclerView();
+//        createFilterSpinner();
+//
+//        loadFirstStories();
+//
+//        scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
+//            @Override
+//            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+//                loadNextStories();
+//            }
+//        };
+//        storyRview.addOnScrollListener(scrollListener);
+//
+//        findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                goToCreateStory();
+//            }
+//        });
     }
 
     @Override
@@ -117,6 +153,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             goToLogin();
         }
     }
+
 
     private void createStorySwipeToRefresh() {
         feedSwipeRefresh = findViewById(R.id.feedSwipeRefresh);
@@ -184,7 +221,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
                     Story story = snapshot.getValue(Story.class);
 
@@ -205,6 +241,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     for(pos=0;pos<storyCardList.size();pos++) {
                         if(storyCardList.get(pos).getID().equals(story.getId())) {
                             storyCardList.set(pos, new StoryRviewCard(story));
+                            //TODO: is this story in our list of bookmarks
                             storyRviewAdapter.notifyItemChanged(pos);
                             replaced = true;
                         }
@@ -277,5 +314,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         currentFilter = filter;
         refreshIterations = 0;
         initialQuery = currentFilter.getQuery(storyRef);
+    }
+
+    private void helpGetBookmarks () {
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                bookmarks = FBUtils.getBookmarks(getApplicationContext());
+            }
+        });
     }
 }

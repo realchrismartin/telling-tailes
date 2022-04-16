@@ -9,11 +9,11 @@ import java.util.ArrayList;
 
 public class StoryRviewCard {
     private Story story;
-    private User user;
+    private Boolean bookmarked;
 
     public StoryRviewCard(Story story) {
         this.story = story;
-        //this.user = AuthUtils.getLoggedInUserID();
+        this.bookmarked = false;
     }
 
     public String getID() {
@@ -41,4 +41,8 @@ public class StoryRviewCard {
     }
 
     public Story getStory() { return story; }
+
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
 }

@@ -172,9 +172,7 @@ public class FBUtils {
 
     public static ArrayList<String> getBookmarks(Context context) {
         ArrayList<String> bookmarks = new ArrayList<>();
-
         String currentUser = AuthUtils.getLoggedInUserID(context);
-
         Task<DataSnapshot> getBookmarksTask = usersRef.child(currentUser).child("bookmarks").get();
 
         getBookmarksTask.addOnCompleteListener(task -> {
@@ -182,9 +180,7 @@ public class FBUtils {
             for (DataSnapshot snapshot: bookmarksResult.getChildren()) {
                 bookmarks.add(snapshot.getValue().toString());
             }
-
         });
-
         return bookmarks;
     }
 }
