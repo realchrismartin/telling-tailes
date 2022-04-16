@@ -24,6 +24,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private int loveCount;
     private boolean following;
     private String[] menuOptions;
+    private String followOptionText;
+    private String unfollowOptionText;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -49,14 +51,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         items.setAdapter(arrayAdapterItems);
         items.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        /*
-
-        for(int i=0;i < items.getAdapter().getCount(); i++) {
-            CheckedTextView checkView = (CheckedTextView) items.getAdapter().getView(i,null,items);
-            //TODO: set check mark drawable?
-        }
-         */
-
         //Set up item onclick listener for dialog options
         items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -64,12 +58,11 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                 CheckedTextView checkView = (CheckedTextView) view.findViewById(R.id.author_profile_check_view);
                 String option = adapterView.getItemAtPosition(i).toString();
 
-                //TODO: extract resources
-                if (option.equals("Follow") || option.equals("Unfollow")) {
+                if (option.equals(followOptionText) || option.equals(unfollowOptionText)) {
                     if(checkView.isChecked()) {
-                        checkView.setText("Unfollow");
+                        checkView.setText(unfollowOptionText);
                     } else {
-                        checkView.setText("Follow");
+                        checkView.setText(followOptionText);
                     }
                 }
             }
@@ -88,6 +81,11 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         Set up the dialog with data from the calling activity
      */
     private void init() {
+
+        //Set up option text
+        followOptionText = getResources().getString(R.string.author_profile_follow_option);
+        unfollowOptionText = getResources().getString(R.string.author_profile_unfollow_option);
+
         //Set menu options
         menuOptions = updateValues(getResources().getStringArray(R.array.author_profile_options));
 
@@ -127,9 +125,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         for(int i=0;i<initialValues.length;i++) {
 
-            if(initialValues[i].equals("Follow")) {
+            if(initialValues[i].equals(followOptionText)) {
                 if(following) {
-                    result[i] = "Unfollow";
+                    result[i] = unfollowOptionText;
                     continue;
                 }
             }

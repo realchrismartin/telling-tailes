@@ -75,8 +75,9 @@ public class FBUtils {
     //Calls callback with null if there's some issue retrieving data
     public static void getAuthorProfile(Context context, String username, Consumer<AuthorProfile> callback) {
         //TODO
-        callback.accept(null);
-        //callback.accept(new AuthorProfile());
+
+        //callback.accept(null);
+        callback.accept(new AuthorProfile());
     }
 
     //Checks if user exists or not in Firebase
