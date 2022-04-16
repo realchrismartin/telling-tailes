@@ -33,6 +33,7 @@ public class User {
     public String getSalt() { return salt; }
 
     public ArrayList<String> getFollows() {
+        //TODO: undo this workaround - this is since we have no follow data, otherwise it will crash
        if(follows == null)  { return new ArrayList<>(); }
         return follows; }
 

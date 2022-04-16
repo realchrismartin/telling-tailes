@@ -36,6 +36,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String readUserStoriesText;
     private String readOptionText;
     private Toast profileToast;
+    private TextView profileUserNameView;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -56,6 +57,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         TextView loveCountView = content.findViewById(R.id.author_profile_love_count_view);
         loveCountView.setText(Integer.toString(loveCount));
+
+        profileUserNameView = content.findViewById(R.id.author_profile_user_name_view);
+        profileUserNameView.setText(authorId);
 
         final ListView items = content.findViewById(R.id.author_profile_options_view);
         items.setAdapter(arrayAdapterItems);
@@ -107,9 +111,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         //Create dialog via builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(authorId);
         builder.setView(content);
-        builder.setIcon(R.drawable.ic_baseline_profile_24);
 
         return builder.create();
     }

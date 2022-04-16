@@ -8,6 +8,36 @@
     android:padding="3dp">
 
     <LinearLayout
+        android:id="@+id/author_profile_user_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="3dp">
+
+        <Button
+            android:id="@+id/author_profile_user_profile_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="52dp"
+            android:layout_height="47dp"
+            android:drawableStart="@drawable/ic_baseline_profile_24"
+            android:enabled="false"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/author_profile_user_name_view"
+            android:layout_width="234dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
     android:id="@+id/author_profile_stories_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
