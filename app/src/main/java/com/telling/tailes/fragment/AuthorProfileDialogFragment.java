@@ -4,20 +4,25 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.telling.tailes.R;
 import com.telling.tailes.activity.StoryFeedActivity;
+import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
 import java.util.function.Consumer;
@@ -26,6 +31,7 @@ import java.util.function.Consumer;
 public class AuthorProfileDialogFragment extends DialogFragment {
 
     private String authorId;
+    private int profileIcon;
     private int storyCount;
     private int loveCount;
     private boolean following;
@@ -37,6 +43,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String readOptionText;
     private Toast profileToast;
     private TextView profileUserNameView;
+    private Button profileButtonView;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -60,6 +67,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         profileUserNameView = content.findViewById(R.id.author_profile_user_name_view);
         profileUserNameView.setText(authorId);
+
+        profileButtonView = content.findViewById(R.id.author_profile_user_profile_button);
+        profileButtonView.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon)),null,null,null);
 
         final ListView items = content.findViewById(R.id.author_profile_options_view);
         items.setAdapter(arrayAdapterItems);
@@ -137,6 +147,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             authorId = "None";
             storyCount = 0;
             loveCount = 0;
+            profileIcon = 0;
             following = false;
             return;
         }
@@ -153,9 +164,13 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             loveCount = args.getInt("loveCount");
         }
 
+        if(args.containsKey("profileIcon")) {
+            profileIcon = args.getInt("profileIcon");
+        }
         if(args.containsKey("following")) {
             following = args.getBoolean("following");
         }
+
 
         readOptionText = readUserStoriesText.replace(placeholderUsernameText,authorId);
 

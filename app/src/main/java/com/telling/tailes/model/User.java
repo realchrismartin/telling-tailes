@@ -13,12 +13,14 @@ public class User {
     private ArrayList<String> follows;
     private int stories;
     private int loves;
+    private int profileIcon;
 
     public User(){}
 
-    public User(String username, String hashedPassword, String salt, ArrayList<String> follows, int stories, int loves)
+    public User(String username, int profileIcon,  String hashedPassword, String salt, ArrayList<String> follows, int stories, int loves)
     {
         this.username = username;
+        this.profileIcon = profileIcon;
         this.hashedPassword = hashedPassword;
         this.salt = salt;
         this.follows = follows;
@@ -27,6 +29,8 @@ public class User {
     }
 
     public String getUsername() { return username; }
+
+    public int getProfileIcon() { return profileIcon; }
 
     public String getHashedPassword() { return hashedPassword; }
 

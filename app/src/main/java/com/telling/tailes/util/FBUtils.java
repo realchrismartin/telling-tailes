@@ -238,7 +238,7 @@ public class FBUtils {
                               //Author doesn't exist
                               callback.accept(null);
                           } else {
-                              callback.accept(new AuthorProfile(user.getUsername(),user.getStories(),user.getLoves(),following));
+                              callback.accept(new AuthorProfile(user.getUsername(),user.getStories(),user.getLoves(),user.getProfileIcon(),following));
                           }
                        }
                    });
@@ -289,11 +289,11 @@ public class FBUtils {
     //Create a user. Assumes that the user account doesn't exist already // this has already been checked
     //Calls callback when user is created, or if creation fails
     //Returns false in callback if user wasn't created, otherwise returns true
-    public static void createUser(Context context, String username, String password, Consumer<Boolean> callback) {
+    public static void createUser(Context context, String username, String password, int profileIcon, Consumer<Boolean> callback) {
 
         Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
 
-        User user = new User(username,hashedPieces.first,hashedPieces.second,new ArrayList<>(),0,0);
+        User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),0,0);
 
         Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
 

@@ -73,7 +73,7 @@ public class AuthUtils {
 
     //Attempts to create the specified user
     //Calls the callback when done - either with a zero length string (on success) or an error message (on failure)
-    public static void createUser(Context context, String username, String password, String confirmationPassword, Consumer<String> callback)
+    public static void createUser(Context context, String username, String password, String confirmationPassword, int profileIcon, Consumer<String> callback)
     {
         boolean usernameTooSimple = username.length() < 5; //TODO?
         boolean passwordsDoNotMatch = !password.equals(confirmationPassword);
@@ -104,7 +104,7 @@ public class AuthUtils {
                 }
 
                 //If user doesn't exist and passwords match and meet complexity requirement, create account
-                FBUtils.createUser(context,username, password, new Consumer<Boolean>() {
+                FBUtils.createUser(context,username, password,profileIcon, new Consumer<Boolean>() {
                     @Override
                     public void accept(Boolean result) {
 

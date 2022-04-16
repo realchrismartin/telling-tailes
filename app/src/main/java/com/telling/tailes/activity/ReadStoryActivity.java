@@ -1,6 +1,7 @@
 package com.telling.tailes.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
 import java.util.concurrent.Executor;
@@ -130,6 +132,7 @@ public class ReadStoryActivity extends AppCompatActivity {
                             resultData.putString("authorId", authorProfile.getAuthorId());
                             resultData.putInt("storyCount", authorProfile.getStoryCount());
                             resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            resultData.putInt("profileIcon",authorProfile.getProfileIcon());
                             resultData.putBoolean("following", authorProfile.following());
                         }
 
