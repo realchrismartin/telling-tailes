@@ -329,19 +329,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         FilterType filter = FilterType.get(selection,authorId);
         applyFilter(filter);
         refreshStories();
-
-
-        /*
-
-        //Skip selecting By Author and reset back to the default view
-        if(selection.equals("By Author")) {
-            filterSpinner.setSelection(0);
-            applyFilter(FilterType.get(adapterView.getItemAtPosition(0).toString()));
-            refreshStories();
-            return;
-        }
-
-         */
     }
 
     //Listener method for filter spinner item deselection

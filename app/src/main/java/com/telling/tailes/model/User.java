@@ -32,7 +32,9 @@ public class User {
 
     public String getSalt() { return salt; }
 
-    public ArrayList<String> getFollows() { return follows; }
+    public ArrayList<String> getFollows() {
+       if(follows == null)  { return new ArrayList<>(); }
+        return follows; }
 
     public int getStories() { return stories; }
 

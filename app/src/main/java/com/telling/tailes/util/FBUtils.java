@@ -222,30 +222,29 @@ public class FBUtils {
 
         //Get the current user's current follow list
         getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
-                    @Override
-                    public void accept(User user) {
-                       if(user == null) {
-                           //Current user doesn't exist
-                           callback.accept(null);
-                       } else {
-                           boolean following = user.getFollows().contains(username);
+            @Override
+            public void accept(User user) {
+               if(user == null) {
+                   //Current user doesn't exist
+                   callback.accept(null);
+               } else {
+                   boolean following = user.getFollows().contains(username);
 
-                           //Get the specified author's user
-                           getUser(context, username, new Consumer<User>() {
-                               @Override
-                               public void accept(User user) {
-                                  if(user == null)  {
-                                      //Author doesn't exist
-                                      callback.accept(null);
-                                  } else {
-                                      //TODO: create and return an author profile
-                                  }
-                               }
-                           });
+                   //Get the specified author's user
+                   getUser(context, username, new Consumer<User>() {
+                       @Override
+                       public void accept(User user) {
+                          if(user == null)  {
+                              //Author doesn't exist
+                              callback.accept(null);
+                          } else {
+                              callback.accept(new AuthorProfile(user.getUsername(),user.getStories(),user.getLoves(),following));
+                          }
                        }
-                    }
+                   });
+               }
+            }
         });
-             //   callback.accept(new AuthorProfile("chrism", 100, 99, true)); //TODO
     }
 
     //Gets the user with the specified username
