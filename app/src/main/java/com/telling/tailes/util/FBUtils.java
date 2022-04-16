@@ -77,7 +77,7 @@ public class FBUtils {
         //TODO
 
         //callback.accept(null);
-        callback.accept(new AuthorProfile());
+        callback.accept(new AuthorProfile("chrism",100,99,true)); //TODO
     }
 
     //Checks if user exists or not in Firebase

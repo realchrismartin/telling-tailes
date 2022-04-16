@@ -3,6 +3,7 @@ package com.telling.tailes.fragment;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.telling.tailes.R;
+import com.telling.tailes.activity.StoryFeedActivity;
 
 //Popup dialog fragment for displaying author profile data
 public class AuthorProfileDialogFragment extends DialogFragment {
@@ -26,6 +28,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String[] menuOptions;
     private String followOptionText;
     private String unfollowOptionText;
+    private String placeholderUsernameText;
+    private String readUserStoriesText;
+    private String readOptionText;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -64,6 +69,15 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                     } else {
                         checkView.setText(followOptionText);
                     }
+
+                    return;
+                }
+
+                if(option.equals(readOptionText)) {
+                    Intent intent = new Intent(getContext(), StoryFeedActivity.class);
+                    intent.putExtra("feedFilter", "By Author");
+                    intent.putExtra("authorId",authorId);
+                    startActivity(intent);
                 }
             }
         });
@@ -85,9 +99,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         //Set up option text
         followOptionText = getResources().getString(R.string.author_profile_follow_option);
         unfollowOptionText = getResources().getString(R.string.author_profile_unfollow_option);
-
-        //Set menu options
-        menuOptions = updateValues(getResources().getStringArray(R.array.author_profile_options));
+        readUserStoriesText = getResources().getString(R.string.author_profile_read_option);
+        placeholderUsernameText = getResources().getString(R.string.author_profile_placeholder_username);
 
         //Set member properties from args
         Bundle args = getArguments();
@@ -116,6 +129,10 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             following = args.getBoolean("following");
         }
 
+        readOptionText = readUserStoriesText.replace(placeholderUsernameText,authorId);
+
+        //Set menu options (after member data is loaded)
+        menuOptions = updateValues(getResources().getStringArray(R.array.author_profile_options));
     }
     /*
         Update the option list to reflect whether the author is followed or not
@@ -125,11 +142,18 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         for(int i=0;i<initialValues.length;i++) {
 
+            //Update the follow option if already following this user
             if(initialValues[i].equals(followOptionText)) {
                 if(following) {
                     result[i] = unfollowOptionText;
                     continue;
                 }
+            }
+
+            //Update the read option to show the author's username
+            if(initialValues[i].equals(readUserStoriesText)) {
+               result[i] = readOptionText;
+               continue;
             }
 
             result[i]  = initialValues[i];

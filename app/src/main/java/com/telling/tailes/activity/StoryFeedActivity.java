@@ -193,14 +193,26 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadFirstStories() {
-        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            intentFilter = extras.getString("feedFilter");
-            filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+            if(extras.containsKey("feedFilter")) {
+
+                String intentFilter = extras.getString("feedFilter");
+                String authorId = "";
+                filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+
+                //If an author is also passed, apply the author's username to the filter
+                if(extras.containsKey("authorId")) {
+                    authorId = extras.getString("authorId");
+                }
+
+                FilterType filter = FilterType.get(intentFilter,authorId);
+
+                applyFilter(filter);
+            }
         }
-        applyFilter(FilterType.get(intentFilter));
+
         loadStoryData(initialQuery);
     }
 
@@ -302,9 +314,34 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String selection = adapterView.getItemAtPosition(i).toString();
 
-        applyFilter(FilterType.get(adapterView.getItemAtPosition(i).toString()));
+
+        Bundle extras = getIntent().getExtras();
+        String authorId = "";
+
+        if (extras != null) {
+            if (extras.containsKey("authorId")) {
+                authorId = extras.getString("authorId");
+            }
+        }
+
+        FilterType filter = FilterType.get(selection,authorId);
+        applyFilter(filter);
         refreshStories();
+
+
+        /*
+
+        //Skip selecting By Author and reset back to the default view
+        if(selection.equals("By Author")) {
+            filterSpinner.setSelection(0);
+            applyFilter(FilterType.get(adapterView.getItemAtPosition(0).toString()));
+            refreshStories();
+            return;
+        }
+
+         */
     }
 
     //Listener method for filter spinner item deselection
@@ -342,6 +379,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                                 resultData.putString("authorId", authorProfile.getAuthorId());
                                 resultData.putInt("storyCount", authorProfile.getStoryCount());
                                 resultData.putInt("loveCount", authorProfile.getLoveCount());
+                                resultData.putBoolean("following", authorProfile.following());
                             }
 
                             Message resultMessage = new Message();
