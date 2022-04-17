@@ -1,6 +1,9 @@
 package com.telling.tailes.activity;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +12,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,13 +32,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
+import com.telling.tailes.fragment.AuthorProfileDialogFragment;
+import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.R;
+import com.telling.tailes.util.GPTUtils;
 
-public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnAuthorClickCallbackListener {
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
@@ -52,7 +62,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
 
+    private AuthorProfileDialogFragment authorProfileDialogFragment;
+
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
+
     private String lastLoadedStoryId;
+    private Toast toast;
 
     private FilterType currentFilter;
 
@@ -66,6 +82,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
+        toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
         doLoginCheck();
 
@@ -74,6 +91,33 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         createFilterSpinner();
 
         loadFirstStories();
+
+        //Set up background executor for handling author profile data request threads
+        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
+
+        //Define handling for author profile data results from the background thread
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (authorProfileDialogFragment != null) {
+                    authorProfileDialogFragment.dismiss();
+                }
+
+                //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                    toast.setText(R.string.generic_error_notification);
+                    toast.show();
+                    return;
+                }
+
+                //If all is well, show the author profile fragment with the retrieved data
+                authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                authorProfileDialogFragment.setArguments(msg.getData());
+                authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+
+            }
+        };
 
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
@@ -133,7 +177,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext());
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext(),this);
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -149,14 +193,26 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadFirstStories() {
-        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            intentFilter = extras.getString("feedFilter");
-            filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+            if(extras.containsKey("feedFilter")) {
+
+                String intentFilter = extras.getString("feedFilter");
+                String authorId = "";
+                filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+
+                //If an author is also passed, apply the author's username to the filter
+                if(extras.containsKey("authorId")) {
+                    authorId = extras.getString("authorId");
+                }
+
+                FilterType filter = FilterType.get(intentFilter,authorId);
+
+                applyFilter(filter);
+            }
         }
-        applyFilter(FilterType.get(intentFilter));
+
         loadStoryData(initialQuery);
     }
 
@@ -258,8 +314,20 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String selection = adapterView.getItemAtPosition(i).toString();
 
-        applyFilter(FilterType.get(adapterView.getItemAtPosition(i).toString()));
+
+        Bundle extras = getIntent().getExtras();
+        String authorId = "";
+
+        if (extras != null) {
+            if (extras.containsKey("authorId")) {
+                authorId = extras.getString("authorId");
+            }
+        }
+
+        FilterType filter = FilterType.get(selection,authorId);
+        applyFilter(filter);
         refreshStories();
     }
 
@@ -274,5 +342,43 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         currentFilter = filter;
         refreshIterations = 0;
         initialQuery = currentFilter.getQuery(storyRef);
+    }
+
+    /*
+        Card onClick handler for opening an author profile
+     */
+    public void handleAuthorClick(String username)
+    {
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                FBUtils.getAuthorProfile(getApplicationContext(),username, new Consumer<AuthorProfile>() {
+                        @Override
+                        public void accept(AuthorProfile authorProfile) {
+
+                            //Set up a bundle of author profile result data
+                            Bundle resultData = new Bundle();
+                            resultData.putString("type", "authorProfile");
+                            resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+
+                            if (authorProfile != null) {
+                                resultData.putString("authorId", authorProfile.getAuthorId());
+                                resultData.putInt("storyCount", authorProfile.getStoryCount());
+                                resultData.putInt("loveCount", authorProfile.getLoveCount());
+                                resultData.putBoolean("following", authorProfile.following());
+                                resultData.putInt("profileIcon", authorProfile.getProfileIcon());
+                            }
+
+                            Message resultMessage = new Message();
+                            resultMessage.setData(resultData);
+
+                            //Notify the activity that profile data has been retrieved
+                            backgroundTaskResultHandler.sendMessage(resultMessage);
+                        }
+                });
+            }
+        });
     }
 }
