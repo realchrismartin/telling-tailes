@@ -53,6 +53,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private int queryIndex;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private int loadingCardIndex = -1;
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
@@ -122,6 +123,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                addLoadingCard();
                 loadNextStories();
             }
         };
@@ -178,6 +180,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
         storyRviewAdapter = new StoryRviewAdapter(storyCardList,getApplicationContext(),this);
+        addLoadingCard();
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -267,8 +270,17 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         continue;
                     }
 
+//                    if (loadingCardIndex > -1) {
+//                        removeLoadingCard();
+//                        pos--;
+//                    }
+
                     storyCardList.add(pos, new StoryRviewCard(story));
                     storyRviewAdapter.notifyItemInserted(pos);
+
+//                    if (loadingCardIndex < 0) {
+//                        addLoadingCard();
+//                    }
                 }
 
                 feedSwipeRefresh.setRefreshing(false);
@@ -380,5 +392,21 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 });
             }
         });
+    }
+
+    public void addLoadingCard() {
+        if (loadingCardIndex < 0) {
+            loadingCardIndex = storyCardList.size();
+            storyCardList.add(new StoryRviewCard());
+            storyRviewAdapter.notifyItemInserted(loadingCardIndex);
+        }
+    }
+
+    public void removeLoadingCard() {
+        if (storyCardList.size() - 1 == loadingCardIndex) {
+            storyCardList.remove(storyCardList.size() - 1);
+            storyRviewAdapter.notifyItemRemoved(loadingCardIndex);
+            loadingCardIndex = -1;
+        }
     }
 }
