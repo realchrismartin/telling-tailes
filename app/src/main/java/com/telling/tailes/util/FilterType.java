@@ -11,12 +11,15 @@ public enum FilterType {
     MY,
     BOOKMARKS,
     DRAFTS,
+    AUTHOR,
     NONE;
 
+    private String authorUsernameFilter = ""; //Only set if filter is for specific author
+
     //Get a FilterType given a string
-    public static FilterType get(String str) {
+    public static FilterType get(String str, String authorId) {
         switch (str) {
-            case ("My Tailes"): {
+            case ("My T(ai)les"): {
                 return MY;
             }
             case ("Bookmarks"): {
@@ -24,6 +27,11 @@ public enum FilterType {
             }
             case ("Drafts"): {
                 return DRAFTS;
+            }
+            case ("By Author") : {
+                FilterType ft = AUTHOR;
+                ft.setAuthorFilter(authorId);
+                return ft;
             }
             default:
                 return NONE;
@@ -41,6 +49,9 @@ public enum FilterType {
                 return ref.orderByChild("id").limitToFirst(10);
             }
             case BOOKMARKS: {
+                return ref.orderByChild("id").limitToFirst(10);
+            }
+            case AUTHOR: {
                 return ref.orderByChild("id").limitToFirst(10);
             }
             default: {
@@ -63,9 +74,16 @@ public enum FilterType {
             case BOOKMARKS: {
                 return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
             }
+            case AUTHOR: {
+               return authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter);
+            }
             default: {
                 return true;
             }
         }
+    }
+
+    private void setAuthorFilter(String username) {
+        this.authorUsernameFilter = username;
     }
 }

@@ -1,8 +1,13 @@
 <resources>
     <string-array name="filter_spinner_options">
-        <item>All Tailes</item>
-        <item>My Tailes</item>
+        <item>All T(ai)les</item>
+        <item>My T(ai)les</item>
         <item>Drafts</item>
         <item>Bookmarks</item>
+        <item>By Author</item>
+    </string-array>
+    <string-array name="author_profile_options">
+        <item>Follow</item>
+        <item>PlaceholderUsername\'s T(ai)les</item>
     </string-array>
 </resources>

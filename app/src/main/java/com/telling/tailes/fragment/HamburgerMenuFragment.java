@@ -1,4 +1,4 @@
-package com.telling.tailes.activity;
+package com.telling.tailes.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -15,6 +15,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.telling.tailes.R;
+import com.telling.tailes.activity.CreateStoryActivity;
+import com.telling.tailes.activity.StoryFeedActivity;
+import com.telling.tailes.activity.UserSettingsActivity;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
 
 
@@ -63,6 +66,20 @@ public class HamburgerMenuFragment extends Fragment {
                 // Save profile changes
                 Log.d("menu onClick", "NEW STORY");
                 intent = new Intent(getContext(), CreateStoryActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.view_my_stories:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY STORIES");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "My T(ai)les");
+                startActivity(intent);
+                return true;
+            case R.id.view_my_drafts:
+                // Navigate to settings screen
+                Log.d("menu onClick", "VIEW MY DRAFTS");
+                intent = new Intent(getContext(), StoryFeedActivity.class);
+                intent.putExtra("feedFilter", "Drafts");
                 startActivity(intent);
                 return true;
             case R.id.view_settings:
