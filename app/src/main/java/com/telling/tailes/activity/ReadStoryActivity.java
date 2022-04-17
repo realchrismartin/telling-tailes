@@ -169,7 +169,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         updateLoveButtonState();
 
         //Set bookmark button default state
-        //updateBookmarkButtonState();
+        updateBookmarkButtonState();
     }
 
     private void initListeners() {
