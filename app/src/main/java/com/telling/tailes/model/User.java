@@ -78,10 +78,16 @@ public class User {
         return AuthUtils.hashPassword(password,this.salt).equals(this.hashedPassword);
     }
 
-    public ArrayList<String> getBookmarks() {return bookmarks;}
+    public ArrayList<String> getBookmarks() {
+        initBookmarks();
+        return bookmarks;}
 
-    public void setBookmarks(ArrayList<String> bookmarks) {
-            this.bookmarks = bookmarks;
-    } 
+    public void setBookmarks(ArrayList<String> bookmarks) { this.bookmarks = bookmarks;
+    }
 
+    private void initBookmarks() {
+        if (bookmarks == null) {
+            bookmarks = new ArrayList<String>();
+        }
+    }
 }

@@ -230,6 +230,36 @@ public class FBUtils {
             callback.accept(false);
         });
 
+        getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
+            @Override
+            public void accept(User user) {
+                Map<String, Object> fbUserUpdate= new HashMap<>();
+                ArrayList<String> newBookmarks = user.getBookmarks();
+
+                if (newBookmarks.contains(currentStory)) {
+                    newBookmarks.remove(currentStory);
+                } else {
+                    newBookmarks.add(currentStory);
+                }
+
+                user.setBookmarks(newBookmarks);
+                fbUserUpdate.put(user.getUsername(), (Object) user);
+                Task<Void> userBookmarkTask = usersRef.updateChildren(fbUserUpdate);
+
+                userBookmarkTask.addOnCompleteListener(task -> {
+                    Log.d("updateUserBookmark", "added bookmark for user");
+                    callback.accept(true);
+                });
+
+                userBookmarkTask.addOnFailureListener(task -> {
+                    callback.accept(false);
+                });
+            }
+        });
+
+
+
+
 
     }
 
