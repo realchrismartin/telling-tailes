@@ -94,19 +94,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(5);
-        backgroundTaskResultHandlerBookmarks = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                //TODO: ugly!
-                if (msg.getData().containsKey("bookmarks")) {
-                    bookmarks = msg.getData().getStringArrayList("bookmarks");
-                    loadFirstStories();
-                }
-            }
-        };
 
         toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-
 
         doLoginCheck();
 
@@ -114,7 +103,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         createStoryRecyclerView();
         createFilterSpinner();
 
-        preloadBookmarks();
+        // preloadBookmarks();
+
+        loadFirstStories();
+
 
         //Set up background executor for handling author profile data request threads
         //backgroundTaskExecutorAuthors = Executors.newFixedThreadPool(2);
@@ -226,22 +218,49 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey("feedFilter")) {
-
                 String intentFilter = extras.getString("feedFilter");
-                String authorId = "";
-                ArrayList<String> bookmarks = new ArrayList<>();
                 filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
 
-                //If an author is also passed, apply the author's username to the filter
-                if (extras.containsKey("authorId")) {
-                    authorId = extras.getString("authorId");
+                if (!intentFilter.equals("Bookmarks")) {
+                    String authorId = "";
+                    ArrayList<String> bookmarks = new ArrayList<>();
+
+                    //If an author is also passed, apply the author's username to the filter
+                    if (extras.containsKey("authorId")) {
+                        authorId = extras.getString("authorId");
+                    }
+
+                    FilterType filter = FilterType.get(intentFilter, authorId, bookmarks);
+                    applyFilter(filter);
+                    loadStoryData(initialQuery);
+                    loadedFirstStories = true;
+                    return;
                 }
 
-                // TODO: pull bookmarks array list from extras
+                backgroundTaskResultHandlerBookmarks = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        //TODO: ugly!
+                        if (msg.getData().containsKey("bookmarks")) {
+                            Bundle extras = getIntent().getExtras();
+                            String authorId = "";
+                            ArrayList<String> localBookmarks = msg.getData().getStringArrayList("bookmarks");
+                            //bookmarks = msg.getData().getStringArrayList("bookmarks");
+                            if (extras != null) {
+                                if (extras.containsKey("authorId")) {
+                                    authorId = extras.getString("authorId");
+                                }
+                            }
 
-                FilterType filter = FilterType.get(intentFilter, authorId, bookmarks);
+                            FilterType filter = FilterType.get(intentFilter, authorId, localBookmarks);
+                            applyFilter(filter);
+                            refreshStories();
+                        }
+                    }
+                };
 
-                applyFilter(filter);
+                preloadBookmarks();
+
             }
         }
 
@@ -351,21 +370,46 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String selection = adapterView.getItemAtPosition(i).toString();
 
+        if (!selection.equals("Bookmarks")) {
+            Bundle extras = getIntent().getExtras();
+            String authorId = "";
+            ArrayList<String> localBookmarks = new ArrayList<>();
 
-        Bundle extras = getIntent().getExtras();
-        String authorId = "";
-        ArrayList<String> bookmarks = new ArrayList<>();
-
-
-        if (extras != null) {
-            if (extras.containsKey("authorId")) {
-                authorId = extras.getString("authorId");
+            if (extras != null) {
+                if (extras.containsKey("authorId")) {
+                    authorId = extras.getString("authorId");
+                }
             }
+
+            FilterType filter = FilterType.get(selection, authorId, localBookmarks);
+            applyFilter(filter);
+            refreshStories();
+            return;
         }
 
-        FilterType filter = FilterType.get(selection, authorId, bookmarks);
-        applyFilter(filter);
-        refreshStories();
+        backgroundTaskResultHandlerBookmarks = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                //TODO: ugly!
+                if (msg.getData().containsKey("bookmarks")) {
+                    Bundle extras = getIntent().getExtras();
+                    String authorId = "";
+                    ArrayList<String> localBookmarks = msg.getData().getStringArrayList("bookmarks");
+                    //bookmarks = msg.getData().getStringArrayList("bookmarks");
+                    if (extras != null) {
+                        if (extras.containsKey("authorId")) {
+                            authorId = extras.getString("authorId");
+                        }
+                    }
+
+                    FilterType filter = FilterType.get(selection, authorId, localBookmarks);
+                    applyFilter(filter);
+                    refreshStories();
+                }
+            }
+        };
+
+        preloadBookmarks();
     }
 
     //Listener method for filter spinner item deselection
