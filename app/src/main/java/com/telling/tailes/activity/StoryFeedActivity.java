@@ -229,6 +229,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 String intentFilter = extras.getString("feedFilter");
                 String authorId = "";
+                ArrayList<String> bookmarks = new ArrayList<>();
                 filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
 
                 //If an author is also passed, apply the author's username to the filter
@@ -236,7 +237,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     authorId = extras.getString("authorId");
                 }
 
-                FilterType filter = FilterType.get(intentFilter, authorId);
+                // TODO: pull bookmarks array list from extras
+
+                FilterType filter = FilterType.get(intentFilter, authorId, bookmarks);
 
                 applyFilter(filter);
             }
@@ -351,6 +354,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         Bundle extras = getIntent().getExtras();
         String authorId = "";
+        ArrayList<String> bookmarks = new ArrayList<>();
+
 
         if (extras != null) {
             if (extras.containsKey("authorId")) {
@@ -358,7 +363,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-        FilterType filter = FilterType.get(selection, authorId);
+        FilterType filter = FilterType.get(selection, authorId, bookmarks);
         applyFilter(filter);
         refreshStories();
     }
