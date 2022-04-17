@@ -28,18 +28,6 @@ public class StoryRviewCard {
         return story.getTitle();
     }
 
-    public ArrayList<String> getLovers() {
-        return story.getLovers();
-    }
-
-    public void addLove(String userId) {
-        story.addLover(userId);
-    }
-
-    public void removeLove(String userId) {
-        story.removeLover(userId);
-    }
-
     public Story getStory() { return story; }
 
     public boolean isBookmarked() {
@@ -53,4 +41,7 @@ public class StoryRviewCard {
     public ArrayList<String> getBookmarkers() {
         return story.getBookmarkers();
     }
+
+    public void setStory(Story story) { this.story = story; }
+
 }

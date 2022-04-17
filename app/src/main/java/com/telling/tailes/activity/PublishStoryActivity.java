@@ -16,10 +16,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FBUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Consumer;
 
 public class PublishStoryActivity extends AppCompatActivity {
 
@@ -204,13 +207,43 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = storyId; //TODO: make this nicer?
         }
 
+
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers);
+
+        //TODO: do this all in a background thread
+        //TODO: loading wheel
 
         Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
         storyPublishTask.addOnCompleteListener(task -> {
+
             published = true;
-            goToFeed();
+
+            //Only increment story count if this isn't a draft
+            if(asDraft) {
+                goToFeed();
+               return;
+            }
+
+            FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
+                        @Override
+                        public void accept(User user) {
+                            if(user != null) {
+                               user.incrementStoryCount();
+                               FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
+                                   @Override
+                                   public void accept(Boolean result) {
+                                       if(!result) {
+                                           toast.setText(genericErrorNotification);
+                                           toast.show();
+                                       }
+
+                                       goToFeed();
+                                   }
+                               });
+                            }
+                        }
+                    });
         });
 
         storyPublishTask.addOnFailureListener(task -> {

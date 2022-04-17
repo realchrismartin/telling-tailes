@@ -34,14 +34,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
+import com.telling.tailes.fragment.AuthorProfileDialogFragment;
+import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.R;
+import com.telling.tailes.util.GPTUtils;
 
-public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnAuthorClickCallbackListener {
 
     private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
@@ -59,18 +63,24 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private ArrayAdapter<CharSequence> spinnerAdapter;
     private Spinner filterSpinner;
-//    private RecyclerView.LayoutManager storyRviewLayoutManager;
+    //    private RecyclerView.LayoutManager storyRviewLayoutManager;
     private LinearLayoutManager storyRviewLayoutManager;
 
+    private AuthorProfileDialogFragment authorProfileDialogFragment;
+
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandlerBookmarks;
+
+    //private Executor backgroundTaskExecutorAuthors;
+    private Handler backgroundTaskResultHandlerAuthors;
+
     private String lastLoadedStoryId;
+    private Toast toast;
 
     private FilterType currentFilter;
 
     private int refreshIterations;
     private int maxRefreshIterations;
-
-    private Executor backgroundTaskExecutor;
-    private Handler backgroundTaskResultHandler;
 
     boolean loadedFirstStories;
 
@@ -82,17 +92,21 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         lastLoadedStoryId = "";
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
-        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
-        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+
+        backgroundTaskExecutor = Executors.newFixedThreadPool(5);
+        backgroundTaskResultHandlerBookmarks = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 //TODO: ugly!
-                if(msg.getData().containsKey("bookmarks"))  {
+                if (msg.getData().containsKey("bookmarks")) {
                     bookmarks = msg.getData().getStringArrayList("bookmarks");
                     loadFirstStories();
                 }
             }
         };
+
+        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+
 
         doLoginCheck();
 
@@ -102,10 +116,37 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         preloadBookmarks();
 
+        //Set up background executor for handling author profile data request threads
+        //backgroundTaskExecutorAuthors = Executors.newFixedThreadPool(2);
+
+        //Define handling for author profile data results from the background thread
+        backgroundTaskResultHandlerAuthors = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (authorProfileDialogFragment != null) {
+                    authorProfileDialogFragment.dismiss();
+                }
+
+                //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                    toast.setText(R.string.generic_error_notification);
+                    toast.show();
+                    return;
+                }
+
+                //If all is well, show the author profile fragment with the retrieved data
+                authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                authorProfileDialogFragment.setArguments(msg.getData());
+                authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
+
+            }
+        };
+
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if(!loadedFirstStories) {
+                if (!loadedFirstStories) {
                     return;
                 }
 
@@ -138,10 +179,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     //Kick the user out of the Feed if they aren't logged in for some reason
-    private void doLoginCheck()
-    {
-        if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
-        {
+    private void doLoginCheck() {
+        if (!AuthUtils.userIsLoggedIn(getApplicationContext())) {
             goToLogin();
         }
     }
@@ -165,7 +204,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
         storyRview.setHasFixedSize(true);
-        storyRviewAdapter = new StoryRviewAdapter(storyCardList, getApplicationContext());
+
+        storyRviewAdapter = new StoryRviewAdapter(storyCardList, getApplicationContext(), this);
+
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -181,14 +222,26 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadFirstStories() {
-        String intentFilter = "";
         initialQuery = storyRef.orderByChild("id").limitToFirst(10);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            intentFilter = extras.getString("feedFilter");
-            filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+            if (extras.containsKey("feedFilter")) {
+
+                String intentFilter = extras.getString("feedFilter");
+                String authorId = "";
+                filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+
+                //If an author is also passed, apply the author's username to the filter
+                if (extras.containsKey("authorId")) {
+                    authorId = extras.getString("authorId");
+                }
+
+                FilterType filter = FilterType.get(intentFilter, authorId);
+
+                applyFilter(filter);
+            }
         }
-        applyFilter(FilterType.get(intentFilter));
+
         loadStoryData(initialQuery);
         loadedFirstStories = true;
     }
@@ -200,7 +253,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if(!lastLoadedStoryId.equals("")) {
+        if (!lastLoadedStoryId.equals("")) {
             Query newQuery = initialQuery.startAfter(lastLoadedStoryId);
             loadStoryData(newQuery);
             return;
@@ -213,32 +266,32 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Story story = snapshot.getValue(Story.class);
 
-                    if(story == null) {
+                    if (story == null) {
                         continue;
                     }
 
                     //Track the last seen id, even if excluded by filter
                     lastLoadedStoryId = story.getId();
 
-                    if(!currentFilter.includes(getApplicationContext(),story)) {
+                    if (!currentFilter.includes(getApplicationContext(), story)) {
                         continue;
                     }
 
                     //TODO: this could be more efficient the way it was originally
                     int pos;
                     boolean replaced = false;
-                    for(pos=0;pos<storyCardList.size();pos++) {
-                        if(storyCardList.get(pos).getID().equals(story.getId())) {
+                    for (pos = 0; pos < storyCardList.size(); pos++) {
+                        if (storyCardList.get(pos).getID().equals(story.getId())) {
                             storyCardList.set(pos, new StoryRviewCard(story));
                             storyRviewAdapter.notifyItemChanged(pos);
                             replaced = true;
                         }
                     }
 
-                    if(replaced) {
+                    if (replaced) {
                         continue;
                     }
 
@@ -248,7 +301,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 feedSwipeRefresh.setRefreshing(false);
 
-                if(storyCardList.size() <= 0 && refreshIterations < maxRefreshIterations) {
+                if (storyCardList.size() <= 0 && refreshIterations < maxRefreshIterations) {
                     refreshIterations++;
                     loadNextStories();
                 }
@@ -271,29 +324,42 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void goToCreateStory() {
-        Intent intent = new Intent(this,CreateStoryActivity.class);
+        Intent intent = new Intent(this, CreateStoryActivity.class);
         startActivity(intent);
     }
 
     private void goToLogin() {
-        Intent intent = new Intent(this,LoginActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
     private void goToReadStory(Story story) {
-        Intent intent = new Intent(this,ReadStoryActivity.class);
-        intent.putExtra("story",story);
+        Intent intent = new Intent(this, ReadStoryActivity.class);
+        intent.putExtra("story", story);
         startActivity(intent);
     }
-//
+
+    //
 //    public ArrayList<String> getBookmarks() {
 //        return bookmarks;
 //    }
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String selection = adapterView.getItemAtPosition(i).toString();
 
-        applyFilter(FilterType.get(adapterView.getItemAtPosition(i).toString()));
+
+        Bundle extras = getIntent().getExtras();
+        String authorId = "";
+
+        if (extras != null) {
+            if (extras.containsKey("authorId")) {
+                authorId = extras.getString("authorId");
+            }
+        }
+
+        FilterType filter = FilterType.get(selection, authorId);
+        applyFilter(filter);
         refreshStories();
     }
 
@@ -303,12 +369,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     //Apply the requested filter to the initialQuery
-    private void applyFilter(FilterType filter)
-    {
+    private void applyFilter(FilterType filter) {
         currentFilter = filter;
         refreshIterations = 0;
         initialQuery = currentFilter.getQuery(storyRef);
     }
+
 
     private void preloadBookmarks() {
         backgroundTaskExecutor.execute(new Runnable() {
@@ -320,13 +386,47 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putStringArrayList("bookmarks",bookmarks);
+                        resultData.putStringArrayList("bookmarks", bookmarks);
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
 
                         //Notify the activity that bookmarks have been retrieved
-                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                        backgroundTaskResultHandlerBookmarks.sendMessage(resultMessage);
+                    }
+                });
+            }
+        });
+    }
+
+    /*
+        Card onClick handler for opening an author profile
+     */
+    public void handleAuthorClick (String username){
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FBUtils.getAuthorProfile(getApplicationContext(), username, new Consumer<AuthorProfile>() {
+                    @Override
+                    public void accept(AuthorProfile authorProfile) {
+                        //Set up a bundle of author profile result data
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "authorProfile");
+                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+
+                        if (authorProfile != null) {
+                            resultData.putString("authorId", authorProfile.getAuthorId());
+                            resultData.putInt("storyCount", authorProfile.getStoryCount());
+                            resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            resultData.putBoolean("following", authorProfile.following());
+                            resultData.putInt("profileIcon", authorProfile.getProfileIcon());
+                        }
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        //Notify the activity that profile data has been retrieved
+                        backgroundTaskResultHandlerAuthors.sendMessage(resultMessage);
                     }
                 });
             }
