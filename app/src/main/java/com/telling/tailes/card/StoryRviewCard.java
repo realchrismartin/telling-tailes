@@ -21,7 +21,15 @@ public class StoryRviewCard {
     }
 
     public String getID() {
-        return story.getId();
+        switch (cardType) {
+            case 0:
+                return story.getId();
+            case 1:
+                return "loading";
+            default:
+                return "bad";
+        }
+
     }
 
     public String getAuthorId() {
