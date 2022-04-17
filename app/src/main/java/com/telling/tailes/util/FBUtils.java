@@ -92,7 +92,9 @@ public class FBUtils {
             callback.accept(false);
         });
 
+
     }
+
 
 
     //Checks if user exists or not in Firebase
