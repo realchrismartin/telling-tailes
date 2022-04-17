@@ -205,17 +205,28 @@ public class ReadStoryActivity extends AppCompatActivity {
         }
     }
 
-//    private void updateBookmarkButtonState() {
-//        //TODO: set the bookmark state according to the Story - like with Love button
-//        if (user.getBookmarks().contains(AuthUtils.)) {
-//            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-//        } else {
-//            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-//        }
-//    }
+    private void updateBookmarkButtonState() {
+        //TODO: set the bookmark state according to the Story - like with Love button
+        if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+        } else {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+        }
+    }
 
     private void handleClickBookmark() {
         //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
+        FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
+            @Override
+            public void accept(Story result) {
+                if(result == null) {
+                    readStoryToast.setText("weird");
+                } else {
+                    story = result;
+                    updateBookmarkButtonState();
+                }
+            }
+        });
     }
 
     private void handleClickRecycle() {

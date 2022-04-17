@@ -97,10 +97,10 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                FBUtils.updateBookmark(context.getApplicationContext(), currentItem.getStory(), new Consumer<Boolean>() {
+                FBUtils.updateBookmark(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
                     @Override
-                    public void accept(Boolean result) {
-                        if (!result) {
+                    public void accept(Story result) {
+                        if (result == null) {
                             return;
                         }
                         if (currentItem.getBookmarkers().contains(currentUser)) {

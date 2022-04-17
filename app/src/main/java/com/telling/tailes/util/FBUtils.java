@@ -196,11 +196,11 @@ public class FBUtils {
         });
     }
 
-    public static void updateBookmark(Context context, Story story, Consumer<Boolean> callback) {
+    public static void updateBookmark(Context context, Story story, Consumer<Story> callback) {
 
         if(!AuthUtils.userIsLoggedIn(context))
         {
-            callback.accept(false);
+            callback.accept(null);
             return;
         }
 
@@ -223,11 +223,11 @@ public class FBUtils {
 
         storyBookmarkTask.addOnCompleteListener(task -> {
             Log.d("updateBookmark", "added bookmark to FB");
-            callback.accept(true);
+            callback.accept(story);
         });
 
         storyBookmarkTask.addOnFailureListener(task -> {
-            callback.accept(false);
+            callback.accept(null);
         });
 
         getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
@@ -248,11 +248,11 @@ public class FBUtils {
 
                 userBookmarkTask.addOnCompleteListener(task -> {
                     Log.d("updateUserBookmark", "added bookmark for user");
-                    callback.accept(true);
+                    callback.accept(story);
                 });
 
                 userBookmarkTask.addOnFailureListener(task -> {
-                    callback.accept(false);
+                    callback.accept(null);
                 });
             }
         });
