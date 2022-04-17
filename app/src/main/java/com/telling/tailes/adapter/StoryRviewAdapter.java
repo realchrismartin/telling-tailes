@@ -121,7 +121,6 @@ public class StoryRviewAdapter extends RecyclerView.Adapter {
                 return;
             default:
                 return;
-
         }
 
 
