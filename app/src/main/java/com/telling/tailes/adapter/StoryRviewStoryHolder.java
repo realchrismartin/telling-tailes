@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.telling.tailes.R;
 import com.telling.tailes.card.StoryRviewCardClickListener;
 
-public class StoryRviewHolder extends RecyclerView.ViewHolder {
+public class StoryRviewStoryHolder extends RecyclerView.ViewHolder {
     public TextView titleText;
     public TextView authorText;
     public Button loveButton;
     public Button recycleButton;
     public Button profileButton;
 
-    public StoryRviewHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
+    public StoryRviewStoryHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
         super(itemView);
         titleText = itemView.findViewById(R.id.storyCardTitle);
         authorText = itemView.findViewById(R.id.storyCardAuthor);

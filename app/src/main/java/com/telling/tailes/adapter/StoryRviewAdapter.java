@@ -20,7 +20,7 @@ import com.telling.tailes.util.FBUtils;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
+public class StoryRviewAdapter extends RecyclerView.Adapter {
     private ArrayList<StoryRviewCard> storyCardList;
     private StoryRviewCardClickListener listener;
     private Context context;
@@ -36,60 +36,95 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         this.listener = listener;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        switch (storyCardList.get(position).getType()) {
+            case 0:
+                return StoryRviewCard.CARD_TYPE_STORY;
+            case 1:
+                return StoryRviewCard.CARD_TYPE_LOADING;
+            default:
+                return -1;
+        }
+    }
+
     @NonNull
     @Override
-    public StoryRviewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_card, parent, false);
-        return new StoryRviewHolder(view, listener);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        switch (viewType) {
+            case 0:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.story_card, parent, false);
+                return new StoryRviewStoryHolder(view, listener);
+            case 1:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_card, parent, false);
+                return new RviewLoadingHolder(view);
+            default:
+                return null;
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(StoryRviewHolder holder, int position) {
-
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         StoryRviewCard currentItem = storyCardList.get(position);
-        holder.titleText.setText(currentItem.getTitle());
-        holder.authorText.setText(currentItem.getAuthorId());
+        switch (currentItem.getType()) {
+            case 0:
+                StoryRviewStoryHolder sHolder = (StoryRviewStoryHolder) holder;
 
-        if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-        } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-        }
 
-        holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
+                sHolder.titleText.setText(currentItem.getTitle());
+                sHolder.authorText.setText(currentItem.getAuthorId());
 
-        holder.loveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
+                if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+                } else {
+                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+                }
+
+                sHolder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
+
+                sHolder.loveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void accept(Story result) {
+                    public void onClick(View view) {
+                        FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
+                            @Override
+                            public void accept(Story result) {
 
-                        if (result == null) {
-                            return; //TODO: indicate to user that love failed?
-                        }
+                                if (result == null) {
+                                    return; //TODO: indicate to user that love failed?
+                                }
 
-                        currentItem.setStory(result);
+                                currentItem.setStory(result);
 
-                        holder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
+                                sHolder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
 
-                        if (result.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-                        } else {
-                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-                        }
+                                if (result.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+                                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+                                } else {
+                                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+                                }
+                            }
+                        });
                     }
                 });
-            }
-        });
 
-        holder.profileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                authorClickCallbackListener.handleAuthorClick(currentItem.getAuthorId());
-            }
-        });
+                sHolder.profileButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        authorClickCallbackListener.handleAuthorClick(currentItem.getAuthorId());
+                    }
+                });
+                return;
+            case 1:
+                return;
+            default:
+                return;
+
+        }
+
+
     }
 
     @Override
