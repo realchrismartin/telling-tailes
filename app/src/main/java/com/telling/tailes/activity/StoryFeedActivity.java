@@ -232,24 +232,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
                 filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
-
-                if (!intentFilter.equals("Bookmarks")) {
-
-                    //If an author is also passed, apply the author's username to the filter
-                    String authorId = extras.containsKey("authorId") ? extras.getString("authorId") : "";
-
-                    FilterType filter = FilterType.get(intentFilter);
-                    filter.setAuthorFilter(authorId);
-                    applyFilter(filter);
-                    loadStoryData(initialQuery);
-                    loadedFirstStories = true;
-                    return;
-                }
-
-                loadBookmarks();
             }
         }
-
         loadStoryData(initialQuery);
         loadedFirstStories = true;
     }
@@ -356,9 +340,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         switch(selection) {
             case("Bookmarks"): {
                 loadBookmarks();
+                break;
             }
             case("Followed Authors"): {
                 loadFollowedAuthors();
+                break;
             }
             default: {
                 Bundle extras = getIntent().getExtras();
@@ -374,6 +360,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 filter.setAuthorFilter(authorId);
                 applyFilter(filter);
                 refreshStories();
+                break;
             }
         }
 
