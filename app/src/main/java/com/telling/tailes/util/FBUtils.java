@@ -198,8 +198,7 @@ public class FBUtils {
 
     public static void updateBookmark(Context context, Story story, Consumer<Story> callback) {
 
-        if(!AuthUtils.userIsLoggedIn(context))
-        {
+        if(!AuthUtils.userIsLoggedIn(context)) {
             callback.accept(null);
             return;
         }
@@ -207,7 +206,6 @@ public class FBUtils {
         String currentStory = story.getId();
         String currentUser = AuthUtils.getLoggedInUserID(context);
         ArrayList<String> bookmarkers = story.getBookmarkers();
-
 
         if (bookmarkers.contains(currentUser)) {
             Log.d("updateBookmarks", "removing bookmark from FB...");
@@ -256,11 +254,6 @@ public class FBUtils {
                 });
             }
         });
-
-
-
-
-
     }
 
     //Given a user, add the current logged in user as a follower (or remove a follow)

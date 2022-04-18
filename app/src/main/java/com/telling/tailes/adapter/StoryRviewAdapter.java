@@ -113,7 +113,6 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
             }
         });
 
-        //TODO: come back and take care of onClick for bookmark, and updating database
 
         holder.profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
