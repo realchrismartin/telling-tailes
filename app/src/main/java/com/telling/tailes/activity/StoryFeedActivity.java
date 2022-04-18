@@ -37,6 +37,7 @@ import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FilterType;
@@ -131,7 +132,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 authorProfileDialogFragment = new AuthorProfileDialogFragment();
                 authorProfileDialogFragment.setArguments(msg.getData());
                 authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
-
             }
         };
 
@@ -468,6 +468,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             resultData.putString("authorId", authorProfile.getAuthorId());
                             resultData.putInt("storyCount", authorProfile.getStoryCount());
                             resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            resultData.putInt("followCount", authorProfile.getFollowCount());
                             resultData.putBoolean("following", authorProfile.following());
                             resultData.putInt("profileIcon", authorProfile.getProfileIcon());
                         }
@@ -480,6 +481,5 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 });
             }
         });
-
     }
 }

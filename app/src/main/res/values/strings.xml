@@ -33,5 +33,6 @@
     <string name="author_profile_unfollow_option">Unfollow</string>
     <string name="author_profile_read_option">PlaceholderUsername\'s T(ai)les</string>
     <string name="author_profile_placeholder_username">PlaceholderUsername</string>
-    <string name="author_profile_follow_notification">Author followed (or unfollowed)!</string>
+    <string name="author_profile_follow_notification">Followed</string>
+    <string name="author_profile_unfollow_notification">Unfollowed</string>
 </resources>
