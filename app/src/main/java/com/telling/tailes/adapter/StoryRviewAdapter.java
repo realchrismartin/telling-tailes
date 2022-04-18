@@ -55,12 +55,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.titleText.setText(currentItem.getTitle());
         holder.authorText.setText(currentItem.getAuthorId());
 
-        if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-        } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-        }
-
+        updateLoveIconState(currentItem, currentUser, holder);
         holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
 
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
@@ -77,22 +72,13 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
                         currentItem.setStory(result);
 
                         holder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
-
-                        if (result.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-                        } else {
-                            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-                        }
+                        updateLoveIconState(currentItem, currentUser, holder);
                     }
                 });
             }
         });
 
-        if (currentItem.getBookmarkers().contains(currentUser)) {
-            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
-        } else {
-            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
-        }
+        updateBookmarkIconState(currentItem, currentUser, holder);
 
         holder.bookmarkButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -103,17 +89,12 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
                         if (result == null) {
                             return;
                         }
-                        if (currentItem.getBookmarkers().contains(currentUser)) {
-                            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
-                        } else {
-                            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
-                        }
+                        updateBookmarkIconState(currentItem, currentUser, holder);
                     }
                 });
             }
         });
 
-        //TODO: come back and take care of onClick for bookmark, and updating database
 
         holder.profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,4 +107,21 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
 
     @Override
     public int getItemCount() { return storyCardList.size(); }
+
+    private void updateBookmarkIconState(StoryRviewCard currentItem, String currentUser, StoryRviewHolder holder) {
+        if (currentItem.getBookmarkers().contains(currentUser)) {
+            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+        } else {
+            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewHolder holder) {
+        if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+        } else {
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+        }
+    }
 }

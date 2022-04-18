@@ -206,7 +206,6 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void updateBookmarkButtonState() {
-        //TODO: set the bookmark state according to the Story - like with Love button
         if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
             bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
         } else {
@@ -215,12 +214,11 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void handleClickBookmark() {
-        //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
         FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
             @Override
             public void accept(Story result) {
                 if(result == null) {
-                    readStoryToast.setText("weird");
+                    readStoryToast.setText(R.string.generic_error_notification);
                 } else {
                     story = result;
                     updateBookmarkButtonState();
