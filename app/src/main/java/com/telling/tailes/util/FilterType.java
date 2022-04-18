@@ -14,30 +14,31 @@ public enum FilterType {
     BOOKMARKS,
     DRAFTS,
     AUTHOR,
+    FOLLOWING,
     NONE;
 
     private String authorUsernameFilter = ""; //Only set if filter is for specific author
     private ArrayList<String> bookmarksFilter = new ArrayList<>(); // Only set if filter is for bookmarks
+    private ArrayList<String> followsFilter = new ArrayList<>(); // Only set if filter is for bookmarks
 
     //Get a FilterType given a string
-    public static FilterType get(String str, String authorId, ArrayList<String> bookmarks) {
+    public static FilterType get(String str) {
         FilterType ft;
         switch (str) {
             case ("My T(ai)les"): {
                 return MY;
             }
             case ("Bookmarks"): {
-                ft = BOOKMARKS;
-                ft.setBookmarksFilter(bookmarks);
-                return ft;
+                return BOOKMARKS;
             }
             case ("Drafts"): {
                 return DRAFTS;
             }
             case ("By Author") : {
-                ft = AUTHOR;
-                ft.setAuthorFilter(authorId);
-                return ft;
+                return AUTHOR;
+            }
+            case ("Followed Authors"): {
+                return FOLLOWING;
             }
             default:
                 return NONE;
@@ -48,18 +49,6 @@ public enum FilterType {
     //TODO: This is unused right now, but will be helpful to order by love count etc when implemented
     public Query getQuery(DatabaseReference ref) {
         switch (this) {
-            case MY: {
-                return ref.orderByChild("id").limitToFirst(10); //TODO: duplicates: make these appropriate for each filter
-            }
-            case DRAFTS: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
-            case BOOKMARKS: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
-            case AUTHOR: {
-                return ref.orderByChild("id").limitToFirst(10);
-            }
             default: {
                 return ref.orderByChild("id").limitToFirst(10);
             }
@@ -79,10 +68,12 @@ public enum FilterType {
             }
             case BOOKMARKS: {
                 return bookmarksFilter.contains(story.getId());
-                // return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
             }
             case AUTHOR: {
                return authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter);
+            }
+            case FOLLOWING: {
+                return followsFilter.contains(story.getAuthorID());
             }
             default: {
                 return true;
@@ -90,11 +81,15 @@ public enum FilterType {
         }
     }
 
-    private void setAuthorFilter(String username) {
+    public void setAuthorFilter(String username) {
         this.authorUsernameFilter = username;
     }
 
-    private void setBookmarksFilter(ArrayList<String> bookmarks) {
+    public void setBookmarksFilter(ArrayList<String> bookmarks) {
         this.bookmarksFilter = bookmarks;
+    }
+
+    public void setFollowsFilter(ArrayList<String> follows) {
+        this.followsFilter = follows;
     }
 }

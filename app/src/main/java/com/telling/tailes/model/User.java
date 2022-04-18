@@ -2,6 +2,7 @@ package com.telling.tailes.model;
 
 import com.telling.tailes.util.AuthUtils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class User {
@@ -12,6 +13,7 @@ public class User {
     private String salt;
 
     private ArrayList<String> follows;
+    private ArrayList<String> followers;
     private ArrayList<String> bookmarks;
 
     private int stories;
@@ -26,7 +28,7 @@ public class User {
         this.bookmarks = bookmarks;
     }
 
-    public User(String username, int profileIcon,  String hashedPassword, String salt, ArrayList<String> follows, int stories, int loves)
+    public User(String username, int profileIcon,  String hashedPassword, String salt, ArrayList<String> follows, ArrayList<String> followers, int stories, int loves)
 
     {
         this.username = username;
@@ -34,6 +36,7 @@ public class User {
         this.hashedPassword = hashedPassword;
         this.salt = salt;
         this.follows = follows;
+        this.followers = followers;
         this.stories = stories;
         this.loves = loves;
     }
@@ -48,9 +51,35 @@ public class User {
     public String getSalt() { return salt; }
 
     public ArrayList<String> getFollows() {
-        //TODO: undo this workaround - this is since we have no follow data, otherwise it will crash
-       if(follows == null)  { return new ArrayList<>(); }
-        return follows; }
+        initFollows();
+        return follows;
+    }
+
+    public ArrayList<String> getFollowers() {
+        initFollowers();
+        return followers;
+    }
+
+    //Add or remove the specified user as a follow, depending on whether they are present
+    public void updateFollows(String usernameToFollow) {
+        initFollows();
+       if(follows.contains(usernameToFollow)) {
+           follows.remove(usernameToFollow);
+       } else {
+           follows.add(usernameToFollow);
+       }
+    }
+
+    //Add or remove the specified user as a follower, depending on whether they are present
+    public void updateFollowers(String usernameWhoIsFollowing) {
+        initFollowers();
+
+        if(followers.contains(usernameWhoIsFollowing)) {
+            followers.remove(usernameWhoIsFollowing);
+        } else {
+            followers.add(usernameWhoIsFollowing);
+        }
+    }
 
     public int getStories() { return stories; }
 
@@ -80,7 +109,8 @@ public class User {
 
     public ArrayList<String> getBookmarks() {
         initBookmarks();
-        return bookmarks;}
+        return bookmarks;
+    }
 
     public void setBookmarks(ArrayList<String> bookmarks) { this.bookmarks = bookmarks;
     }
@@ -88,6 +118,18 @@ public class User {
     private void initBookmarks() {
         if (bookmarks == null) {
             bookmarks = new ArrayList<String>();
+        }
+    }
+
+    private void initFollows() {
+        if(follows == null) {
+            follows = new ArrayList<String>();
+        }
+    }
+
+    private void initFollowers() {
+        if(followers == null) {
+            followers = new ArrayList<String>();
         }
     }
 }

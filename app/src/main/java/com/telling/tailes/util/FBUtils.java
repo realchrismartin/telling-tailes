@@ -282,12 +282,75 @@ public class FBUtils {
         });
     }
 
-    //Given a user, add the current logged in user as a follower (or remove a follow)
-    //If follow is true - add a follow, otherwise remove one
-    //Call callback with true if all is well, otherwise call it with false
-    public static void updateFollow(Context context, String username, boolean follow, Consumer<Boolean> callback) {
-        //TODO: implement
-        callback.accept(true);
+    //Given a user, add the user to the current logged in user's record as an author the current user is following
+    //Additionally update the target user's follower list to include the current user
+    //Call the callback with the updated current user record if successful
+    //Otherwise, call it with null
+    public static void updateFollow(Context context, String username, Consumer<User> callback) {
+
+        //Get the current user
+        getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
+            @Override
+            public void accept(User follower) {
+                if(follower == null) {
+                    //Current user doesn't exist
+                    callback.accept(null);
+                    return;
+                }
+
+                //Get the target user
+                getUser(context, username, new Consumer<User>() {
+                    @Override
+                    public void accept(User followee) {
+                        if(followee == null)  {
+                            //Target user doesn't exist
+                            callback.accept(null);
+                            return;
+                        }
+
+                        //Update the follower's list to include followee
+                        follower.updateFollows(followee.getUsername());
+
+                        updateUser(context, follower, new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean result) {
+
+                                if(!result) {
+                                    callback.accept(null);
+                                    return;
+                                }
+
+                                //If follower list was updated, update followee list
+                                followee.updateFollowers(follower.getUsername());
+
+                                updateUser(context, followee, new Consumer<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean followeeResult) {
+                                       if(!followeeResult)  {
+
+                                           //Rollback prior change if followee update failed
+                                           follower.updateFollowers(followee.getUsername());
+
+                                           updateUser(context, follower, new Consumer<Boolean>() {
+                                                       @Override
+                                                       public void accept(Boolean aBoolean) {
+                                                           Log.e("updateFollowers","Rollback occurred in follower update with result " + aBoolean);
+                                                            callback.accept(null); //Regardless of result, this failed
+                                                       }
+                                                   });
+                                           return;
+                                       }
+
+                                       //All updates succeeded, callback with true
+                                        callback.accept(follower);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     //Retrieves author profile data for the specified user
@@ -298,12 +361,12 @@ public class FBUtils {
         //Get the current user's current follow list
         getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
             @Override
-            public void accept(User user) {
-               if(user == null) {
+            public void accept(User currentUser) {
+               if(currentUser == null) {
                    //Current user doesn't exist
                    callback.accept(null);
                } else {
-                   boolean following = user.getFollows().contains(username);
+                   boolean following = currentUser.getFollows().contains(username);
 
                    //Get the specified author's user
                    getUser(context, username, new Consumer<User>() {
@@ -313,7 +376,7 @@ public class FBUtils {
                               //Author doesn't exist
                               callback.accept(null);
                           } else {
-                              callback.accept(new AuthorProfile(user.getUsername(),user.getProfileIcon(),user.getStories(),user.getLoves(),following));
+                              callback.accept(new AuthorProfile(user.getUsername(),user.getProfileIcon(),user.getStories(),user.getLoves(),user.getFollowers().size(), following));
                           }
                        }
                    });
@@ -368,7 +431,7 @@ public class FBUtils {
 
         Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
 
-        User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),0,0);
+        User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),new ArrayList<>(),0,0);
 
         Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
 

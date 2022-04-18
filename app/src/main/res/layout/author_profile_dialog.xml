@@ -98,6 +98,36 @@
             android:textSize="18sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/author_profile_follows_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="3dp">
+
+        <Button
+            android:id="@+id/author_profile_follow_count_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="47dp"
+            android:drawableStart="@drawable/ic_baseline_profile_24"
+            android:enabled="false"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/author_profile_follow_count_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:textAppearance="?android:attr/textAppearanceListItem"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+    </LinearLayout>
     <ListView
         android:id="@+id/author_profile_options_view"
         android:layout_width="match_parent"
