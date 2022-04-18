@@ -171,7 +171,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             following = args.getBoolean("following");
         }
 
-
         readOptionText = readUserStoriesText.replace(placeholderUsernameText,authorId);
 
         //Set menu options (after member data is loaded)

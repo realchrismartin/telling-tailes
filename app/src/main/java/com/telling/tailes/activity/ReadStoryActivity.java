@@ -20,6 +20,7 @@ import com.telling.tailes.R;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
@@ -49,6 +50,8 @@ public class ReadStoryActivity extends AppCompatActivity {
     private String promptText;
     private String storyText;
     private Story story;
+
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,11 +206,25 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void updateBookmarkButtonState() {
-        //TODO: set the bookmark state according to the Story - like with Love button
+        if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+        } else {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+        }
     }
 
     private void handleClickBookmark() {
-        //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
+        FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
+            @Override
+            public void accept(Story result) {
+                if(result == null) {
+                    readStoryToast.setText(R.string.generic_error_notification);
+                } else {
+                    story = result;
+                    updateBookmarkButtonState();
+                }
+            }
+        });
     }
 
     private void handleClickRecycle() {

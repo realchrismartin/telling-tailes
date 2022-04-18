@@ -198,6 +198,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         String storyText = storyTextView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
         ArrayList<String> lovers = new ArrayList<String>();
+        ArrayList<String> bookmarkers = new ArrayList<String>();
 
         String storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
 
@@ -206,10 +207,11 @@ public class PublishStoryActivity extends AppCompatActivity {
             title = storyId; //TODO: make this nicer?
         }
 
+
+        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers);
+
         //TODO: do this all in a background thread
         //TODO: loading wheel
-
-        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers);
 
         Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
