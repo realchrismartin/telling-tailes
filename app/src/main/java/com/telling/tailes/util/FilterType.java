@@ -6,6 +6,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.telling.tailes.model.Story;
 
+import java.util.ArrayList;
+
 public enum FilterType {
 
     MY,
@@ -15,21 +17,25 @@ public enum FilterType {
     NONE;
 
     private String authorUsernameFilter = ""; //Only set if filter is for specific author
+    private ArrayList<String> bookmarksFilter = new ArrayList<>(); // Only set if filter is for bookmarks
 
     //Get a FilterType given a string
-    public static FilterType get(String str, String authorId) {
+    public static FilterType get(String str, String authorId, ArrayList<String> bookmarks) {
+        FilterType ft;
         switch (str) {
             case ("My T(ai)les"): {
                 return MY;
             }
             case ("Bookmarks"): {
-                return BOOKMARKS;
+                ft = BOOKMARKS;
+                ft.setBookmarksFilter(bookmarks);
+                return ft;
             }
             case ("Drafts"): {
                 return DRAFTS;
             }
             case ("By Author") : {
-                FilterType ft = AUTHOR;
+                ft = AUTHOR;
                 ft.setAuthorFilter(authorId);
                 return ft;
             }
@@ -72,7 +78,8 @@ public enum FilterType {
                 return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft();
             }
             case BOOKMARKS: {
-                return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
+                return bookmarksFilter.contains(story.getId());
+                // return false; //story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)); //TODO: This does nothing currently
             }
             case AUTHOR: {
                return authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter);
@@ -85,5 +92,9 @@ public enum FilterType {
 
     private void setAuthorFilter(String username) {
         this.authorUsernameFilter = username;
+    }
+
+    private void setBookmarksFilter(ArrayList<String> bookmarks) {
+        this.bookmarksFilter = bookmarks;
     }
 }
