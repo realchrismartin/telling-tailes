@@ -23,6 +23,7 @@ import androidx.fragment.app.DialogFragment;
 import com.telling.tailes.R;
 import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.model.User;
+import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
@@ -95,6 +96,18 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                 String option = adapterView.getItemAtPosition(i).toString();
 
                 if (option.equals(followOptionText) || option.equals(unfollowOptionText)) {
+
+                    String currentUsername = AuthUtils.getLoggedInUserID(getContext());
+
+                    if(currentUsername.equals("")){
+                        return;
+                    }
+
+                    if(currentUsername.equals(authorId)) {
+                        profileToast.setText(R.string.author_profile_follow_self_error);
+                        profileToast.show();
+                        return;
+                    }
 
                     //Handle following the author in the current activity, assumed to be StoryFeedActivity
                     //When follow is complete, update here

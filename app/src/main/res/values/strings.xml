@@ -35,4 +35,5 @@
     <string name="author_profile_placeholder_username">PlaceholderUsername</string>
     <string name="author_profile_follow_notification">Followed</string>
     <string name="author_profile_unfollow_notification">Unfollowed</string>
+    <string name="author_profile_follow_self_error">You can\'t follow yourself.</string>
 </resources>
