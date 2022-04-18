@@ -198,6 +198,7 @@ public class FBUtils {
 
     public static void updateBookmark(Context context, Story story, Consumer<Story> callback) {
 
+        // Check if user is even logged in
         if(!AuthUtils.userIsLoggedIn(context)) {
             callback.accept(null);
             return;
@@ -205,33 +206,13 @@ public class FBUtils {
 
         String currentStory = story.getId();
         String currentUser = AuthUtils.getLoggedInUserID(context);
-        ArrayList<String> bookmarkers = story.getBookmarkers();
 
-        if (bookmarkers.contains(currentUser)) {
-            Log.d("updateBookmarks", "removing bookmark from FB...");
-            story.removeBookmark(currentUser);
-        } else {
-            Log.d("updateBookmarks", "adding bookmark to FB...");
-            story.addBookmark(currentUser);
-        }
-
-        Map<String, Object> fbUpdate = new HashMap<>();
-        fbUpdate.put(story.getId(),story);
-        Task<Void> storyBookmarkTask =  storiesRef.updateChildren(fbUpdate);
-
-        storyBookmarkTask.addOnCompleteListener(task -> {
-            Log.d("updateBookmark", "added bookmark to FB");
-            callback.accept(story);
-        });
-
-        storyBookmarkTask.addOnFailureListener(task -> {
-            callback.accept(null);
-        });
-
+        // Get user from database to maintain parity
         getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
             @Override
             public void accept(User user) {
                 Map<String, Object> fbUserUpdate= new HashMap<>();
+                ArrayList<String> oldBookmarks = user.getBookmarks();
                 ArrayList<String> newBookmarks = user.getBookmarks();
 
                 if (newBookmarks.contains(currentStory)) {
@@ -240,13 +221,58 @@ public class FBUtils {
                     newBookmarks.add(currentStory);
                 }
 
+                // Update user in database
                 user.setBookmarks(newBookmarks);
                 fbUserUpdate.put(user.getUsername(), (Object) user);
                 Task<Void> userBookmarkTask = usersRef.updateChildren(fbUserUpdate);
 
                 userBookmarkTask.addOnCompleteListener(task -> {
                     Log.d("updateUserBookmark", "added bookmark for user");
-                    callback.accept(story);
+
+                    // Now that user has been updated properly, get story from database to update
+                    getStory(context, story.getId(), new Consumer<Story>() {
+                        @Override
+                        public void accept(Story resultStory) {
+                            // If story could not be found in database...
+                            if (resultStory == null) {
+                                user.setBookmarks(oldBookmarks);
+                                fbUserUpdate.put(user.getUsername(), (Object) user);
+                                Task<Void> userBookmarkRollbackTask = usersRef.updateChildren(fbUserUpdate);
+                                // ... roll back changes to user
+                                userBookmarkRollbackTask.addOnCompleteListener(task -> {
+                                    callback.accept(null);
+                                });
+                                userBookmarkRollbackTask.addOnFailureListener(task -> {
+                                    callback.accept(null);
+                                });
+                                return;
+                            }
+
+                            // Now, update story in database with new bookmarkers
+                            ArrayList<String> bookmarkers = resultStory.getBookmarkers();
+
+                            if (bookmarkers.contains(currentUser)) {
+                                Log.d("updateBookmarks", "removing bookmark from FB...");
+                                resultStory.removeBookmark(currentUser);
+                            } else {
+                                Log.d("updateBookmarks", "adding bookmark to FB...");
+                                resultStory.addBookmark(currentUser);
+                            }
+
+                            Map<String, Object> fbUpdate = new HashMap<>();
+                            fbUpdate.put(resultStory.getId(), resultStory);
+                            Task<Void> storyBookmarkTask = storiesRef.updateChildren(fbUpdate);
+
+                            storyBookmarkTask.addOnCompleteListener(task -> {
+                                Log.d("updateBookmark", "added bookmark to FB");
+                                callback.accept(resultStory);
+                            });
+
+                            storyBookmarkTask.addOnFailureListener(task -> {
+                                callback.accept(null);
+                            });
+                        }
+                    });
                 });
 
                 userBookmarkTask.addOnFailureListener(task -> {
