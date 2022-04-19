@@ -15,6 +15,7 @@ public enum FilterType {
     DRAFTS,
     AUTHOR,
     FOLLOWING,
+    POPULAR,
     NONE;
 
     private String authorUsernameFilter = ""; //Only set if filter is for specific author
@@ -37,6 +38,9 @@ public enum FilterType {
             case ("By Author") : {
                 return AUTHOR;
             }
+            case ("Popular") : {
+                return POPULAR;
+            }
             case ("Followed Authors"): {
                 return FOLLOWING;
             }
@@ -46,18 +50,18 @@ public enum FilterType {
     }
 
     //Get a Query for this FilterType from the provided ref that is appropriate for this filter
-    //TODO: This is unused right now, but will be helpful to order by love count etc when implemented
-    public Query getQuery(DatabaseReference ref) {
-        switch (this) {
+    public Query getQuery(Context context, DatabaseReference ref) {
+        switch(this) {
+            case POPULAR: {
+                return ref.orderByChild("loveCount").limitToFirst(10);
+            }
             default: {
-                return ref.orderByChild("id").limitToFirst(10);
+                return ref.orderByChild("timestamp").limitToFirst(10);
             }
         }
     }
 
     //Return true if this filter includes the provided story, false otherwise
-    //This is not efficient, sorry.
-    //TODO: make more efficient
     public boolean includes(Context context, Story story) {
         switch (this) {
             case MY: {
@@ -75,6 +79,7 @@ public enum FilterType {
             case FOLLOWING: {
                 return followsFilter.contains(story.getAuthorID());
             }
+            case POPULAR: {}
             default: {
                 return true;
             }
