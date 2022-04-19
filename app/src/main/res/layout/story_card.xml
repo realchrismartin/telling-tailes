@@ -22,7 +22,7 @@
             android:layout_height="45dp"
             android:drawableLeft="@drawable/ic_baseline_favorite_border_24"
             android:text=""
-            android:textColor="#283593"
+            android:textColor="#616161"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
