@@ -31,7 +31,7 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
         profileButton = itemView.findViewById(R.id.storyCardAuthorProfileButton);
 
         //Note: recycle button is hidden on cards by default
-        recycleButton.setVisibility(View.INVISIBLE);
+        recycleButton.setVisibility(View.GONE);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
