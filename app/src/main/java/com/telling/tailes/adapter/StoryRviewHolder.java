@@ -23,7 +23,6 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
     public StoryRviewHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
         super(itemView);
         titleText = itemView.findViewById(R.id.storyCardTitle);
-        authorText = itemView.findViewById(R.id.storyCardAuthor);
         loveButton = itemView.findViewById(R.id.storyCardLoveButton);
         recycleButton = itemView.findViewById(R.id.storyCardRecycleButton);
 

@@ -53,7 +53,6 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
 
         StoryRviewCard currentItem = storyCardList.get(position);
         holder.titleText.setText(currentItem.getTitle());
-        holder.authorText.setText(currentItem.getAuthorId());
 
         updateLoveIconState(currentItem, currentUser, holder);
         holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
@@ -96,6 +95,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         });
 
 
+        holder.profileButton.setText(currentItem.getAuthorId());
         holder.profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
