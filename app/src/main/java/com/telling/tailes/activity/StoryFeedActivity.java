@@ -374,7 +374,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private void applyFilter(FilterType filter) {
         currentFilter = filter;
         refreshIterations = 0;
-        initialQuery = currentFilter.getQuery(storyRef);
+        initialQuery = currentFilter.getQuery(getApplicationContext(),storyRef);
     }
 
     /*

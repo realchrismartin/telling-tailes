@@ -208,7 +208,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         }
 
 
-        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers);
+        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
 
         //TODO: do this all in a background thread
         //TODO: loading wheel
