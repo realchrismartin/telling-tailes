@@ -157,7 +157,7 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         //Set up views with story data
         titleTextView.setText(story.getTitle());
-        authorTextView.setText(story.getAuthorID());
+        authorProfileButton.setText(story.getAuthorID());
         storyTextView.setText(story.getStoryText());
 
         //Set up private variables
