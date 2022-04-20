@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 
 import android.widget.TextView;
@@ -13,10 +16,14 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.util.AuthUtils;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
     private TextView usernameEntryView;
     private TextView passwordEntryView;
     private Toast loginToast;
@@ -26,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 
         //Set views
         usernameEntryView = findViewById(R.id.enterUsernameView);
@@ -52,6 +60,28 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if(msg.getData() == null) {
+                    return;
+                }
+
+                String errors = msg.getData().getString("errors");
+
+                if(errors.length() > 0) {
+                    loginToast.setText(errors);
+                    loginToast.show();
+                    return;
+                }
+
+                //If all is well, redirect to the feed once logged in
+                Intent intent = new Intent(getApplicationContext(),StoryFeedActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        };
     }
 
     /*
@@ -96,24 +126,26 @@ public class LoginActivity extends AppCompatActivity {
        If the login is successful, redirect to the feed
         Note: allows you to log in even if you're already logged in (i.e. change accounts)
      */
-    public void login()
-    {
-        AuthUtils.logInUser(getApplicationContext(), usernameEntryView.getText().toString(), passwordEntryView.getText().toString(), new Consumer<String>() {
+    public void login() {
+        backgroundTaskExecutor.execute(new Runnable() {
             @Override
-            public void accept(String errorResult) {
+            public void run() {
+                AuthUtils.logInUser(getApplicationContext(), usernameEntryView.getText().toString(), passwordEntryView.getText().toString(), new Consumer<String>() {
+                    @Override
+                    public void accept(String errorResult) {
+                        //Set up a bundle
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type","errors");
+                        resultData.putString("errors", errorResult);
 
-                if(errorResult.length() > 0)
-                {
-                    loginToast.setText(errorResult);
-                    loginToast.show();
-                    return;
-                }
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
 
-                //If all is well, redirect to the feed once logged in
-                Intent intent = new Intent(getApplicationContext(),StoryFeedActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
             }
         });
+
     }
 }
