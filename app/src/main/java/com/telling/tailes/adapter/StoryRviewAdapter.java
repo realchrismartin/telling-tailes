@@ -121,7 +121,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
             holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_24, 0);
         } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_24, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_border_24, 0);
         }
     }
 }
