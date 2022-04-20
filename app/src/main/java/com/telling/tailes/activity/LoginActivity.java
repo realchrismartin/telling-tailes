@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         //Set views
         usernameEntryView = findViewById(R.id.enterUsernameView);
         passwordEntryView = findViewById(R.id.enterPasswordView);
@@ -110,6 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 //If all is well, redirect to the feed once logged in
                 Intent intent = new Intent(getApplicationContext(),StoryFeedActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
         });

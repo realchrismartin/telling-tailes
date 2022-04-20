@@ -118,6 +118,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
                         //If all is well, redirect to the feed once logged in
                         Intent intent = new Intent(getApplicationContext(),StoryFeedActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     }
                 });
