@@ -29,6 +29,7 @@
     <string name="user_exists_error_notification">A user with this name exists already, try something else</string>
     <string name="invalid_password_error_notification">Password is invalid vs. Firebase</string>
     <string name="create_user_error_notification">Creating a user account in Firebase failed</string>
+    <string name="no_microphone_error_notification">This device doesn\'t appear to have a microphone, or something went wrong trying to record.</string>
     <string name="author_profile_follow_option">Follow</string>
     <string name="author_profile_unfollow_option">Unfollow</string>
     <string name="author_profile_read_option">PlaceholderUsername\'s T(ai)les</string>

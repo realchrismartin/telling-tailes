@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     private DatabaseReference ref;
     private TextView storyTextView;
     private TextView titleView;
+    private Button recycleButton;
     private Toast toast;
 
     private String promptText;
@@ -52,6 +54,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         genericErrorNotification = getString(R.string.generic_error_notification);
 
         titleView = findViewById(R.id.titleTextView);
+        recycleButton = findViewById(R.id.storyRecycleButton);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
@@ -66,9 +69,15 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
+        recycleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickRecycle();
+            }
+        });
+
         //Load data from device rotation
-        //TODO: This doesn't do anything due to lifecycle method override - turning the display saves as draft instead.
-        //We may wish to address this.
+        //TODO: This doesn't do anything due to lifecycle method override - turning the display saves as draft instead. We may wish to address this.
         loadInstanceState(savedInstanceState);
 
         //Load data from intent passed here by CreateStoryActivity
@@ -87,7 +96,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                     return;
                 }
 
-                handlePublishStory(false);
+                handleClickPublish(false);
             }
         });
     }
@@ -104,6 +113,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     //Handle loading data on activity creation, if any is saved
     protected void loadInstanceState(@NonNull Bundle state) {
 
+        //Note: this is intentional, sometimes "nonnull" state is null for some reason
         if(state == null) {
             return;
         }
@@ -135,7 +145,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         if(!published && storyTextView.getText().length() > 0)
         {
-            handlePublishStory(true);
+            handleClickPublish(true);
             toast.setText(draftSaveNotification);
             toast.show();
         }
@@ -183,10 +193,19 @@ public class PublishStoryActivity extends AppCompatActivity {
         return valid;
     }
 
+    //Handle user clicking recycle
+    private void handleClickRecycle() {
+        //Navigate to the Create Story activity with a recycled prompt
+        Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
+        intent.putExtra("prompt",promptText);
+        startActivity(intent);
+    }
+
     /*
+        Handle user clicking publish
         Publish a story to the feed, or save a draft, then redirect to the feed if successful (if not drafting)
      */
-    private void handlePublishStory(boolean asDraft)
+    private void handleClickPublish(boolean asDraft)
     {
 
         if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
