@@ -1,13 +1,25 @@
 package com.telling.tailes.activity;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -17,6 +29,9 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.util.GPTUtils;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -26,6 +41,9 @@ public class CreateStoryActivity extends AppCompatActivity {
     private static final int promptMinCharacters = 30;
     private static final int lengthMin = 40;
     private static final int lengthMax = 2048;
+
+    //Request IDs
+    private static final int REQUEST_AUDIO = 0;
 
     //Bundle data keys
     private static final String resultKey = "Result";
@@ -109,10 +127,52 @@ public class CreateStoryActivity extends AppCompatActivity {
             }
         });
 
+        ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if(result.getResultCode() == Activity.RESULT_OK){
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                            return;
+                        }
+
+                        //ArrayList<String> res = result.getData().getExtras().getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                        int i = 0; //This won't work, right now this one launcher handles both different onClick results below. TODO
+                    }});
+
+        //Define click handler for recording prompt from voice
+        findViewById(R.id.recordButton).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                handleClickRecordPrompt(launcher);
+            }});
+
         //Finish loading
         hideLoadingWheel();
     }
 
+    //Handle user clicking record prompt
+    private void handleClickRecordPrompt(ActivityResultLauncher<Intent> launcher) {
+
+        if(!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+            toast.setText(R.string.no_microphone_error_notification);
+            toast.show();
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            launcher.launch(i);
+        } else {
+            ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO);
+        }
+    }
     /*
          Handle saving data on device rotation
      */
