@@ -138,7 +138,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                     public void onActivityResult(ActivityResult result) {
 
                         if(result.getResultCode() != Activity.RESULT_OK){
-                            toast.setText(R.string.no_microphone_error_notification); //TODO: this might not be why this fails
+                            toast.setText(R.string.no_microphone_error_notification);
                             toast.show();
                             return;
                         }
