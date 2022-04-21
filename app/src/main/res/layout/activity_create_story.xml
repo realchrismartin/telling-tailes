@@ -16,6 +16,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#00FFFFFF"
+        app:layout_anchor="@+id/fragment_container_view"
+        app:layout_anchorGravity="center"
         tools:context=".activity.CreateStoryActivity">
 
         <TextView
@@ -99,7 +102,7 @@
             app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
             app:layout_constraintEnd_toStartOf="@+id/promptView"
             app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
-            app:srcCompat="@drawable/ic_baseline_bookmark_border_24" />
+            app:srcCompat="@drawable/ic_baseline_mic_border_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
