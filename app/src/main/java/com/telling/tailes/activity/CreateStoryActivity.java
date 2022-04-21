@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -57,6 +58,7 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
+    private ActivityResultLauncher<Intent> launcher;
 
     private SeekBar lengthSeekBar;
     private TextView promptView;
@@ -127,19 +129,23 @@ public class CreateStoryActivity extends AppCompatActivity {
             }
         });
 
-        ActivityResultLauncher<Intent> launcher = registerForActivityResult(
+        //Set up launcher for activity result handling (mic recordings)
+        launcher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        if(result.getResultCode() == Activity.RESULT_OK){
-                            toast.setText(R.string.generic_error_notification);
+
+                        if(result.getResultCode() != Activity.RESULT_OK){
+                            toast.setText(R.string.no_microphone_error_notification); //TODO: this might not be why this fails
                             toast.show();
                             return;
                         }
 
-                        //ArrayList<String> res = result.getData().getExtras().getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                        int i = 0; //This won't work, right now this one launcher handles both different onClick results below. TODO
+                        //TODO: this gets called in multiple circumstances, permissions or record complete
+                        //Handle both outcomes here, not just the record complete one
+                        ArrayList<String> res = result.getData().getExtras().getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                        int i = 0; //TODO
                     }});
 
         //Define click handler for recording prompt from voice
@@ -147,7 +153,7 @@ public class CreateStoryActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                handleClickRecordPrompt(launcher);
+                handleClickRecordPrompt();
             }});
 
         //Finish loading
@@ -155,7 +161,7 @@ public class CreateStoryActivity extends AppCompatActivity {
     }
 
     //Handle user clicking record prompt
-    private void handleClickRecordPrompt(ActivityResultLauncher<Intent> launcher) {
+    private void handleClickRecordPrompt() {
 
         if(!getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
             toast.setText(R.string.no_microphone_error_notification);
@@ -163,14 +169,20 @@ public class CreateStoryActivity extends AppCompatActivity {
             return;
         }
 
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                     RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-            launcher.launch(i);
+
+            try {
+                launcher.launch(i);
+            } catch(ActivityNotFoundException ex) {
+                toast.setText(R.string.no_microphone_error_notification);
+                toast.show();
+            }
         } else {
-            ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO);
+            ActivityCompat.requestPermissions(CreateStoryActivity.this, new String[]{android.Manifest.permission.RECORD_AUDIO}, REQUEST_AUDIO);
         }
     }
     /*
