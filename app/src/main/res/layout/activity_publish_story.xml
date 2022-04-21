@@ -13,12 +13,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_anchor="@+id/fragment_container_view"
+        app:layout_anchorGravity="center"
         tools:context=".model.PublishStoryActivity">
+
+        <Button
+            android:id="@+id/storyRecycleButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="44dp"
+            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintBottom_toTopOf="@+id/publishButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/publishStoryTextView"
