@@ -143,13 +143,12 @@ public class CreateStoryActivity extends AppCompatActivity {
                             return;
                         }
 
-                        //TODO: this gets called in multiple circumstances, permissions or record complete
-                        //Handle both outcomes here, not just the record complete one
                         if (result.getData() != null && result.getData().getExtras() != null) {
                             promptView.setText(String.join("," , result.getData().getExtras().getStringArrayList(RecognizerIntent.EXTRA_RESULTS)));
                             return;
                         }
-                        Log.e("Listening for voice input", "Voice input has result but no data.");
+
+                        Log.e("Listening for voice input", "Voice input has result but no data - this is an anomalous result");
                     }});
 
         //Define click handler for recording prompt from voice
