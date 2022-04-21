@@ -23,7 +23,6 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
     public StoryRviewHolder(@NonNull View itemView, final StoryRviewCardClickListener listener) {
         super(itemView);
         titleText = itemView.findViewById(R.id.storyCardTitle);
-        authorText = itemView.findViewById(R.id.storyCardAuthor);
         loveButton = itemView.findViewById(R.id.storyCardLoveButton);
         recycleButton = itemView.findViewById(R.id.storyCardRecycleButton);
 
@@ -32,7 +31,7 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
         profileButton = itemView.findViewById(R.id.storyCardAuthorProfileButton);
 
         //Note: recycle button is hidden on cards by default
-        recycleButton.setVisibility(View.INVISIBLE);
+        recycleButton.setVisibility(View.GONE);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override

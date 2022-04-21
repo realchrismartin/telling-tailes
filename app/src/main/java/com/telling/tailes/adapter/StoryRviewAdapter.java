@@ -53,7 +53,6 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
 
         StoryRviewCard currentItem = storyCardList.get(position);
         holder.titleText.setText(currentItem.getTitle());
-        holder.authorText.setText(currentItem.getAuthorId());
 
         updateLoveIconState(currentItem, currentUser, holder);
         holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
@@ -96,6 +95,7 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         });
 
 
+        holder.profileButton.setText(currentItem.getAuthorId());
         holder.profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,9 +119,9 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     @SuppressLint("SetTextI18n")
     private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewHolder holder) {
         if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_24, 0);
         } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_border_24, 0);
         }
     }
 }
