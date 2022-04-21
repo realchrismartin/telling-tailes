@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -144,17 +145,20 @@ public class CreateStoryActivity extends AppCompatActivity {
 
                         //TODO: this gets called in multiple circumstances, permissions or record complete
                         //Handle both outcomes here, not just the record complete one
-                        ArrayList<String> res = result.getData().getExtras().getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                        int i = 0; //TODO
+                        if (result.getData() != null && result.getData().getExtras() != null) {
+                            promptView.setText(String.join("," , result.getData().getExtras().getStringArrayList(RecognizerIntent.EXTRA_RESULTS)));
+                            return;
+                        }
+                        Log.e("Listening for voice input", "Voice input has result but no data.");
                     }});
 
         //Define click handler for recording prompt from voice
         findViewById(R.id.recordButton).setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 handleClickRecordPrompt();
-            }});
+            }
+        });
 
         //Finish loading
         hideLoadingWheel();
