@@ -137,6 +137,10 @@ public class PublishStoryActivity extends AppCompatActivity {
     protected void loadIntentData(Intent intent) {
 
         //Only load data if extras are present
+        if(intent.hasExtra("storyId")) {
+            storyId = intent.getStringExtra("storyId");
+        }
+
         if(intent.hasExtra("story")) {
             storyText = intent.getStringExtra("story");
         }
