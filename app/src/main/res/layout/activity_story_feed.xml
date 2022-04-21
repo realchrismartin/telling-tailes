@@ -24,7 +24,8 @@
             android:id="@+id/filterSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="10dp"
+            android:dropDownWidth="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +34,7 @@
             android:id="@+id/feedSwipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="#6A1B9A"
+            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -51,9 +52,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
+            android:elevation="0dp"
+            app:backgroundTint="#616161"
+            app:borderWidth="0.5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:layout_constraintHorizontal_bias="0.87"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
+            app:layout_constraintVertical_bias="0.93"
+            app:srcCompat="@drawable/ic_baseline_post_add_24" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
