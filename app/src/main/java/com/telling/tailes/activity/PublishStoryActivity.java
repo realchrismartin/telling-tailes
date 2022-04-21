@@ -38,6 +38,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     private TextView titleView;
     private Button recycleButton;
     private Toast toast;
+    private String storyId;
 
     private String promptText;
     private String storyText;
@@ -49,6 +50,8 @@ public class PublishStoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_story);
+
+        storyId = ""; //Set once a draft is saved
 
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
@@ -77,7 +80,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         });
 
         //Load data from device rotation
-        //TODO: This doesn't do anything due to lifecycle method override - turning the display saves as draft instead. We may wish to address this.
         loadInstanceState(savedInstanceState);
 
         //Load data from intent passed here by CreateStoryActivity
@@ -99,6 +101,11 @@ public class PublishStoryActivity extends AppCompatActivity {
                 handleClickPublish(false);
             }
         });
+
+        //If hasn't been saved as a draft, publish draft of this
+        if(storyId.equals("") && storyText.length() > 0) {
+           handleClickPublish(true);
+        }
     }
 
     //Handle saving data on device rotation
@@ -107,6 +114,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         state.putString("story",storyText);
         state.putString("prompt",promptText);
         state.putString("title",titleView.getText().toString());
+        state.putString("storyId",storyId);
         super.onSaveInstanceState(state);
     }
 
@@ -121,6 +129,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyText = state.getString("story");
         promptText = state.getString("prompt");
         titleView.setText(state.getString("title"));
+        storyId = state.getString("storyId");
 
     }
 
@@ -136,6 +145,8 @@ public class PublishStoryActivity extends AppCompatActivity {
             promptText = intent.getStringExtra("prompt");
         }
     }
+
+    /*
 
     //Handle saving drafts on stop
     //TODO: may need to override other lifecycle methods in order to save drafts in all cases
@@ -166,6 +177,8 @@ public class PublishStoryActivity extends AppCompatActivity {
            goToFeed();
        }
     }
+
+     */
 
     /*
         Validate that story can be published
@@ -219,13 +232,14 @@ public class PublishStoryActivity extends AppCompatActivity {
         ArrayList<String> lovers = new ArrayList<String>();
         ArrayList<String> bookmarkers = new ArrayList<String>();
 
-        String storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+        if(storyId.equals("")) {
+            storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+        }
 
         //Ensure that title is always entered, even if it's a draft
         if(title.length() <= 0) {
             title = storyId; //TODO: make this nicer?
         }
-
 
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
 
