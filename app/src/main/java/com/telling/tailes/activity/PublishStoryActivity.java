@@ -208,6 +208,9 @@ public class PublishStoryActivity extends AppCompatActivity {
 
     //Handle user clicking recycle
     private void handleClickRecycle() {
+        //Delete draft that we're working on
+        //TODO: do this?
+
         //Navigate to the Create Story activity with a recycled prompt
         Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
         intent.putExtra("prompt",promptText);
@@ -250,13 +253,12 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         storyPublishTask.addOnCompleteListener(task -> {
 
-            published = true;
-
             //Only increment story count if this isn't a draft
             if(asDraft) {
-                goToFeed();
                return;
             }
+
+            published = true;
 
             FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
                         @Override
@@ -270,11 +272,11 @@ public class PublishStoryActivity extends AppCompatActivity {
                                            toast.setText(genericErrorNotification);
                                            toast.show();
                                        }
-
-                                       goToFeed();
                                    }
                                });
                             }
+
+                            goToFeed();
                         }
                     });
         });
