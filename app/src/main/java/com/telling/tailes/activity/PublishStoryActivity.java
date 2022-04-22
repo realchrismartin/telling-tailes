@@ -286,12 +286,12 @@ public class PublishStoryActivity extends AppCompatActivity {
         ArrayList<String> bookmarkers = new ArrayList<String>();
 
         if(storyId.equals("")) {
-            storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+            storyId = new Date().toString().replace(" ","") + "-" + userId;
         }
 
         //Ensure that title is always entered, even if it's a draft
         if(title.length() <= 0) {
-            title = storyId; //TODO: make this nicer?
+            title = storyId;
         }
 
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
