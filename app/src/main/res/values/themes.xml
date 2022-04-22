@@ -5,7 +5,7 @@
         <item name="colorPrimary">#fafafa</item>
         <item name="colorPrimaryDark">#c7c7c7</item>
         <item name="colorAccent">@color/white</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/purple_200</item>
         <item name="colorOnPrimary">#616161</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">#616161</item>
@@ -17,7 +17,16 @@
         <item name="colorSurface">#fafafa</item>
         <item name="android:textColorPrimary">#616161</item>
         <item name="android:textColorSecondary">#ffffff</item>
+
+
     </style>
+
+    <!--<style name="loginEditText" parent="@android:style/Widget.EditText">
+        <item name="backgroundTint">@color/test</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/purple_700</item>
+        <item name="colorControlHighlight">@color/purple_700</item>
+    </style>-->
 
 
 
