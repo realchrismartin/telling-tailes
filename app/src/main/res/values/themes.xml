@@ -4,7 +4,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/off_white</item>
         <item name="colorPrimaryDark">@color/medium_grey</item>
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/slate</item>
         <item name="colorPrimaryVariant">@color/medium_grey</item>
         <item name="colorOnPrimary">@color/pitch</item>
 

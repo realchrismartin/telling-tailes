@@ -9,20 +9,20 @@
 
     <TextView
         android:id="@+id/appTitleView"
+        style="@style/MainTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login_app_title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.40" />
 
     <EditText
-        style="@style/loginEditText"
         android:id="@+id/enterUsernameView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        style="@style/SmallTextInput"
+        android:layout_marginTop="10dp"
         android:hint="@string/username_hint"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,11 +30,9 @@
         app:layout_constraintTop_toBottomOf="@+id/appTitleView" />
 
     <EditText
-        style="@style/loginEditText"
+        style="@style/SmallTextInput"
         android:id="@+id/enterPasswordView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_marginTop="10dp"
         android:hint="@string/password_hint"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,8 +41,8 @@
 
     <Button
         android:id="@+id/loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/PrimaryButton"
+        android:layout_marginTop="10dp"
         android:text="@string/login_button_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,9 +50,14 @@
 
     <Button
         android:id="@+id/createAccountNavButton"
-        android:layout_width="wrap_content"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="monospace"
         android:text="@string/create_account_button_text"
+        android:textAllCaps="true"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"

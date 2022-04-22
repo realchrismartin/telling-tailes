@@ -1,10 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <style name="loginEditText" parent="@android:style/Widget.EditText">
-<!--        <item name="backgroundTint">?attr/colorPrimaryVariant</item>
-        <item name="colorControlNormal">#c5c5c5</item>
-        <item name="colorControlActivated">@color/purple_700</item>
-        <item name="colorControlHighlight">@color/purple_700</item>-->
+
+    <style name="MainTitle" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">34sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:typeface">sans</item>
+
+<!--        android:fontFamily="sans-serif-light"
+        android:text="@string/login_app_title"
+        android:textSize="34sp"
+        android:textStyle="italic"
+        android:typeface="sans"-->
     </style>
+
+    <style name="SmallTextInput" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">serif-monospace</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PrimaryButton" parent="@android:style/Widget.Button">
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
+
+    <style name="SecondaryButton" parent="@android:style/Widget.Button">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+
 </resources>
