@@ -81,10 +81,11 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
-        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
+        backgroundTaskExecutor = Executors.newFixedThreadPool(10);
 
         //Define handling for data results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            int i = 0;
             @Override
             public void handleMessage(Message msg) {
                 if (msg.getData() == null) {
@@ -99,6 +100,12 @@ public class PublishStoryActivity extends AppCompatActivity {
                 }
 
                 hideLoadingWheel();
+
+                String publishMsg = msg.getData().getString("published");
+
+                if (publishMsg != null && publishMsg.equals("true")) {
+                    goToFeed();
+                }
             }
         };
 
@@ -200,21 +207,18 @@ public class PublishStoryActivity extends AppCompatActivity {
     /*
         Validate that story can be published
      */
-    private boolean validatePublishStory()
-    {
+    private boolean validatePublishStory() {
         boolean valid = true;
 
         String error = "";
 
         String title = titleView.getText().toString();
 
-        if(title.length() < titleCharacterLength)
-        {
+        if(title.length() < titleCharacterLength) {
             error = "Enter a title that is at least " + titleCharacterLength + " characters (currently using " + title.length() + " character(s))";
         }
 
-        if(error.length() > 0 )
-        {
+        if(error.length() > 0 ) {
             valid = false;
             toast.setText(error);
             toast.show();
@@ -268,8 +272,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         Handle user clicking publish
         Publish a story to the feed, or save a draft, then redirect to the feed if successful (if not drafting)
      */
-    private void handleClickPublish(boolean asDraft)
-    {
+    private void handleClickPublish(boolean asDraft) {
 
         if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
         {
@@ -292,8 +295,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         }
 
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
-
-        //TODO: loading wheel
 
         backgroundTaskExecutor.execute(
             new Runnable() {
@@ -339,6 +340,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                                public void accept(Boolean result) {
                                    Bundle resultData = new Bundle();
                                    resultData.putString("error", result ? "" : getString(R.string.generic_error_notification));
+                                   resultData.putString("published", "true");
 
                                    //Send meesage rom thresd
                                    Message resultMessage = new Message();
