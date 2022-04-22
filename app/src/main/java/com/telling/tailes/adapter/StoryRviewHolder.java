@@ -15,7 +15,7 @@ public class StoryRviewHolder extends RecyclerView.ViewHolder {
     public TextView titleText;
     public TextView authorText;
     public Button loveButton;
-    public Button recycleButton;
+    public ImageButton recycleButton;
     public ImageButton bookmarkButton;
     public Button profileButton;
 

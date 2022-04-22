@@ -55,7 +55,12 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.titleText.setText(currentItem.getTitle());
 
         updateLoveIconState(currentItem, currentUser, holder);
-        holder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
+        holder.loveButton.setText(
+                currentItem.getStory().getLovers().size() > 0 ?
+                    Integer.toString(currentItem.getStory().getLovers().size())
+                    :
+                    ""
+                );
 
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +75,12 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
 
                         currentItem.setStory(result);
 
-                        holder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
+                        holder.loveButton.setText(
+                                result.getLovers().size() > 0 ?
+                                        Integer.toString(result.getLovers().size())
+                                        :
+                                        ""
+                        );
                         updateLoveIconState(currentItem, currentUser, holder);
                     }
                 });
@@ -119,9 +129,9 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     @SuppressLint("SetTextI18n")
     private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewHolder holder) {
         if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_24, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
         } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_favorite_border_24, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
         }
     }
 }
