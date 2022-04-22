@@ -34,7 +34,8 @@
         <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
 
-    <style name="SecondaryButton" parent="@android:style/Widget.Button">
+<!--https://www.geeksforgeeks.org/theming-material-design-buttons-in-android-with-examples/-->
+    <style name="SecondaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_width">250dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -43,6 +44,28 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="FloatingAction" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+    </style>
+
+    <style name="Spinner" parent="@style/Widget.AppCompat.Spinner">
+<!--        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:typeface">sans</item>-->
+    </style>
+
+    <style name="SpinnerDropdown" parent="@android:style/ThemeOverlay.Material.Light">
+            <item name="android:textSize">24sp</item>
+            <item name="android:fontFamily">sans-serif-light</item>
+            <item name="android:textStyle">italic</item>
+            <item name="android:typeface">sans</item>
     </style>
 
 

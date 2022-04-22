@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import com.telling.tailes.adapter.FilterSpinnerAdapter;
 import com.telling.tailes.adapter.StoryRviewAdapter;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
@@ -57,6 +58,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private StoryRviewAdapter storyRviewAdapter;
 
     private ArrayAdapter<CharSequence> spinnerAdapter;
+    private FilterSpinnerAdapter filterSpinnerAdapter;
     private Spinner filterSpinner;
     private LinearLayoutManager storyRviewLayoutManager;
 
