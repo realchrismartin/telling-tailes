@@ -6,9 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +27,8 @@ import com.telling.tailes.util.FBUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class PublishStoryActivity extends AppCompatActivity {
@@ -36,12 +42,15 @@ public class PublishStoryActivity extends AppCompatActivity {
     private DatabaseReference ref;
     private TextView storyTextView;
     private TextView titleView;
-    private Button recycleButton;
+    private ProgressBar loadingWheel;
     private Toast toast;
-    private String storyId;
 
+    private String storyId;
     private String promptText;
     private String storyText;
+
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
 
     private boolean published = false;
 
@@ -57,7 +66,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         genericErrorNotification = getString(R.string.generic_error_notification);
 
         titleView = findViewById(R.id.titleTextView);
-        recycleButton = findViewById(R.id.storyRecycleButton);
+        loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
@@ -72,12 +81,26 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
-        recycleButton.setOnClickListener(new View.OnClickListener() {
+        backgroundTaskExecutor = Executors.newFixedThreadPool(2);
+
+        //Define handling for data results from the background thread
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
-            public void onClick(View view) {
-                handleClickRecycle();
+            public void handleMessage(Message msg) {
+                if (msg.getData() == null) {
+                    return;
+                }
+
+                String errorMsg = msg.getData().getString("error");
+
+                if(errorMsg.length() > 0) {
+                    toast.setText(errorMsg);
+                    toast.show();
+                }
+
+                hideLoadingWheel();
             }
-        });
+        };
 
         //Load data from device rotation
         loadInstanceState(savedInstanceState);
@@ -102,10 +125,34 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.storyDeleteButton).setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view)  {
+               handleClickDeleteDraft();
+               goToFeed();
+           }
+        });
+
+        findViewById(R.id.storyRecycleButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickDeleteDraft();
+                handleClickRecycle();
+            }
+        });
+
         //If hasn't been saved as a draft, publish draft of this
         if(storyId.equals("") && storyText.length() > 0) {
            handleClickPublish(true);
         }
+    }
+
+    private void hideLoadingWheel() {
+        loadingWheel.setVisibility(View.INVISIBLE);
+    }
+
+    private void showLoadingWheel() {
+        loadingWheel.setVisibility(View.VISIBLE);
     }
 
     //Handle saving data on device rotation
@@ -151,40 +198,6 @@ public class PublishStoryActivity extends AppCompatActivity {
     }
 
     /*
-
-    //Handle saving drafts on stop
-    //TODO: may need to override other lifecycle methods in order to save drafts in all cases
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if(!published && storyTextView.getText().length() > 0)
-        {
-            handleClickPublish(true);
-            toast.setText(draftSaveNotification);
-            toast.show();
-        }
-
-        storyTextView.setText("");
-        titleView.setText("");
-        published = false;
-    }
-
-    @Override
-    protected void onResume() {
-       super.onResume();
-
-       //Redirect to feed on resume if there's nothing to publish here
-        //TODO: this makes the back button work weirdly. We probably don't want to do this.
-       if(storyTextView.getText().length() <= 0)
-       {
-           goToFeed();
-       }
-    }
-
-     */
-
-    /*
         Validate that story can be published
      */
     private boolean validatePublishStory()
@@ -212,13 +225,43 @@ public class PublishStoryActivity extends AppCompatActivity {
 
     //Handle user clicking recycle
     private void handleClickRecycle() {
-        //Delete draft that we're working on
-        //TODO: do this?
-
         //Navigate to the Create Story activity with a recycled prompt
         Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
         intent.putExtra("prompt",promptText);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    //Handle user clicking delete draft
+    private void handleClickDeleteDraft() {
+
+        if(storyId.equals("")) {
+            return;
+        }
+
+        showLoadingWheel();
+
+        backgroundTaskExecutor.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
+
+                        storyDeleteTask.addOnFailureListener(task -> {
+                            Bundle resultData = new Bundle();
+                            resultData.putString("error", "");
+
+                            Message resultMessage = new Message();
+                            resultMessage.setData(resultData);
+
+                            backgroundTaskResultHandler.sendMessage(resultMessage);
+                        });
+                    }
+                }
+        );
+
+
     }
 
     /*
@@ -250,55 +293,79 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
 
-        //TODO: do this all in a background thread
         //TODO: loading wheel
 
-        Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
+        backgroundTaskExecutor.execute(
+            new Runnable() {
+               @Override
+           public void run() {
 
-        storyPublishTask.addOnCompleteListener(task -> {
+               Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
-            //Only increment story count if this isn't a draft
-            if(asDraft) {
-               return;
-            }
+               storyPublishTask.addOnCompleteListener(task -> {
 
-            published = true;
+                   //Only increment story count if this isn't a draft
+                   if(asDraft) {
+                       Bundle resultData = new Bundle();
+                       resultData.putString("error", "");
 
-            FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
-                        @Override
-                        public void accept(User user) {
-                            if(user != null) {
-                               user.incrementStoryCount();
-                               FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
-                                   @Override
-                                   public void accept(Boolean result) {
-                                       if(!result) {
-                                           toast.setText(genericErrorNotification);
-                                           toast.show();
-                                       }
-                                   }
-                               });
-                            }
+                       Message resultMessage = new Message();
+                       resultMessage.setData(resultData);
 
-                            goToFeed();
-                        }
-                    });
-        });
+                       backgroundTaskResultHandler.sendMessage(resultMessage);
+                       return;
+                   }
 
-        storyPublishTask.addOnFailureListener(task -> {
-            toast.setText(genericErrorNotification);
-            toast.show();
-            published = false;
-        });
+                   published = true;
+
+                   FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
+                       @Override
+                       public void accept(User user) {
+
+                           if(user == null) {
+                               Bundle resultData = new Bundle();
+                               resultData.putString("error", "Failed to get user"); //TODO
+
+                               Message resultMessage = new Message();
+                               resultMessage.setData(resultData);
+
+                               backgroundTaskResultHandler.sendMessage(resultMessage);
+                              return;
+                           }
+
+                           user.incrementStoryCount();
+                           FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
+                               @Override
+                               public void accept(Boolean result) {
+                                   Bundle resultData = new Bundle();
+                                   resultData.putString("error", result ? "" : getString(R.string.generic_error_notification));
+
+                                   //Send meesage rom thresd
+                                   Message resultMessage = new Message();
+                                   resultMessage.setData(resultData);
+
+                                   backgroundTaskResultHandler.sendMessage(resultMessage);
+                               }
+                           });
+                       }
+                   });
+               });
+
+               storyPublishTask.addOnFailureListener(task -> {
+                   toast.setText(genericErrorNotification);
+                   toast.show();
+                   published = false;
+               });
+           }
+       });
     }
-
 
     /*
         Go back to the feed after having published a story
      */
-    private void goToFeed()
-    {
+    private void goToFeed() {
         Intent intent = new Intent(this,StoryFeedActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }
