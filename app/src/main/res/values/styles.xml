@@ -4,7 +4,7 @@
 
     <style name="MainTitle" parent="@android:style/Widget.TextView">
         <item name="android:textSize">34sp</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
         <item name="android:textStyle">italic</item>
         <item name="android:typeface">sans</item>
 
@@ -55,22 +55,35 @@
     </style>
 
     <style name="Spinner" parent="@style/Widget.AppCompat.Spinner">
-<!--        <item name="android:textSize">24sp</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textStyle">italic</item>
-        <item name="android:typeface">sans</item>-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:dropDownWidth">match_parent</item>
     </style>
 
     <style name="FilterSpinnerItem" parent="@android:style/ThemeOverlay.Material.Light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">24sp</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
         <item name="android:textStyle">italic</item>
         <item name="android:singleLine">true</item>
         <item name="android:typeface">sans</item>
         <item name="android:padding">5dp</item>
         <item name="android:backgroundTint">@color/off_white</item>
+    </style>
+
+    <style name="StoryTitle" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/pitch</item>
+        <item name="android:textAlignment">textStart</item>
     </style>
 
 
