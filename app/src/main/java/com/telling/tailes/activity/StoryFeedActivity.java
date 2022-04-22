@@ -215,6 +215,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
             public void onStoryClick(int position) {
+                if(storyCardList.get(position).getStory().getIsDraft()) {
+                    goToPublishStory(storyCardList.get(position).getStory());
+                    return;
+                }
+
                 goToReadStory(storyCardList.get(position).getStory());
             }
         };
@@ -323,6 +328,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private void goToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    //Publish a (draft) story, if applicable - called by the holder on the recycler view
+    private void goToPublishStory(Story story) {
+        Intent intent = new Intent(this,PublishStoryActivity.class);
+        intent.putExtra("prompt",story.getPromptText());
+        intent.putExtra("story",story.getStoryText());
+        intent.putExtra("storyId",story.getId());
         startActivity(intent);
     }
 

@@ -33,6 +33,20 @@
             app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <Button
+            android:id="@+id/storyDeleteButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="50dp"
+            android:layout_height="44dp"
+            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.572" />
+
         <TextView
             android:id="@+id/publishStoryTextView"
             android:layout_width="331dp"
@@ -62,5 +76,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/publishStoryTextView"
             tools:layout_editor_absoluteX="155dp" />
+
+        <ProgressBar
+            android:id="@+id/storyPublishLoadingWheel"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toStartOf="@+id/titleTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
