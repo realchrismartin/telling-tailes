@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.card.StoryRviewCardClickListener;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
+import com.telling.tailes.model.FilterSpinnerItem;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
@@ -57,8 +59,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
 
-    private ArrayAdapter<CharSequence> spinnerAdapter;
-    private FilterSpinnerAdapter filterSpinnerAdapter;
+    private ArrayAdapter<FilterSpinnerItem> spinnerAdapter;
+    private ArrayList<FilterSpinnerItem> filterSpinnerItems;
     private Spinner filterSpinner;
     private LinearLayoutManager storyRviewLayoutManager;
 
@@ -176,8 +178,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void createFilterSpinner() {
+        filterSpinnerItems = new ArrayList<>();
+        String[] resourceArray = getResources().getStringArray(R.array.filter_spinner_options);
+        for (String option : resourceArray) {
+            filterSpinnerItems.add(new FilterSpinnerItem(option));
+        }
         filterSpinner = findViewById(R.id.filterSpinner);
-        spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.filter_spinner_options, android.R.layout.simple_spinner_item);
+        spinnerAdapter = new FilterSpinnerAdapter(this, filterSpinnerItems);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filterSpinner.setAdapter(spinnerAdapter);
         filterSpinner.setOnItemSelectedListener(this);
@@ -238,7 +245,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         if (extras != null) {
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
-                filterSpinner.setSelection(spinnerAdapter.getPosition(intentFilter));
+                int pos = 0;
+                for (FilterSpinnerItem item : filterSpinnerItems) {
+                    if (item.getFilterTitle().equals(intentFilter)) {
+                        pos = filterSpinnerItems.indexOf(item);
+                        break;
+                    }
+                }
+                filterSpinner.setSelection(pos);
             }
         }
         loadStoryData(initialQuery);
