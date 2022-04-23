@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style name="MainTitle" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">34sp</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:typeface">sans</item>
+
+<!--        android:fontFamily="sans-serif-light"
+        android:text="@string/login_app_title"
+        android:textSize="34sp"
+        android:textStyle="italic"
+        android:typeface="sans"-->
+    </style>
+
+    <style name="SmallTextInput" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">serif-monospace</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+    </style>
+
+    <style name="PrimaryButton" parent="@android:style/Widget.Button">
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
+
+<!--https://www.geeksforgeeks.org/theming-material-design-buttons-in-android-with-examples/-->
+    <style name="SecondaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:backgroundTint">?attr/colorPrimary</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="FloatingAction" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+    </style>
+
+    <style name="Spinner" parent="@style/Widget.AppCompat.Spinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:dropDownWidth">match_parent</item>
+    </style>
+
+    <style name="FilterSpinnerItem" parent="@android:style/ThemeOverlay.Material.Light">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:typeface">sans</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:backgroundTint">@color/off_white</item>
+    </style>
+
+    <style name="StoryTitle" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/pitch</item>
+        <item name="android:textAlignment">textStart</item>
+    </style>
+
+
+</resources>

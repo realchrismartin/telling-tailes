@@ -108,6 +108,14 @@ public class CreateAccountActivity extends AppCompatActivity {
                createAccount();
             }
         });
+
+        findViewById(R.id.loginNavButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /*

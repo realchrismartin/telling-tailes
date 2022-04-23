@@ -38,7 +38,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     private TextView storyTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
-    private Button recycleButton;
+    private ImageButton recycleButton;
     private Button authorProfileButton;
 
     private Executor backgroundTaskExecutor;

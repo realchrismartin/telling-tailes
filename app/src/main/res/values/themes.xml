@@ -2,24 +2,25 @@
     <!-- Base application theme. -->
     <style name="Theme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">#fafafa</item>
-        <item name="colorPrimaryDark">#c7c7c7</item>
-        <item name="colorAccent">@color/white</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">#616161</item>
+        <item name="colorPrimary">@color/off_white</item>
+        <item name="colorPrimaryDark">@color/medium_grey</item>
+        <item name="colorAccent">@color/slate</item>
+        <item name="colorPrimaryVariant">@color/medium_grey</item>
+        <item name="colorOnPrimary">@color/pitch</item>
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">#616161</item>
-        <item name="colorSecondaryVariant">#616161</item>
-        <item name="colorOnSecondary">#ffffff</item>
+        <item name="colorSecondary">@color/slate</item>
+        <item name="colorSecondaryVariant">@color/light_slate</item>
+        <item name="colorOnSecondary">@color/off_white</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
-        <item name="colorSurface">#fafafa</item>
-        <item name="android:textColorPrimary">#616161</item>
-        <item name="android:textColorSecondary">#ffffff</item>
+        <item name="colorSurface">@color/off_white</item>
+        <item name="android:textColorPrimary">@color/slate</item>
+        <item name="android:textColorSecondary">@color/light_slate</item>
     </style>
-
-
 
     <style name="Theme.NoActionBar">
         <item name="windowActionBar">false</item>
