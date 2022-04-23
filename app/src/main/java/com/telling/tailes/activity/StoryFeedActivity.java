@@ -5,6 +5,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +25,7 @@ import android.widget.Filter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,7 +55,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private DatabaseReference storyRef;
 
     private EndlessScrollListener scrollListener;
-    private Query initialQuery;
+    private Query query;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
     private SwipeRefreshLayout feedSwipeRefresh;
@@ -69,7 +72,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
-    private String lastLoadedStoryId;
+    private String lastLoadedStoryProperty;
     private Toast toast;
 
     private FilterType currentFilter;
@@ -84,7 +87,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
         loadedFirstStories = false;
-        lastLoadedStoryId = "";
+        lastLoadedStoryProperty = "";
+        refreshIterations = 0;
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
@@ -240,7 +244,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadFirstStories() {
-        initialQuery = storyRef.orderByChild("id").limitToFirst(10);
+
+        query = FilterType.NONE.getQuery(storyRef);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey("feedFilter")) {
@@ -255,7 +261,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 filterSpinner.setSelection(pos);
             }
         }
-        loadStoryData(initialQuery);
+        loadStoryData(query);
         loadedFirstStories = true;
     }
 
@@ -266,33 +272,28 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if (!lastLoadedStoryId.equals("")) {
-            Query newQuery = initialQuery.startAfter(lastLoadedStoryId);
-            loadStoryData(newQuery);
-            return;
+        if (!lastLoadedStoryProperty.equals("")) {
+            query = currentFilter.getQuery(storyRef).startAfter(FilterType.getSortProperty(currentFilter),lastLoadedStoryProperty);
         }
 
-        loadStoryData(initialQuery);
+        loadStoryData(query);
     }
 
     private void loadStoryData(Query query) {
-        query.addValueEventListener(new ValueEventListener() {
+        query.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Story story = snapshot.getValue(Story.class);
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {
 
-                    if (story == null) {
-                        continue;
-                    }
+                Story story = dataSnapshot.getValue(Story.class);
 
-                    //Track the last seen id, even if excluded by filter
-                    lastLoadedStoryId = story.getId();
+                if (story == null) {
+                    return;
+                }
 
-                    if (!currentFilter.includes(getApplicationContext(), story)) {
-                        continue;
-                    }
+                //Track the last seen id, even if excluded by filter
+                lastLoadedStoryProperty = currentFilter.getSortPropertyValue(story);
 
+                if (currentFilter.includes(getApplicationContext(), story)) {
                     //TODO: this could be more efficient the way it was originally
                     int pos;
                     boolean replaced = false;
@@ -304,20 +305,38 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         }
                     }
 
-                    if (replaced) {
-                        continue;
+                    if (!replaced) {
+                        storyCardList.add(pos, new StoryRviewCard(story));
+                        storyRviewAdapter.notifyItemInserted(pos);
                     }
-
-                    storyCardList.add(pos, new StoryRviewCard(story));
-                    storyRviewAdapter.notifyItemInserted(pos);
                 }
 
                 feedSwipeRefresh.setRefreshing(false);
 
-                if (storyCardList.size() <= 0 && refreshIterations < maxRefreshIterations) {
+                /*
+
+                //TODO: magic number
+                if (storyCardList.size() <= 10 && refreshIterations < maxRefreshIterations) {
                     refreshIterations++;
                     loadNextStories();
                 }
+
+                 */
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
             }
 
             @Override
@@ -333,7 +352,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyCardList.clear();
         storyRviewAdapter.notifyDataSetChanged();
         scrollListener.resetState();
-        loadStoryData(initialQuery);
+        refreshIterations = 0;
+        query = currentFilter.getQuery(storyRef);
+        loadStoryData(query);
     }
 
     private void goToCreateStory() {
@@ -402,11 +423,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) { }
 
-    //Apply the requested filter to the initialQuery
+    //Apply the requested filter to the current query
     private void applyFilter(FilterType filter) {
         currentFilter = filter;
         refreshIterations = 0;
-        initialQuery = currentFilter.getQuery(getApplicationContext(),storyRef);
+        query = currentFilter.getQuery(storyRef);
     }
 
     /*

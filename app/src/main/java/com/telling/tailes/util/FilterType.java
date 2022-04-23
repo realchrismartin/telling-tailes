@@ -49,16 +49,36 @@ public enum FilterType {
         }
     }
 
-    //Get a Query for this FilterType from the provided ref that is appropriate for this filter
-    public Query getQuery(Context context, DatabaseReference ref) {
-        switch(this) {
+    //Return the property this filter sorts FB data results by
+    public static String getSortProperty(FilterType type) {
+        switch(type) {
             case POPULAR: {
-                return ref.orderByChild("loveCount").limitToFirst(10);
+                return "lovecount";
             }
             default: {
-                return ref.orderByChild("timestamp").limitToFirst(10);
+                return "timestamp";
             }
         }
+    }
+
+    //Given a Story, return the property this filter would sort that story by
+    public String getSortPropertyValue(Story story) {
+       switch(getSortProperty(this)) {
+           case "lovecount": {
+              return story.getTimestamp() + ""; //TODO
+           }
+           case "timestamp": {
+               return story.getTimestamp() + ""; //TODO
+           }
+           default : {
+               return "";
+           }
+       }
+    }
+
+    //Get a Query for this FilterType from the provided ref that is appropriate for this filter
+    public Query getQuery(DatabaseReference ref) {
+        return ref.orderByChild(getSortProperty(this)).limitToFirst(10);
     }
 
     //Return true if this filter includes the provided story, false otherwise
