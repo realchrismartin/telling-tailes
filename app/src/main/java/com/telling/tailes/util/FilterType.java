@@ -50,15 +50,13 @@ public enum FilterType {
     }
 
     //Return the property this filter sorts FB data results by
-    public static String getSortProperty(FilterType type) {
+    private static String getSortProperty(FilterType type) {
         switch(type) {
             case POPULAR: {
                 return "loveCount";
             }
             default: {
                 return "timestamp";
-//                return "id";
-//                return "title";
             }
         }
     }
@@ -85,9 +83,16 @@ public enum FilterType {
     }
 
     //Get a Query for this FilterType from the provided ref that is appropriate for this filter
-    public Query getQuery(DatabaseReference ref) {
-        String prop = getSortProperty(this);
-        return ref.orderByChild(prop).limitToFirst(10);
+    public Query getQuery(DatabaseReference ref, Object lastLoadedStorySortValue) {
+        String key = getSortProperty(this);
+
+        if (lastLoadedStorySortValue == null) {
+            return ref.orderByChild(key).limitToFirst(10);
+        }
+        if (key.equals("timestamp") || key.equals("loveCount")) {
+            return ref.orderByChild(key).limitToFirst(10).startAfter((double) lastLoadedStorySortValue);
+        }
+        return ref.orderByChild(key).limitToFirst(10).startAfter((String)lastLoadedStorySortValue);
     }
 
     //Return true if this filter includes the provided story, false otherwise

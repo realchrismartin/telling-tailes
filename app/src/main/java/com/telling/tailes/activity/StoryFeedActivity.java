@@ -84,7 +84,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
         loadedFirstStories = false;
-        lastLoadedStorySortValue = "";
+        lastLoadedStorySortValue = null;
         refreshIterations = 0;
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
@@ -116,16 +116,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 switch(msg.getData().getString("type")) {
                     case("bookmarks"): {
-                        FilterType filter = FilterType.get("Bookmarks");
-                        filter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
-                        applyFilter(filter);
+                        currentFilter = FilterType.get("Bookmarks");
+                        currentFilter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
                         refreshStories();
                         break;
                     }
                     case("followedAuthors"): {
-                        FilterType filter = FilterType.get("Followed Authors");
-                        filter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
-                        applyFilter(filter);
+                        currentFilter = FilterType.get("Followed Authors");
+                        currentFilter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
                         refreshStories();
                         break;
                     }
@@ -264,9 +262,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-        applyFilter(filter);
-        query = filter.getQuery(storyRef);
 
+        applyFilter(filter);
         loadStoryData(query);
         loadedFirstStories = true;
     }
@@ -278,24 +275,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if (!lastLoadedStorySortValue.equals("")) {
-//            query = currentFilter.getQuery(storyRef);
-            String key = FilterType.getSortProperty(currentFilter);
-//            String value = lastLoadedStorySortValue;
-//            query = query.startAfter(value, key);
-//            query = storyRef.orderByChild(key).limitToFirst(10).startAfter(lastLoadedStorySortValue);
-//            loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(lastLoadedStorySortValue));
-
-            if (key.equals("timestamp") || key.equals("loveCount")) {
-                double foo1 = (double) lastLoadedStorySortValue;
-                loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(foo1));
-            } else {
-                String foo2 = (String) lastLoadedStorySortValue;
-                loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(foo2));
-            }
-            int i = 99;
-            return;
-        }
+        applyFilter(currentFilter);
         loadStoryData(query);
     }
 
@@ -376,7 +356,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRviewAdapter.notifyDataSetChanged();
         scrollListener.resetState();
         refreshIterations = 0;
-        query = currentFilter.getQuery(storyRef);
+        lastLoadedStorySortValue = null;
+
+        applyFilter(currentFilter);
         loadStoryData(query);
     }
 
@@ -450,7 +432,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private void applyFilter(FilterType filter) {
         currentFilter = filter;
         refreshIterations = 0;
-        query = currentFilter.getQuery(storyRef);
+        query = currentFilter.getQuery(storyRef, lastLoadedStorySortValue);
     }
 
     /*
