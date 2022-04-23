@@ -27,6 +27,7 @@ import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
+import java.text.DecimalFormat;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -49,6 +50,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private Toast profileToast;
     private TextView profileUserNameView;
     private Button profileButtonView;
+    private double rating;
 
     private Executor backgroundTaskExecutor;
 
@@ -77,6 +79,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
         TextView followCountView = content.findViewById(R.id.author_profile_follow_count_view);
         followCountView.setText(Integer.toString(followCount));
+
+        TextView ratingView = content.findViewById(R.id.author_profile_rating_view);
+        ratingView.setText(calculateRating());
 
         profileUserNameView = content.findViewById(R.id.author_profile_user_name_view);
         profileUserNameView.setText(authorId);
@@ -244,5 +249,12 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                 FBUtils.updateFollow(getContext(), username, callback);
             }
         });
+    }
+
+    private String calculateRating() {
+        // I HATE JAVA'S INTEGER DIVISION -- wrc
+        double number = (loveCount + followCount)/((double)storyCount);
+        String rtn = "(" + String.format("%.1f", number) + ")";
+        return rtn;
     }
 }
