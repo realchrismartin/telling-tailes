@@ -76,6 +76,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private int refreshIterations;
     private int maxRefreshIterations;
+    private int maxStoryCards;
 
     boolean loadedFirstStories;
 
@@ -85,8 +86,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         setContentView(R.layout.activity_story_feed);
         loadedFirstStories = false;
         lastLoadedStorySortValue = null;
+
         refreshIterations = 0;
+        maxStoryCards = 10;
         maxRefreshIterations = 5; //TODO: adjust this
+
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(5);
@@ -100,10 +104,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         createFilterSpinner();
 
         loadFirstStories();
-
-
-        //Set up background executor for handling author profile data request threads
-        //backgroundTaskExecutorAuthors = Executors.newFixedThreadPool(2);
 
         //Define handling for data results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
@@ -319,9 +319,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     feedSwipeRefresh.setRefreshing(false);
                 }
 
-
-                //TODO: magic number
-                if (storyCardList.size() <= 10 && refreshIterations < maxRefreshIterations) {
+                if (storyCardList.size() <= maxStoryCards && refreshIterations < maxRefreshIterations) {
                     refreshIterations++;
                     loadNextStories();
                 }
