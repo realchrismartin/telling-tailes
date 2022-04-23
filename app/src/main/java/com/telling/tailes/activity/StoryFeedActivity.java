@@ -366,7 +366,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String selection = adapterView.getItemAtPosition(i).toString();
+        FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
+        String selection = item.getFilterTitle();
 
         switch(selection) {
             case("Bookmarks"): {

@@ -81,7 +81,7 @@ public enum FilterType {
             }
             case POPULAR: {}
             default: {
-                return true;
+                return !story.getIsDraft();
             }
         }
     }
