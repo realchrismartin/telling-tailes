@@ -245,7 +245,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     private void loadFirstStories() {
 
-        query = FilterType.NONE.getQuery(storyRef);
+        FilterType filter = FilterType.NONE;
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -259,8 +259,17 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     }
                 }
                 filterSpinner.setSelection(pos);
+                filter = FilterType.get(intentFilter);
+            }
+            if (extras.containsKey("authorId")) {
+                String authorId = extras.getString("authorId");
+                filter.setAuthorFilter(authorId);
             }
         }
+
+        applyFilter(filter);
+        query = filter.getQuery(storyRef);
+
         loadStoryData(query);
         loadedFirstStories = true;
     }

@@ -53,7 +53,7 @@ public enum FilterType {
     public static String getSortProperty(FilterType type) {
         switch(type) {
             case POPULAR: {
-                return "lovecount";
+                return "loveCount";
             }
             default: {
                 return "timestamp";
@@ -64,8 +64,8 @@ public enum FilterType {
     //Given a Story, return the property this filter would sort that story by
     public String getSortPropertyValue(Story story) {
        switch(getSortProperty(this)) {
-           case "lovecount": {
-              return story.getTimestamp() + ""; //TODO
+           case "loveCount": {
+              return story.getLoveCount() + ""; //TODO
            }
            case "timestamp": {
                return story.getTimestamp() + ""; //TODO
@@ -78,7 +78,8 @@ public enum FilterType {
 
     //Get a Query for this FilterType from the provided ref that is appropriate for this filter
     public Query getQuery(DatabaseReference ref) {
-        return ref.orderByChild(getSortProperty(this)).limitToFirst(10);
+        String prop = getSortProperty(this);
+        return ref.orderByChild(prop).limitToFirst(10);
     }
 
     //Return true if this filter includes the provided story, false otherwise
@@ -99,7 +100,9 @@ public enum FilterType {
             case FOLLOWING: {
                 return followsFilter.contains(story.getAuthorID());
             }
-            case POPULAR: {}
+            case POPULAR: {
+                return story.getLovers().size() > 1 && !story.getIsDraft();
+            }
             default: {
                 return !story.getIsDraft();
             }

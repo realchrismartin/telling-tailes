@@ -1,10 +1,12 @@
 package com.telling.tailes.model;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Story implements Serializable {
 
+    private final long constant = 1000000000000000000L; //TODO
     private String id;
     private String authorID;
     private String title;
@@ -13,7 +15,7 @@ public class Story implements Serializable {
     private boolean isDraft;
     private ArrayList<String> lovers;
     private ArrayList<String> bookmarkers;
-    private int loveCount;
+    private long loveCount;
     private long timestamp;
 
     private Story() {};
@@ -60,7 +62,7 @@ public class Story implements Serializable {
         return timestamp; //Timestamp is stored in reverse in order to trick FB database ordering - this will be negative
     }
 
-    public int getLoveCount() {
+    public long getLoveCount() {
         return loveCount; //Love count is stored in reverse in order to trick FB database ordering - this will be negative
     }
 
@@ -78,13 +80,13 @@ public class Story implements Serializable {
     public void addLover(String userId) {
         initLovers();
         lovers.add(userId);
-        loveCount--; //Stored in reverse
+        loveCount = updateLoveCount(); //Stored in reverse
     }
 
     public void removeLover(String userId) {
         initLovers();
         lovers.remove(userId);
-        loveCount++; //Stored in reverse
+        loveCount = updateLoveCount(); //Stored in reverse
     }
 
     public ArrayList<String> getBookmarkers() {
@@ -107,5 +109,9 @@ public class Story implements Serializable {
     public void addBookmark(String userID) {
         initBookmarkers();
         bookmarkers.add(userID);
+    }
+
+    private long updateLoveCount() {
+        return timestamp - (lovers.size() * constant);
     }
 }
