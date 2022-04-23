@@ -263,8 +263,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         }
 
 
-        applyFilter(filter);
-        loadStoryData(query);
+        loadStoryData();
         loadedFirstStories = true;
     }
 
@@ -275,11 +274,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        applyFilter(currentFilter);
-        loadStoryData(query);
+        loadStoryData();
     }
 
-    private void loadStoryData(Query query) {
+    private void loadStoryData() {
+
+        applyFilter(currentFilter);
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -327,21 +328,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
             }
 
-            /*@Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-            */
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
@@ -358,8 +344,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
 
-        applyFilter(currentFilter);
-        loadStoryData(query);
+        loadStoryData();
     }
 
     private void goToCreateStory() {
@@ -414,9 +399,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     }
                 }
 
-                FilterType filter = FilterType.get(selection);
-                filter.setAuthorFilter(authorId);
-                applyFilter(filter);
+                currentFilter = FilterType.get(selection);
+                currentFilter.setAuthorFilter(authorId);
                 refreshStories();
                 break;
             }
