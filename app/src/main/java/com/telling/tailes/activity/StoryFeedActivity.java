@@ -153,10 +153,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (!loadedFirstStories) {
+                if (page < 2) {
                     return;
                 }
-
+                refreshIterations = 0;
                 loadNextStories();
             }
         };
@@ -264,10 +264,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
 
         loadStoryData();
-        loadedFirstStories = true;
+
     }
 
     private void loadNextStories() {
+        int i = 8999;
+        if (storyCardList.size() <= 0) {
+            int j = 55;
+            return;
+        }
 
         Toast.makeText(StoryFeedActivity.this,
                 "Loading more stories",
@@ -314,6 +319,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             storyCardList.add(pos, new StoryRviewCard(story));
                             storyRviewAdapter.notifyItemInserted(pos);
                         }
+
+                        loadedFirstStories = true;
                     }
 
                     feedSwipeRefresh.setRefreshing(false);
@@ -321,7 +328,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 if (storyCardList.size() <= maxStoryCards && refreshIterations < maxRefreshIterations) {
                     refreshIterations++;
-                    loadNextStories();
+                    loadStoryData();
                 }
 
             }
@@ -413,7 +420,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Apply the requested filter to the current query
     private void applyFilter(FilterType filter) {
         currentFilter = filter;
-        refreshIterations = 0;
         query = currentFilter.getQuery(storyRef, lastLoadedStorySortValue);
     }
 
