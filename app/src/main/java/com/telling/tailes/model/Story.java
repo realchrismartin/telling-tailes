@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Story implements Serializable {
 
-    private final long constant = 1000000000000000000L; //TODO
+    private final double constant = 10000000000000D; //TODO
     private String id;
     private String authorID;
     private String title;
@@ -15,13 +15,13 @@ public class Story implements Serializable {
     private boolean isDraft;
     private ArrayList<String> lovers;
     private ArrayList<String> bookmarkers;
-    private long loveCount;
-    private long timestamp;
+    private double loveCount;
+    private double timestamp;
 
     private Story() {};
 
     public Story(String id, String authorID, boolean isDraft, String title,
-                 String promptText, String storyText, ArrayList<String> lovers, ArrayList<String> bookmarkers, int loveCount, long timestamp)
+                 String promptText, String storyText, ArrayList<String> lovers, ArrayList<String> bookmarkers, int loveCount, double timestamp)
     {
         this.id = id;
         this.isDraft = isDraft;
@@ -58,11 +58,11 @@ public class Story implements Serializable {
         return authorID;
     }
 
-    public long getTimestamp() {
+    public double getTimestamp() {
         return timestamp; //Timestamp is stored in reverse in order to trick FB database ordering - this will be negative
     }
 
-    public long getLoveCount() {
+    public double getLoveCount() {
         return loveCount; //Love count is stored in reverse in order to trick FB database ordering - this will be negative
     }
 
@@ -70,7 +70,7 @@ public class Story implements Serializable {
         if (lovers == null) { //TODO: is there a better way to check if this exists?
             lovers = new ArrayList<String>();
         }
-  }
+    }
 
     public ArrayList<String> getLovers() {
         initLovers();
@@ -100,7 +100,6 @@ public class Story implements Serializable {
         }
     }
 
-
     public void removeBookmark(String userID) {
         initBookmarkers();
         bookmarkers.remove(userID);
@@ -111,7 +110,7 @@ public class Story implements Serializable {
         bookmarkers.add(userID);
     }
 
-    private long updateLoveCount() {
+    private double updateLoveCount() {
         return timestamp - (lovers.size() * constant);
     }
 }

@@ -57,18 +57,26 @@ public enum FilterType {
             }
             default: {
                 return "timestamp";
+//                return "id";
+//                return "title";
             }
         }
     }
 
     //Given a Story, return the property this filter would sort that story by
-    public String getSortPropertyValue(Story story) {
+    public Object getSortPropertyValue(Story story) {
        switch(getSortProperty(this)) {
+           case "id": {
+               return story.getId();
+           }
            case "loveCount": {
-              return story.getLoveCount() + ""; //TODO
+              return story.getLoveCount(); //TODO
            }
            case "timestamp": {
-               return story.getTimestamp() + ""; //TODO
+               return story.getTimestamp(); //TODO
+           }
+           case "title": {
+               return story.getTitle();
            }
            default : {
                return "";

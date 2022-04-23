@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,11 +20,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,7 +69,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
-    private String lastLoadedStoryProperty;
+    private Object lastLoadedStorySortValue;
     private Toast toast;
 
     private FilterType currentFilter;
@@ -87,7 +84,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
         loadedFirstStories = false;
-        lastLoadedStoryProperty = "";
+        lastLoadedStorySortValue = "";
         refreshIterations = 0;
         maxRefreshIterations = 5; //TODO: adjust this
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
@@ -281,48 +278,66 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if (!lastLoadedStoryProperty.equals("")) {
-            query = currentFilter.getQuery(storyRef).startAfter(FilterType.getSortProperty(currentFilter),lastLoadedStoryProperty);
-        }
+        if (!lastLoadedStorySortValue.equals("")) {
+//            query = currentFilter.getQuery(storyRef);
+            String key = FilterType.getSortProperty(currentFilter);
+//            String value = lastLoadedStorySortValue;
+//            query = query.startAfter(value, key);
+//            query = storyRef.orderByChild(key).limitToFirst(10).startAfter(lastLoadedStorySortValue);
+//            loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(lastLoadedStorySortValue));
 
+            if (key.equals("timestamp") || key.equals("loveCount")) {
+                double foo1 = (double) lastLoadedStorySortValue;
+                loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(foo1));
+            } else {
+                String foo2 = (String) lastLoadedStorySortValue;
+                loadStoryData(storyRef.orderByChild(key).limitToFirst(10).startAfter(foo2));
+            }
+            int i = 99;
+            return;
+        }
         loadStoryData(query);
     }
 
     private void loadStoryData(Query query) {
-        query.addChildEventListener(new ChildEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                Story story = dataSnapshot.getValue(Story.class);
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Story story = dataSnapshot.getValue(Story.class);
 
-                if (story == null) {
-                    return;
-                }
 
-                //Track the last seen id, even if excluded by filter
-                lastLoadedStoryProperty = currentFilter.getSortPropertyValue(story);
+                    if (story == null) {
+                        return;
+                    }
 
-                if (currentFilter.includes(getApplicationContext(), story)) {
-                    //TODO: this could be more efficient the way it was originally
-                    int pos;
-                    boolean replaced = false;
-                    for (pos = 0; pos < storyCardList.size(); pos++) {
-                        if (storyCardList.get(pos).getID().equals(story.getId())) {
-                            storyCardList.set(pos, new StoryRviewCard(story));
-                            storyRviewAdapter.notifyItemChanged(pos);
-                            replaced = true;
+                    //Track the last seen id, even if excluded by filter
+                    lastLoadedStorySortValue = currentFilter.getSortPropertyValue(story);
+                    //wrc
+                    int i = 44;
+
+                    if (currentFilter.includes(getApplicationContext(), story)) {
+                        //TODO: this could be more efficient the way it was originally
+                        int pos;
+                        boolean replaced = false;
+                        for (pos = 0; pos < storyCardList.size(); pos++) {
+                            if (storyCardList.get(pos).getID().equals(story.getId())) {
+                                storyCardList.set(pos, new StoryRviewCard(story));
+                                storyRviewAdapter.notifyItemChanged(pos);
+                                replaced = true;
+                            }
+                        }
+
+                        if (!replaced) {
+                            storyCardList.add(pos, new StoryRviewCard(story));
+                            storyRviewAdapter.notifyItemInserted(pos);
                         }
                     }
 
-                    if (!replaced) {
-                        storyCardList.add(pos, new StoryRviewCard(story));
-                        storyRviewAdapter.notifyItemInserted(pos);
-                    }
+                    feedSwipeRefresh.setRefreshing(false);
                 }
 
-                feedSwipeRefresh.setRefreshing(false);
-
-                /*
 
                 //TODO: magic number
                 if (storyCardList.size() <= 10 && refreshIterations < maxRefreshIterations) {
@@ -330,10 +345,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     loadNextStories();
                 }
 
-                 */
             }
 
-            @Override
+            /*@Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
@@ -347,7 +361,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
-
+            */
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
