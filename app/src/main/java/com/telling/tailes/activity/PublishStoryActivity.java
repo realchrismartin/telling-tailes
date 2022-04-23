@@ -280,7 +280,6 @@ public class PublishStoryActivity extends AppCompatActivity {
         }
 
         String title = titleView.getText().toString();
-        String storyText = storyTextView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
         ArrayList<String> lovers = new ArrayList<String>();
         ArrayList<String> bookmarkers = new ArrayList<String>();
