@@ -158,7 +158,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         //Set up views with story data
         titleTextView.setText(story.getTitle());
         authorProfileButton.setText(story.getAuthorID());
-        storyTextView.setText(story.getStoryText());
+        storyTextView.setText(story.getPromptText() + " " + story.getStoryText()); //TODO: spacing
 
         //Set up private variables
         storyText = story.getStoryText();

@@ -49,16 +49,50 @@ public enum FilterType {
         }
     }
 
-    //Get a Query for this FilterType from the provided ref that is appropriate for this filter
-    public Query getQuery(Context context, DatabaseReference ref) {
-        switch(this) {
+    //Return the property this filter sorts FB data results by
+    private static String getSortProperty(FilterType type) {
+        switch(type) {
             case POPULAR: {
-                return ref.orderByChild("loveCount").limitToFirst(10);
+                return "loveCount";
             }
             default: {
-                return ref.orderByChild("timestamp").limitToFirst(10);
+                return "timestamp";
             }
         }
+    }
+
+    //Given a Story, return the property this filter would sort that story by
+    public Object getSortPropertyValue(Story story) {
+       switch(getSortProperty(this)) {
+           case "id": {
+               return story.getId();
+           }
+           case "loveCount": {
+              return story.getLoveCount(); //TODO
+           }
+           case "timestamp": {
+               return story.getTimestamp(); //TODO
+           }
+           case "title": {
+               return story.getTitle();
+           }
+           default : {
+               return "";
+           }
+       }
+    }
+
+    //Get a Query for this FilterType from the provided ref that is appropriate for this filter
+    public Query getQuery(DatabaseReference ref, Object lastLoadedStorySortValue) {
+        String key = getSortProperty(this);
+
+        if (lastLoadedStorySortValue == null) {
+            return ref.orderByChild(key).limitToFirst(10);
+        }
+        if (key.equals("timestamp") || key.equals("loveCount")) {
+            return ref.orderByChild(key).limitToFirst(10).startAfter((double) lastLoadedStorySortValue);
+        }
+        return ref.orderByChild(key).limitToFirst(10).startAfter((String)lastLoadedStorySortValue);
     }
 
     //Return true if this filter includes the provided story, false otherwise
@@ -79,9 +113,11 @@ public enum FilterType {
             case FOLLOWING: {
                 return followsFilter.contains(story.getAuthorID());
             }
-            case POPULAR: {}
+            case POPULAR: {
+                return story.getLovers().size() > 1 && !story.getIsDraft();
+            }
             default: {
-                return true;
+                return !story.getIsDraft();
             }
         }
     }

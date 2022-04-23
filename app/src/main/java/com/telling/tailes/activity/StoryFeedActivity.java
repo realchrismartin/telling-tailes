@@ -5,6 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -52,7 +52,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private DatabaseReference storyRef;
 
     private EndlessScrollListener scrollListener;
-    private Query initialQuery;
+    private Query query;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
     private SwipeRefreshLayout feedSwipeRefresh;
@@ -69,13 +69,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
-    private String lastLoadedStoryId;
+    private Object lastLoadedStorySortValue;
     private Toast toast;
 
     private FilterType currentFilter;
 
     private int refreshIterations;
     private int maxRefreshIterations;
+    private int maxStoryCards;
 
     boolean loadedFirstStories;
 
@@ -84,8 +85,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
         loadedFirstStories = false;
-        lastLoadedStoryId = "";
+        lastLoadedStorySortValue = null;
+
+        refreshIterations = 0;
+        maxStoryCards = 10;
         maxRefreshIterations = 5; //TODO: adjust this
+
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(5);
@@ -100,10 +105,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         loadFirstStories();
 
-
-        //Set up background executor for handling author profile data request threads
-        //backgroundTaskExecutorAuthors = Executors.newFixedThreadPool(2);
-
         //Define handling for data results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -115,16 +116,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 switch(msg.getData().getString("type")) {
                     case("bookmarks"): {
-                        FilterType filter = FilterType.get("Bookmarks");
-                        filter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
-                        applyFilter(filter);
+                        currentFilter = FilterType.get("Bookmarks");
+                        currentFilter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
                         refreshStories();
                         break;
                     }
                     case("followedAuthors"): {
-                        FilterType filter = FilterType.get("Followed Authors");
-                        filter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
-                        applyFilter(filter);
+                        currentFilter = FilterType.get("Followed Authors");
+                        currentFilter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
                         refreshStories();
                         break;
                     }
@@ -154,10 +153,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener = new EndlessScrollListener(storyRviewLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (!loadedFirstStories) {
+                if (page < 2) {
                     return;
                 }
-
+                refreshIterations = 0;
                 loadNextStories();
             }
         };
@@ -240,7 +239,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadFirstStories() {
-        initialQuery = storyRef.orderByChild("id").limitToFirst(10);
+
+        FilterType filter = FilterType.NONE;
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey("feedFilter")) {
@@ -253,71 +254,83 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     }
                 }
                 filterSpinner.setSelection(pos);
+                filter = FilterType.get(intentFilter);
+            }
+            if (extras.containsKey("authorId")) {
+                String authorId = extras.getString("authorId");
+                filter.setAuthorFilter(authorId);
             }
         }
-        loadStoryData(initialQuery);
-        loadedFirstStories = true;
+
+
+        loadStoryData();
+
     }
 
     private void loadNextStories() {
+        int i = 8999;
+        if (storyCardList.size() <= 0) {
+            int j = 55;
+            return;
+        }
 
         Toast.makeText(StoryFeedActivity.this,
                 "Loading more stories",
                 Toast.LENGTH_SHORT)
                 .show();
 
-        if (!lastLoadedStoryId.equals("")) {
-            Query newQuery = initialQuery.startAfter(lastLoadedStoryId);
-            loadStoryData(newQuery);
-            return;
-        }
-
-        loadStoryData(initialQuery);
+        loadStoryData();
     }
 
-    private void loadStoryData(Query query) {
+    private void loadStoryData() {
+
+        applyFilter(currentFilter);
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Story story = snapshot.getValue(Story.class);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Story story = dataSnapshot.getValue(Story.class);
+
 
                     if (story == null) {
-                        continue;
+                        return;
                     }
 
                     //Track the last seen id, even if excluded by filter
-                    lastLoadedStoryId = story.getId();
+                    lastLoadedStorySortValue = currentFilter.getSortPropertyValue(story);
+                    //wrc
+                    int i = 44;
 
-                    if (!currentFilter.includes(getApplicationContext(), story)) {
-                        continue;
-                    }
-
-                    //TODO: this could be more efficient the way it was originally
-                    int pos;
-                    boolean replaced = false;
-                    for (pos = 0; pos < storyCardList.size(); pos++) {
-                        if (storyCardList.get(pos).getID().equals(story.getId())) {
-                            storyCardList.set(pos, new StoryRviewCard(story));
-                            storyRviewAdapter.notifyItemChanged(pos);
-                            replaced = true;
+                    if (currentFilter.includes(getApplicationContext(), story)) {
+                        //TODO: this could be more efficient the way it was originally
+                        int pos;
+                        boolean replaced = false;
+                        for (pos = 0; pos < storyCardList.size(); pos++) {
+                            if (storyCardList.get(pos).getID().equals(story.getId())) {
+                                storyCardList.set(pos, new StoryRviewCard(story));
+                                storyRviewAdapter.notifyItemChanged(pos);
+                                replaced = true;
+                            }
                         }
+
+                        if (!replaced) {
+                            storyCardList.add(pos, new StoryRviewCard(story));
+                            storyRviewAdapter.notifyItemInserted(pos);
+                        }
+
+                        loadedFirstStories = true;
                     }
 
-                    if (replaced) {
-                        continue;
-                    }
-
-                    storyCardList.add(pos, new StoryRviewCard(story));
-                    storyRviewAdapter.notifyItemInserted(pos);
+                    feedSwipeRefresh.setRefreshing(false);
                 }
 
-                feedSwipeRefresh.setRefreshing(false);
-
-                if (storyCardList.size() <= 0 && refreshIterations < maxRefreshIterations) {
+                if (storyCardList.size() <= maxStoryCards && refreshIterations < maxRefreshIterations) {
                     refreshIterations++;
-                    loadNextStories();
+                    loadStoryData();
                 }
+
             }
 
             @Override
@@ -333,7 +346,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyCardList.clear();
         storyRviewAdapter.notifyDataSetChanged();
         scrollListener.resetState();
-        loadStoryData(initialQuery);
+        refreshIterations = 0;
+        lastLoadedStorySortValue = null;
+
+        loadStoryData();
     }
 
     private void goToCreateStory() {
@@ -366,7 +382,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String selection = adapterView.getItemAtPosition(i).toString();
+        FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
+        String selection = item.getFilterTitle();
 
         switch(selection) {
             case("Bookmarks"): {
@@ -387,9 +404,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     }
                 }
 
-                FilterType filter = FilterType.get(selection);
-                filter.setAuthorFilter(authorId);
-                applyFilter(filter);
+                currentFilter = FilterType.get(selection);
+                currentFilter.setAuthorFilter(authorId);
                 refreshStories();
                 break;
             }
@@ -401,11 +417,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) { }
 
-    //Apply the requested filter to the initialQuery
+    //Apply the requested filter to the current query
     private void applyFilter(FilterType filter) {
         currentFilter = filter;
-        refreshIterations = 0;
-        initialQuery = currentFilter.getQuery(getApplicationContext(),storyRef);
+        query = currentFilter.getQuery(storyRef, lastLoadedStorySortValue);
     }
 
     /*
