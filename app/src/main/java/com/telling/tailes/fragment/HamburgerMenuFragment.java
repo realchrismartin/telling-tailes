@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.telling.tailes.R;
 import com.telling.tailes.activity.CreateStoryActivity;
+import com.telling.tailes.activity.FollowedAuthorsActivity;
 import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.activity.UserSettingsActivity;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
@@ -84,6 +85,11 @@ public class HamburgerMenuFragment extends Fragment {
                 Log.d("menu onClick", "VIEW BOOKMARKS");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
                 intent.putExtra("feedFilter", "Bookmarks");
+                startActivity(intent);
+                return true;
+            case R.id.view_saved_authors:
+                Log.d("menu onClick", "VIEW FOLLOWED AUTHORS");
+                intent = new Intent(getContext(), FollowedAuthorsActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.view_settings:

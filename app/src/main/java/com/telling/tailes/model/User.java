@@ -56,6 +56,10 @@ public class User {
 
     public void setMessagingToken(String messagingToken) { this.messagingToken = messagingToken; }
 
+    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
+
+    public void setSalt(String salt) { this.salt = salt; }
+
     public ArrayList<String> getFollows() {
         initFollows();
         return follows;

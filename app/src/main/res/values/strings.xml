@@ -19,6 +19,7 @@
     <string name="length_short_error_notification">Story length is too short, try selecting a longer length</string>
     <string name="create_in_progress_notification">Please wait while our trained robot monkeys create neo-Shakespeare for you…</string>
     <string name="generic_error_notification">Something went wrong. Check to make sure you have an internet connection. If you do… it might be our fault. Sorry!</string>
+    <string name="password_change_notification">Successfully changed password</string>
     <string name="create_account_button_text">Create Account</string>
     <string name="login_button_text">Login</string>
     <string name="username_hint">Enter your username</string>
@@ -48,4 +49,14 @@
     <string name="message_loved">Love</string>
     <string name="message_loved_body">loved your story</string>
     <string name="love_own_story_error">You can\'t love your own story. Well, not like this, anyway.</string>
+    <string name="setting_title">Settings!</string>
+    <string name="setting_description">Wow these are great</string>
+    <string name="setting_hide_title">Hide</string>
+    <string name="setting_hide_description">Hide in plain sight</string>
+    <string name="setting_password_title">Change your password</string>
+    <string name="setting_password_description">****</string>
+    <string name="setting_logout_title">Log Out</string>
+    <string name="setting_logout_description"> </string>
+    <string name="setting_text_size_title">Font</string>
+    <string name="setting_text_size_description">Set text size</string>
 </resources>

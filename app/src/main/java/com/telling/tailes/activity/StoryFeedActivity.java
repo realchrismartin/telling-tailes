@@ -100,7 +100,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
 
-        doLoginCheck();
+        doLoginCheck(); //TODO: DO THIS FIRST
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
@@ -271,9 +271,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     private void loadNextStories() {
-        int i = 8999;
         if (storyCardList.size() <= 0) {
-            int j = 55;
             return;
         }
 
