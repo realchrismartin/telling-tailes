@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class FollowedAuthorsActivity extends AppCompatActivity {
+public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfollowClickCallbackListener {
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -59,7 +59,23 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                 }
 
                 switch (msg.getData().getString("type")) {
-                    case("followedAuthors"): {
+                    case("unfollowAuthor"): {
+                        if (msg.getData()== null || msg.getData().getInt("error") > 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                            return;
+                        }
+                        String removedId = msg.getData().getString("username");
+                        for (AuthorRviewCard authorCard : authorCardList) {
+                            if (authorCard.getAuthor() == removedId) {
+                                authorCardList.remove(authorCard);
+                                authorRviewAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case ("followedAuthors"): {
                         followedAuthorIds = msg.getData().getStringArrayList("follows");
                         for (String authorId : followedAuthorIds) {
                             authorCardList.add(new AuthorRviewCard(authorId));
@@ -69,7 +85,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                         break;
                     }
 
-                    case("authorProfile"): {
+                    case ("authorProfile"): {
 
                         if (authorProfileDialogFragment != null) {
                             authorProfileDialogFragment.dismiss();
@@ -110,7 +126,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
         authorRviewLayoutManager = new LinearLayoutManager(this);
         authorRview = findViewById(R.id.author_recycler_view);
         authorRview.setHasFixedSize(true);
-        authorRviewAdapter = new AuthorRviewAdapter(authorCardList, getApplicationContext());
+        authorRviewAdapter = new AuthorRviewAdapter(authorCardList, getApplicationContext(), this);
         AuthorRviewCardClickListener authorClickListener = new AuthorRviewCardClickListener() {
             @Override
             public void onAuthorClick(int position) {
@@ -141,7 +157,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
                         resultData.putString("type", "followedAuthors");
-                        resultData.putStringArrayList("follows",user.getFollows());
+                        resultData.putStringArrayList("follows", user.getFollows());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -210,6 +226,28 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
         });
     }
 
+    public void handleUnfollowClick(String username) {
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FBUtils.updateFollow(getApplicationContext(), username, new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "unfollowAuthor");
+                        resultData.putInt("error", user != null ? 0:1);
+                        if (user != null) {
+                            resultData.putString("username", username);
+                        }
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
 
+            }
+        });
+
+    }
 
 }
