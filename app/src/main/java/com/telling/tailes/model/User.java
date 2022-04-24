@@ -50,6 +50,10 @@ public class User {
 
     public String getSalt() { return salt; }
 
+    public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
+
+    public void setSalt(String salt) { this.salt = salt; }
+
     public ArrayList<String> getFollows() {
         initFollows();
         return follows;
