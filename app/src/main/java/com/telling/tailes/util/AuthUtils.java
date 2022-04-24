@@ -103,10 +103,39 @@ public class AuthUtils {
         });
     }
 
-    //Log out - very simply, just delete the username from shared preferences
+    //Log out - very simply, just delete the username from shared preferences and update the user's token
     public static void logOutUser(Context context, Consumer<String> callback) {
+
+        //Persist username temporarily
+        String username = getLoggedInUserID(context);
+
+        //Log out locally
         updateLogin(context,"");
-        callback.accept(""); //Indicate that everything went ok
+
+        //Update user to clear messaging token
+        FBUtils.getUser(context,username, new Consumer<User>() {
+            @Override
+            public void accept(User user) {
+                if (user == null) {
+                    callback.accept(context.getResources().getString(R.string.generic_error_notification));
+                    return;
+                }
+
+                user.setMessagingToken("");
+
+                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            callback.accept(context.getResources().getString(R.string.login_error_notification));
+                            return;
+                        }
+
+                        callback.accept(""); //Indicate that all is well and complete login
+                    }
+                });
+            }
+        });
     }
 
     //Attempts to create the specified user

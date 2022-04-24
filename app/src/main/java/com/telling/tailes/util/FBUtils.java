@@ -107,17 +107,18 @@ public class FBUtils {
 
                                            String body = currentUser + " " +  context.getString(R.string.message_loved_body) + " \"" + story.getTitle() + "\"";
 
-                                           FBUtils.sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", new Consumer<Boolean>() {
+                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", new Consumer<Boolean>() {
                                                @Override
                                                public void accept(Boolean aBoolean) {
 
                                                    if(!aBoolean) {
                                                        Log.e("UpdateLove","Failed to send notification");
                                                    }
-
-                                                   callback.accept(updatedStory);
                                                }
                                            });
+
+                                           //Note: we don't wait for notification to finish
+                                           callback.accept(updatedStory);
                                        }
                                    });
                                 }
@@ -388,10 +389,11 @@ public class FBUtils {
                                                     Log.e("updateFollow","Failed to send follow notification");
                                                 }
 
-                                                //Complete and call callback
-                                                callback.accept(follower);
                                             }
                                         });
+
+                                        //Note: we don't wait for notification to finish
+                                        callback.accept(follower);
                                     }
                                 });
                             }
@@ -660,6 +662,12 @@ public class FBUtils {
     private static void doFCMMessage(Context context, User recipient, String title, String body, String content, Consumer<Boolean> callback) {
 
         String recipientFCMToken = recipient.getMessagingToken();
+
+        if(recipientFCMToken == null || recipientFCMToken.equals("")) {
+            //Silently accept missing or blank tokens - no notifications should be sent here
+            callback.accept(true);
+            return;
+        }
 
         JSONObject jsonObject = new JSONObject();
         JSONObject jNotification = new JSONObject();
