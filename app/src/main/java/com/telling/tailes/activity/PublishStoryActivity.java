@@ -350,7 +350,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                                    }
 
                                    //TODO:
-                                   FBUtils.sendNotification(getApplicationContext(), user.getUsername(), "test", "test", "test", new Consumer<Boolean>() {
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), "test", "test", "test", new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
                                            Bundle resultData = new Bundle();

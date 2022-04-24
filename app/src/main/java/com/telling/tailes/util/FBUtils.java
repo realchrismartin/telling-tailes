@@ -527,6 +527,55 @@ public class FBUtils {
         });
     }
 
+    public static void sendNotificationToFollowers(Context context, String username, String title, String body, String content, Consumer<Boolean> callback) {
+
+        Task<DataSnapshot> userData = usersRef.child(username).get();
+
+        userData.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                callback.accept(false);
+            }
+        });
+
+        userData.addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                DataSnapshot userResult = task.getResult();
+
+                if (!userResult.exists()) {
+                    callback.accept(false);
+                    return;
+                }
+
+                User user = userResult.getValue(User.class);
+
+                if(user == null) {
+                    callback.accept(false);
+                    return;
+                }
+
+                ArrayList<String> followers = user.getFollowers();
+
+                for(String followerUsername : followers) {
+                    sendNotification(context, followerUsername, title, body, content, new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) {
+                            if(!aBoolean) {
+                                Log.e("sendNotificationToFollowers","Something failed when sending a follower notification.");
+                            }
+                        }
+                    });
+                }
+
+                //Note: We don't wait on notification results to complete callback
+                callback.accept(true);
+            }
+        });
+    }
+
     //Send a FCM message to the specified recipient
     public static void sendNotification(Context context, String recipientUsername, String title, String body, String content, Consumer<Boolean> callback)
     {
