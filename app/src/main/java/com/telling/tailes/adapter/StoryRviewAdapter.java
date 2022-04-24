@@ -65,6 +65,11 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
         holder.loveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(currentUser.equals(currentItem.getStory().getAuthorID())) {
+                    return; //TODO: indicate to user that love failed?
+                }
+
                 FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
                     @Override
                     public void accept(Story result) {

@@ -324,7 +324,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                            if(user == null) {
                                Bundle resultData = new Bundle();
-                               resultData.putString("error", "Failed to get user"); //TODO
+                               resultData.putString("error", getString(R.string.user_get_error));
 
                                Message resultMessage = new Message();
                                resultMessage.setData(resultData);
@@ -337,15 +337,34 @@ public class PublishStoryActivity extends AppCompatActivity {
                            FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
                                @Override
                                public void accept(Boolean result) {
-                                   Bundle resultData = new Bundle();
-                                   resultData.putString("error", result ? "" : getString(R.string.generic_error_notification));
-                                   resultData.putString("published", "true");
 
-                                   //Send meesage rom thresd
-                                   Message resultMessage = new Message();
-                                   resultMessage.setData(resultData);
+                                   if(!result) {
+                                       Bundle resultData = new Bundle();
+                                       resultData.putString("error", getString(R.string.user_update_error));
 
-                                   backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       Message resultMessage = new Message();
+                                       resultMessage.setData(resultData);
+
+                                       backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       return;
+                                   }
+
+                                   String body = user.getUsername() + getString(R.string.message_published_story_body);
+
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", new Consumer<Boolean>() {
+                                       @Override
+                                       public void accept(Boolean messageResult) {
+                                           Bundle resultData = new Bundle();
+                                           resultData.putString("error", messageResult ? "" : getString(R.string.generic_error_notification));
+                                           resultData.putString("published", "true");
+
+                                           //Send meesage rom thresd
+                                           Message resultMessage = new Message();
+                                           resultMessage.setData(resultData);
+
+                                           backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       }
+                                   });
                                }
                            });
                        }

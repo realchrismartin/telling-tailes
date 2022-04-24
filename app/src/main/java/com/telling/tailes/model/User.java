@@ -11,6 +11,7 @@ public class User {
     private String username;
     private String hashedPassword;
     private String salt;
+    private String messagingToken;
 
     private ArrayList<String> follows;
     private ArrayList<String> followers;
@@ -28,7 +29,7 @@ public class User {
         this.bookmarks = bookmarks;
     }
 
-    public User(String username, int profileIcon,  String hashedPassword, String salt, ArrayList<String> follows, ArrayList<String> followers, int stories, int loves)
+    public User(String username, int profileIcon,  String hashedPassword, String salt, ArrayList<String> follows, ArrayList<String> followers, int stories, int loves, String messagingToken)
 
     {
         this.username = username;
@@ -39,6 +40,7 @@ public class User {
         this.followers = followers;
         this.stories = stories;
         this.loves = loves;
+        this.messagingToken = messagingToken;
     }
 
 
@@ -49,6 +51,10 @@ public class User {
     public String getHashedPassword() { return hashedPassword; }
 
     public String getSalt() { return salt; }
+
+    public String getMessagingToken() { return messagingToken; }
+
+    public void setMessagingToken(String messagingToken) { this.messagingToken = messagingToken; }
 
     public void setHashedPassword(String hashedPassword) { this.hashedPassword = hashedPassword; }
 

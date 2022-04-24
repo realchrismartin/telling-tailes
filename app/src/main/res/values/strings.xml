@@ -3,6 +3,8 @@
     <string name="login_app_title">Telling Tailes</string>
     <string name="open" />
     <string name="close" />
+    <string name="fcm_server_key">key=AAAAlPniYbs:APA91bGHtElSy0xiM_zOHTbq1GUggAVhRVhuQ5e2t-K-ww_W0cCsrJbuWj6wDq0_NYgHkFDhR1j1pM8cdK5kTaXJSO93ZDvGceLt-luvH6V9tCxIk5VDKlJKviEnc5Kz-vghIy8C4Jxr</string>
+    <string name="fcm_uri">https://fcm.googleapis.com/fcm/send</string>
     <string name="gpt_api_completion_uri">https://api.openai.com/v1/engines/text-davinci-002/completions</string>
     <string name="gpt_api_filter_uri">https://api.openai.com/v1/engines/content-filter-alpha/completions</string>
     <string name="gpt_api_token">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</string>
@@ -38,10 +40,19 @@
     <string name="author_profile_follow_notification">Followed</string>
     <string name="author_profile_unfollow_notification">Unfollowed</string>
     <string name="author_profile_follow_self_error">You can\'t follow yourself.</string>
+    <string name="user_get_error">Failed to get user</string>
+    <string name="user_update_error">Failed to follow user</string>
+    <string name="message_published_story">New Story</string>
+    <string name="message_published_story_body">published a new story</string>
+    <string name="message_followed">New Follow</string>
+    <string name="message_followed_body">is following you</string>
+    <string name="message_loved">Love</string>
+    <string name="message_loved_body">loved your story</string>
+    <string name="love_own_story_error">You can\'t love your own story. Well, not like this, anyway.</string>
     <string name="setting_title">Settings!</string>
     <string name="setting_description">Wow these are great</string>
-    <string name="setting_hide_title">Hide</string>
-    <string name="setting_hide_description">Hide in plain sight</string>
+    <string name="setting_hide_title">Notifications</string>
+    <string name="setting_hide_description">Enable or disable notifications</string>
     <string name="setting_password_title">Change your password</string>
     <string name="setting_password_description">****</string>
     <string name="setting_logout_title">Log Out</string>

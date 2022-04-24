@@ -5,7 +5,14 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.telling.tailes.R;
+import com.telling.tailes.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -37,10 +44,10 @@ public class AuthUtils {
     public static void logInUser(Context context, String username, String password, Consumer<String> callback)
     {
         //Check if user exists
-        FBUtils.userExists(context,username, new Consumer<Boolean>() {
+        FBUtils.getUser(context,username, new Consumer<User>() {
             @Override
-            public void accept(Boolean result) {
-                if (!result) {
+            public void accept(User user) {
+                if (user == null) {
                     callback.accept(context.getResources().getString(R.string.login_error_notification));
                     return;
                 }
@@ -55,20 +62,80 @@ public class AuthUtils {
                             return;
                         }
 
-                        //If user exists and password is valid, log the user in
-                        //Note: this could be more secure.
-                        updateLogin(context,username);
-                        callback.accept(""); //Indicate that everything went ok
+                        //User's password is valid
+                        //Get a new messaging token for this user on login
+                        Task<String> tokenTask = FirebaseMessaging.getInstance().getToken();
+
+                        tokenTask.addOnFailureListener(new OnFailureListener() {
+                                                           @Override
+                                                           public void onFailure(@NonNull Exception e) {
+                                                               callback.accept(e.getMessage());
+                                                           }
+                                                       });
+
+                        tokenTask.addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                //Token is obtained, update user in DB
+                                String token = task.getResult();
+
+                                user.setMessagingToken(token);
+
+                                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
+                                    @Override
+                                    public void accept(Boolean aBoolean) {
+                                        if(!aBoolean) {
+                                            callback.accept(context.getResources().getString(R.string.login_error_notification));
+                                        }
+
+                                        //If user exists and password is valid, log the user in
+                                        //Note: this could be more secure.
+                                        updateLogin(context,username);
+
+                                        callback.accept(""); //Indicate that all is well and complete login
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
         });
     }
 
-    //Log out - very simply, just delete the username from shared preferences
+    //Log out - very simply, just delete the username from shared preferences and update the user's token
     public static void logOutUser(Context context, Consumer<String> callback) {
+
+        //Persist username temporarily
+        String username = getLoggedInUserID(context);
+
+        //Log out locally
         updateLogin(context,"");
-        callback.accept(""); //Indicate that everything went ok
+
+        //Update user to clear messaging token
+        FBUtils.getUser(context,username, new Consumer<User>() {
+            @Override
+            public void accept(User user) {
+                if (user == null) {
+                    callback.accept(context.getResources().getString(R.string.generic_error_notification));
+                    return;
+                }
+
+                user.setMessagingToken("");
+
+                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean aBoolean) {
+                        if (!aBoolean) {
+                            callback.accept(context.getResources().getString(R.string.login_error_notification));
+                            return;
+                        }
+
+                        callback.accept(""); //Indicate that all is well and complete login
+                    }
+                });
+            }
+        });
     }
 
     //Attempts to create the specified user

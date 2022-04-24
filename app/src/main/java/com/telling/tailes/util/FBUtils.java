@@ -4,15 +4,31 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.telling.tailes.R;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,7 +104,21 @@ public class FBUtils {
                                    getStory(context, story.getId(), new Consumer<Story>() {
                                        @Override
                                        public void accept(Story updatedStory) {
-                                          callback.accept(updatedStory);
+
+                                           String body = currentUser + " " +  context.getString(R.string.message_loved_body) + " \"" + story.getTitle() + "\"";
+
+                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", new Consumer<Boolean>() {
+                                               @Override
+                                               public void accept(Boolean aBoolean) {
+
+                                                   if(!aBoolean) {
+                                                       Log.e("UpdateLove","Failed to send notification");
+                                                   }
+                                               }
+                                           });
+
+                                           //Note: we don't wait for notification to finish
+                                           callback.accept(updatedStory);
                                        }
                                    });
                                 }
@@ -308,6 +338,8 @@ public class FBUtils {
                             return;
                         }
 
+                        boolean removedFollow = followee.getFollowers().contains(follower.getUsername());
+
                         //Update the follower's list to include followee
                         follower.updateFollows(followee.getUsername());
 
@@ -341,7 +373,26 @@ public class FBUtils {
                                            return;
                                        }
 
-                                       //All updates succeeded, callback with true
+                                        //Skip notification if unfollowing
+                                        if(removedFollow) {
+                                           callback.accept(follower);
+                                           return;
+                                        }
+
+                                        // send notification if following
+                                        String body = follower.getUsername() + " " + context.getString(R.string.message_followed_body);
+                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, "", new Consumer<Boolean>() {
+                                            @Override
+                                            public void accept(Boolean aBoolean) {
+
+                                                if(aBoolean) {
+                                                    Log.e("updateFollow","Failed to send follow notification");
+                                                }
+
+                                            }
+                                        });
+
+                                        //Note: we don't wait for notification to finish
                                         callback.accept(follower);
                                     }
                                 });
@@ -429,18 +480,34 @@ public class FBUtils {
     //Returns false in callback if user wasn't created, otherwise returns true
     public static void createUser(Context context, String username, String password, int profileIcon, Consumer<Boolean> callback) {
 
-        Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
+        Task<String> token = FirebaseMessaging.getInstance().getToken();
 
-        User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),new ArrayList<>(),0,0);
+        token.addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
 
-        Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
+                Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
 
-        createUserTask.addOnCompleteListener(task -> {
-            callback.accept(true);
+                User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),new ArrayList<>(),0,0,task.getResult());
+
+                Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
+
+                createUserTask.addOnCompleteListener(t -> {
+                    callback.accept(true);
+                });
+
+                createUserTask.addOnFailureListener(t -> {
+                    callback.accept(false);
+                });
+            }
         });
 
-        createUserTask.addOnFailureListener(task -> {
-            callback.accept(false);
+        token.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FBUtils.createUser",e.toString());
+                callback.accept(false);
+            }
         });
     }
 
@@ -495,4 +562,172 @@ public class FBUtils {
         });
     }
 
+    public static void sendNotificationToFollowers(Context context, String username, String title, String body, String content, Consumer<Boolean> callback) {
+
+        Task<DataSnapshot> userData = usersRef.child(username).get();
+
+        userData.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                callback.accept(false);
+            }
+        });
+
+        userData.addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                DataSnapshot userResult = task.getResult();
+
+                if (!userResult.exists()) {
+                    callback.accept(false);
+                    return;
+                }
+
+                User user = userResult.getValue(User.class);
+
+                if(user == null) {
+                    callback.accept(false);
+                    return;
+                }
+
+                ArrayList<String> followers = user.getFollowers();
+
+                for(String followerUsername : followers) {
+                    sendNotification(context, followerUsername, title, body, content, new Consumer<Boolean>() {
+                        @Override
+                        public void accept(Boolean aBoolean) {
+                            if(!aBoolean) {
+                                Log.e("sendNotificationToFollowers",context.getString(R.string.generic_error_notification));
+                            }
+                        }
+                    });
+                }
+
+                //Note: We don't wait on notification results to complete callback
+                callback.accept(true);
+            }
+        });
+    }
+
+    //Send a FCM message to the specified recipient
+    public static void sendNotification(Context context, String recipientUsername, String title, String body, String content, Consumer<Boolean> callback)
+    {
+        Task<DataSnapshot> userData = usersRef.child(recipientUsername).get();
+
+        userData.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                callback.accept(false);
+            }
+        });
+
+        userData.addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                DataSnapshot userResult = task.getResult();
+
+                if(!userResult.exists()) {
+                    callback.accept(false);
+                    return;
+                }
+
+                User recipientUser = userResult.getValue(User.class);
+
+                if(recipientUser == null) {
+                    callback.accept(false);
+                    return;
+                }
+
+                //Run doFCMMessage in another(?) background thread
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doFCMMessage(context, recipientUser, title, body, content, new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean aBoolean) {
+                                callback.accept(aBoolean);
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
+    }
+
+    //Helper method to send a FCM message
+    private static void doFCMMessage(Context context, User recipient, String title, String body, String content, Consumer<Boolean> callback) {
+
+        String recipientFCMToken = recipient.getMessagingToken();
+
+        if(recipientFCMToken == null || recipientFCMToken.equals("")) {
+            //Silently accept missing or blank tokens - no notifications should be sent here
+            callback.accept(true);
+            return;
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jNotification = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        try {
+            jNotification.put("title", title);
+            jNotification.put("body", body);
+            jNotification.put("badge", "1");
+            data.put("content", content);
+            jsonObject.put("to", recipientFCMToken);
+            jsonObject.put("priority", "high");
+            jsonObject.put("notification", jNotification);
+            jsonObject.put("data", data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.accept(false);
+            return;
+        }
+
+        try {
+
+            String serverToken = context.getString(R.string.fcm_server_key);
+            URL url = new URL(context.getString(R.string.fcm_uri));
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", serverToken);
+            conn.setDoOutput(true);
+
+            // Send FCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jsonObject.toString().getBytes());
+            outputStream.close();
+
+            InputStream inputStream = conn.getInputStream();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String res = "";
+
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String len;
+                while ((len = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(len);
+                }
+                bufferedReader.close();
+                res = stringBuilder.toString().replace(",", ",\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //Finish regardless of result
+            callback.accept(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.accept(false);
+        }
+    }
 }
