@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -53,7 +54,15 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        if (remoteMessage.getData().size() > 0) {
+        boolean showNotification = true;
+
+        try {
+            showNotification = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.setting_hide_title),true);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if (showNotification && remoteMessage.getData().size() > 0) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             if(notification != null) {
                 showNotification(notification);

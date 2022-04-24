@@ -51,8 +51,8 @@
     <string name="love_own_story_error">You can\'t love your own story. Well, not like this, anyway.</string>
     <string name="setting_title">Settings!</string>
     <string name="setting_description">Wow these are great</string>
-    <string name="setting_hide_title">Hide</string>
-    <string name="setting_hide_description">Hide in plain sight</string>
+    <string name="setting_hide_title">Notifications</string>
+    <string name="setting_hide_description">Enable or disable notifications</string>
     <string name="setting_password_title">Change your password</string>
     <string name="setting_password_description">****</string>
     <string name="setting_logout_title">Log Out</string>
