@@ -17,14 +17,20 @@ import java.util.Map;
 public class UserSettingsDialogFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int[] SETTINGS = new int[] {
+        //    R.string.setting_hide_title
     };
 
     private Map<String, Preference> preferences = new HashMap<>();
 
     private final Setter[] SETTERS = new Setter [] {
+        //    this::setChangeHide
     };
 
     private Map<String, Setter> setters = new HashMap<>();
+
+    private void setChangeHide(SharedPreferences sharedPreferences, String s) {
+        int i=0;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,12 +80,13 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-       //TODO
+        if (getActivity() != null && isAdded() && setters.get(s) != null) {
+            setters.get(s).apply(sharedPreferences, s);
+        }
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        //TODO
-        return false;
+        return true; //TODO: validate
     }
 }
