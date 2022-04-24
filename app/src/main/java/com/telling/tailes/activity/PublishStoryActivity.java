@@ -337,15 +337,33 @@ public class PublishStoryActivity extends AppCompatActivity {
                            FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
                                @Override
                                public void accept(Boolean result) {
-                                   Bundle resultData = new Bundle();
-                                   resultData.putString("error", result ? "" : getString(R.string.generic_error_notification));
-                                   resultData.putString("published", "true");
 
-                                   //Send meesage rom thresd
-                                   Message resultMessage = new Message();
-                                   resultMessage.setData(resultData);
+                                   if(!result) {
+                                       Bundle resultData = new Bundle();
+                                       resultData.putString("error", "Failed to update user after publish"); //TODO
 
-                                   backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       Message resultMessage = new Message();
+                                       resultMessage.setData(resultData);
+
+                                       backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       return;
+                                   }
+
+                                   //TODO:
+                                   FBUtils.sendNotification(getApplicationContext(), user.getUsername(), "test", "test", "test", new Consumer<Boolean>() {
+                                       @Override
+                                       public void accept(Boolean messageResult) {
+                                           Bundle resultData = new Bundle();
+                                           resultData.putString("error", messageResult ? "" : getString(R.string.generic_error_notification));
+                                           resultData.putString("published", "true");
+
+                                           //Send meesage rom thresd
+                                           Message resultMessage = new Message();
+                                           resultMessage.setData(resultData);
+
+                                           backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       }
+                                   });
                                }
                            });
                        }

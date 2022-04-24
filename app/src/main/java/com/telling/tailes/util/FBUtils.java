@@ -13,11 +13,22 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.telling.tailes.R;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -516,4 +527,100 @@ public class FBUtils {
         });
     }
 
+    //Send a FCM message to the specified recipient
+    public static void sendNotification(Context context, String recipientUsername, String title, String body, String content, Consumer<Boolean> callback)
+    {
+        Task<DataSnapshot> userData = usersRef.child(recipientUsername).get();
+
+        userData.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                e.printStackTrace();
+                callback.accept(false);
+            }
+        });
+
+        userData.addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                DataSnapshot userResult = task.getResult();
+
+                if(!userResult.exists()) {
+                    callback.accept(false);
+                    return;
+                }
+
+                User recipientUser = userResult.getValue(User.class);
+
+                if(recipientUser == null) {
+                    callback.accept(false);
+                    return;
+                }
+
+                //Run doFCMMessage in another(?) background thread
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        doFCMMessage(context, recipientUser, title, body, content, new Consumer<Boolean>() {
+                            @Override
+                            public void accept(Boolean aBoolean) {
+                                callback.accept(aBoolean);
+                            }
+                        });
+                    }
+                }).start();
+            }
+        });
+    }
+
+    //Helper method to send a FCM message
+    private static void doFCMMessage(Context context, User recipient, String title, String body, String content, Consumer<Boolean> callback) {
+
+        String recipientFCMToken = recipient.getMessagingToken();
+
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jNotification = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        try {
+            jNotification.put("title", title);
+            jNotification.put("body", body);
+            jNotification.put("badge", "1");
+            data.put("content", content);
+            jsonObject.put("to", recipientFCMToken);
+            jsonObject.put("priority", "high");
+            jsonObject.put("notification", jNotification);
+            jsonObject.put("data", data);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.accept(false);
+            return;
+        }
+
+        try {
+
+            String serverToken = context.getString(R.string.fcm_server_key);
+            URL url = new URL(context.getString(R.string.fcm_uri));
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Authorization", serverToken);
+            conn.setDoOutput(true);
+
+            // Send FCM message content.
+            OutputStream outputStream = conn.getOutputStream();
+            outputStream.write(jsonObject.toString().getBytes());
+            outputStream.close();
+
+            //Finish regardless of result
+            callback.accept(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            callback.accept(false);
+        }
+    }
 }
