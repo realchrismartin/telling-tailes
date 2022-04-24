@@ -1,7 +1,7 @@
 package com.telling.tailes.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,7 +23,6 @@ import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
-import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
 import java.util.concurrent.Executor;
@@ -31,10 +31,9 @@ import java.util.function.Consumer;
 
 public class ReadStoryActivity extends AppCompatActivity {
 
-    private static final int storyTextSize = 20;
+    private static final int storyTextDefaultSize = 25; //Default text size if not overridden by prefs
 
     private TextView titleTextView;
-    private TextView authorTextView;
     private TextView storyTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
@@ -153,7 +152,14 @@ public class ReadStoryActivity extends AppCompatActivity {
     private void initViews(Story story) {
         //Make story text scrollable
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
-        storyTextView.setTextSize(storyTextSize);
+
+        //Set font size to preference setting
+        try {
+            storyTextView.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            storyTextView.setTextSize(storyTextDefaultSize);
+        }
 
         //Set up views with story data
         titleTextView.setText(story.getTitle());
