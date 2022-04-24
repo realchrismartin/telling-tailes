@@ -349,7 +349,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   //TODO:
+                                   //TODO: set actual data
                                    FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), "test", "test", "test", new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
