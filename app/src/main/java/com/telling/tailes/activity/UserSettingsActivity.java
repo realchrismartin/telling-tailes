@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.telling.tailes.R;
+import com.telling.tailes.fragment.UserSettingsDialogFragment;
 import com.telling.tailes.util.AuthUtils;
 
 import java.util.function.Consumer;
@@ -18,6 +19,7 @@ public class UserSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_settings);
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new UserSettingsDialogFragment()).commit();
     }
 
     public void userSettingsOnclickHelper(View view) {

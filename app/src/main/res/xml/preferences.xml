@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Settings">
+        <Preference
+            android:key="hide_description"
+            android:title="@string/setting_title"
+            android:summary="@string/setting_description"
+            android:icon="@drawable/ic_baseline_profile_24"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Profile">
+        <SwitchPreference
+            android:key="hide_setting"
+            android:title="@string/setting_hide_title"
+            android:summary="@string/setting_hide_description"
+            android:icon="@drawable/ic_baseline_profile_24"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

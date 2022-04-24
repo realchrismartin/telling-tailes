@@ -37,4 +37,8 @@
     <string name="author_profile_follow_notification">Followed</string>
     <string name="author_profile_unfollow_notification">Unfollowed</string>
     <string name="author_profile_follow_self_error">You can\'t follow yourself.</string>
+    <string name="setting_title">Settings!</string>
+    <string name="setting_description">Wow these are great</string>
+    <string name="setting_hide_title">Hide</string>
+    <string name="setting_hide_description">Hide in plain sight</string>
 </resources>
