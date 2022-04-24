@@ -3,7 +3,7 @@
     <string name="login_app_title">Telling Tailes</string>
     <string name="open" />
     <string name="close" />
-    <string name="fcm_server_key">key=AAAAP_xRAKQ:APA91bF_eM7uQ8kttYCACNsJR57kfUZ_D7QK-PSL4nHA8YaWy9KxKk3pzeNXWMOxPk516FHBg_8_VHK-L0kLtE6W_dUXcxg1DoLhu2bbY4UFOl3qv_hBHqNprNpX1k3imD28fv38yLam</string>
+    <string name="fcm_server_key">key=AAAAlPniYbs:APA91bGHtElSy0xiM_zOHTbq1GUggAVhRVhuQ5e2t-K-ww_W0cCsrJbuWj6wDq0_NYgHkFDhR1j1pM8cdK5kTaXJSO93ZDvGceLt-luvH6V9tCxIk5VDKlJKviEnc5Kz-vghIy8C4Jxr</string>
     <string name="fcm_uri">https://fcm.googleapis.com/fcm/send</string>
     <string name="gpt_api_completion_uri">https://api.openai.com/v1/engines/text-davinci-002/completions</string>
     <string name="gpt_api_filter_uri">https://api.openai.com/v1/engines/content-filter-alpha/completions</string>

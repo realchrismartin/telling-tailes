@@ -664,6 +664,23 @@ public class FBUtils {
             outputStream.write(jsonObject.toString().getBytes());
             outputStream.close();
 
+            InputStream inputStream = conn.getInputStream();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String res = "";
+
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String len;
+                while ((len = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(len);
+                }
+                bufferedReader.close();
+                res = stringBuilder.toString().replace(",", ",\n");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             //Finish regardless of result
             callback.accept(true);
 
