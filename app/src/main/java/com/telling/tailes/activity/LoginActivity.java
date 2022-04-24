@@ -3,6 +3,8 @@ package com.telling.tailes.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +35,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //Set up notification channel
+        NotificationChannel channel = new NotificationChannel("CHANNEL_ID","CHANNEL_NAME",NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 

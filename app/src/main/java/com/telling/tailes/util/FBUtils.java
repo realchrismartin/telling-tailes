@@ -4,10 +4,15 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
@@ -429,18 +434,34 @@ public class FBUtils {
     //Returns false in callback if user wasn't created, otherwise returns true
     public static void createUser(Context context, String username, String password, int profileIcon, Consumer<Boolean> callback) {
 
-        Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
+        Task<String> token = FirebaseMessaging.getInstance().getToken();
 
-        User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),new ArrayList<>(),0,0);
+        token.addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
 
-        Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
+                Pair<String,String> hashedPieces = AuthUtils.hashPassword(password);
 
-        createUserTask.addOnCompleteListener(task -> {
-            callback.accept(true);
+                User user = new User(username,profileIcon,hashedPieces.first,hashedPieces.second,new ArrayList<>(),new ArrayList<>(),0,0,task.getResult());
+
+                Task<Void> createUserTask = usersRef.child(user.getUsername()).setValue(user);
+
+                createUserTask.addOnCompleteListener(t -> {
+                    callback.accept(true);
+                });
+
+                createUserTask.addOnFailureListener(t -> {
+                    callback.accept(false);
+                });
+            }
         });
 
-        createUserTask.addOnFailureListener(task -> {
-            callback.accept(false);
+        token.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("FBUtils.createUser",e.toString());
+                callback.accept(false);
+            }
         });
     }
 
