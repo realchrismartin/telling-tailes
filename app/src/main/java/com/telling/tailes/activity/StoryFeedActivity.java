@@ -87,11 +87,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
 
-        //Set up notification channel
-        NotificationChannel channel = new NotificationChannel("CHANNEL_ID","CHANNEL_NAME", NotificationManager.IMPORTANCE_DEFAULT);
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
-
         loadedFirstStories = false;
         lastLoadedStorySortValue = null;
 
