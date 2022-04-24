@@ -12,10 +12,11 @@ import com.telling.tailes.R;
 import com.telling.tailes.activity.OnUnfollowClickCallbackListener;
 import com.telling.tailes.card.AuthorRviewCard;
 import com.telling.tailes.card.AuthorRviewCardClickListener;
+import com.telling.tailes.card.StoryRviewCard;
 
 import java.util.ArrayList;
 
-public class AuthorRviewAdapter extends RecyclerView.Adapter<AuthorRviewHolder> {
+public class AuthorRviewAdapter extends RecyclerView.Adapter{
     private ArrayList<AuthorRviewCard> authorCardList;
     private AuthorRviewCardClickListener listener;
     private OnUnfollowClickCallbackListener unfollowClickCallbackListener;
@@ -33,27 +34,63 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter<AuthorRviewHolder> 
     }
 
 
+    @Override
+    public int getItemViewType(int position) {
+        switch (authorCardList.get(position).getCardType()) {
+            case 0:
+                return AuthorRviewCard.CARD_TYPE_AUTHOR;
+            case 1:
+                return AuthorRviewCard.CARD_TYPE_LOADING;
+            case 2:
+                return AuthorRviewCard.CARD_TYPE_NO_AUTHORS;
+            default:
+                return -1;
+        }
 
+    }
 
     @NonNull
     @Override
-    public AuthorRviewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.author_card, parent, false);
-        return new AuthorRviewHolder(view, listener);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view;
+        switch (viewType) {
+            case 0:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.author_card, parent, false);
+                return new AuthorRviewHolder(view, listener);
+            case 1:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_card, parent, false);
+                return new RviewLoadingHolder(view);
+            case 2:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_authors_card, parent, false);
+                return new NoAuthorsRViewHolder(view);
+            default:
+                return null;
+        }
     }
 
     @Override
-    public void onBindViewHolder(AuthorRviewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AuthorRviewCard currentItem = authorCardList.get(position);
-        holder.authorName.setText(currentItem.getAuthor());
-        holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                unfollowClickCallbackListener.handleUnfollowClick(currentItem.getAuthor());
-            }
-        });
+        switch (currentItem.getCardType()) {
+            case 0:
+                AuthorRviewHolder aHolder = (AuthorRviewHolder) holder;
+                aHolder.authorName.setText(currentItem.getAuthor());
+                aHolder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        unfollowClickCallbackListener.handleUnfollowClick(currentItem.getAuthor());
+                    }
+                });
+            case 1:
+            case 2:
+            default:
+                break;
+        }
+
     }
 
     @Override
     public int getItemCount() { return authorCardList != null ? authorCardList.size() : 0; }
+
+
 }
