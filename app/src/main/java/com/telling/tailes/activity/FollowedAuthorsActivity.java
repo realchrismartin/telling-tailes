@@ -71,6 +71,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                                 authorCardList.remove(authorCard);
                                 if (authorCardList.size() == 0) {
                                     authorCardList.add(new AuthorRviewCard(2));
+                                    authorPullRefresh.setRefreshing(false);
                                 }
                                 authorRviewAdapter.notifyDataSetChanged();
                                 break;
