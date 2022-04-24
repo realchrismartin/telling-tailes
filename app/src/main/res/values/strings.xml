@@ -46,4 +46,6 @@
     <string name="setting_password_description">****</string>
     <string name="setting_logout_title">Log Out</string>
     <string name="setting_logout_description"> </string>
+    <string name="setting_text_size_title">Font</string>
+    <string name="setting_text_size_description">Set text size</string>
 </resources>

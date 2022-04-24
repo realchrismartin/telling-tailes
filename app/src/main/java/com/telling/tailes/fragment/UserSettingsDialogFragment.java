@@ -49,19 +49,22 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
     private static final int[] SETTINGS = new int[] {
             R.string.setting_hide_title,
-            R.string.setting_password_title
+            R.string.setting_password_title,
+            R.string.setting_text_size_title
     };
 
     //Methods used to set setting values
     private final Setter[] SETTERS = new Setter [] {
             this::handleGeneric,
-            this::handlePasswordChange
+            this::handlePasswordChange,
+            this::handleTextSizeChange
     };
 
     //Methods used to validate setting values
     private final Validator[] VALIDATORS = new Validator[] {
             this::validateGeneric,
-            this::validatePassword
+            this::validatePassword,
+            this::validateTextSize
     };
 
     private Map<String, Preference> preferences = new HashMap<>();
@@ -227,6 +230,16 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
         return true;
     }
 
+    private Boolean validateTextSize(Object object) {
+        Integer size = (Integer)object;
+
+        if(size == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     //Validate that the new password being set is valid
     private Boolean validatePassword(Object object) {
         String value = (String)object;
@@ -242,6 +255,10 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
     //Handle generic preference change, most likely by doing nothing
     private void handleGeneric(SharedPreferences sharedPreferences, String s) { }
+
+    private void handleTextSizeChange(SharedPreferences sharedPreferences, String s) {
+       //TODO
+    }
 
     //Handle user submitting a password change via setting
     private void handlePasswordChange(SharedPreferences sharedPreferences, String s) {

@@ -13,7 +13,14 @@
             android:summary="@string/setting_hide_description"
             android:icon="@drawable/ic_baseline_profile_24"
             />
-
+        <SeekBarPreference
+            android:key="@string/setting_text_size_title"
+            android:title="@string/setting_text_size_title"
+            android:summary="@string/setting_text_size_description"
+            android:min="2"
+            android:max="20"
+            android:defaultValue="10"
+            />
         <EditTextPreference
             android:key="@string/setting_password_title"
             android:title="@string/setting_password_title"
