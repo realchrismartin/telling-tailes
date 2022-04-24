@@ -324,7 +324,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                            if(user == null) {
                                Bundle resultData = new Bundle();
-                               resultData.putString("error", "Failed to get user"); //TODO
+                               resultData.putString("error", getString(R.string.user_get_error));
 
                                Message resultMessage = new Message();
                                resultMessage.setData(resultData);
@@ -340,7 +340,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                                    if(!result) {
                                        Bundle resultData = new Bundle();
-                                       resultData.putString("error", "Failed to update user after publish"); //TODO
+                                       resultData.putString("error", getString(R.string.user_update_error));
 
                                        Message resultMessage = new Message();
                                        resultMessage.setData(resultData);
@@ -349,8 +349,9 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   //TODO: set actual data
-                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), "test", "test", "test", new Consumer<Boolean>() {
+                                   String body = user.getUsername() + getString(R.string.message_published_story_body);
+
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
                                            Bundle resultData = new Bundle();

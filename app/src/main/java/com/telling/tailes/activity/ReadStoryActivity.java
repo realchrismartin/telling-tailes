@@ -234,6 +234,13 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void handleClickLove() {
+
+        if(AuthUtils.getLoggedInUserID(getApplicationContext()).equals(story.getAuthorID())) {
+           readStoryToast.setText(R.string.love_own_story_error);
+           readStoryToast.show();
+           return;
+        }
+
         FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
             @Override
             public void accept(Story result) {

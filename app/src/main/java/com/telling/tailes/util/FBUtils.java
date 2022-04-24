@@ -104,7 +104,20 @@ public class FBUtils {
                                    getStory(context, story.getId(), new Consumer<Story>() {
                                        @Override
                                        public void accept(Story updatedStory) {
-                                          callback.accept(updatedStory);
+
+                                           String body = currentUser + " " +  context.getString(R.string.message_loved_body) + " \"" + story.getTitle() + "\"";
+
+                                           FBUtils.sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", new Consumer<Boolean>() {
+                                               @Override
+                                               public void accept(Boolean aBoolean) {
+
+                                                   if(!aBoolean) {
+                                                       Log.e("UpdateLove","Failed to send notification");
+                                                   }
+
+                                                   callback.accept(updatedStory);
+                                               }
+                                           });
                                        }
                                    });
                                 }
@@ -324,6 +337,8 @@ public class FBUtils {
                             return;
                         }
 
+                        boolean removedFollow = followee.getFollowers().contains(follower.getUsername());
+
                         //Update the follower's list to include followee
                         follower.updateFollows(followee.getUsername());
 
@@ -357,8 +372,26 @@ public class FBUtils {
                                            return;
                                        }
 
-                                       //All updates succeeded, callback with true
-                                        callback.accept(follower);
+                                        //Skip notification if unfollowing
+                                        if(removedFollow) {
+                                           callback.accept(follower);
+                                           return;
+                                        }
+
+                                        // send notification if following
+                                        String body = follower.getUsername() + " " + context.getString(R.string.message_followed_body);
+                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, "", new Consumer<Boolean>() {
+                                            @Override
+                                            public void accept(Boolean aBoolean) {
+
+                                                if(aBoolean) {
+                                                    Log.e("updateFollow","Failed to send follow notification");
+                                                }
+
+                                                //Complete and call callback
+                                                callback.accept(follower);
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -564,7 +597,7 @@ public class FBUtils {
                         @Override
                         public void accept(Boolean aBoolean) {
                             if(!aBoolean) {
-                                Log.e("sendNotificationToFollowers","Something failed when sending a follower notification.");
+                                Log.e("sendNotificationToFollowers",context.getString(R.string.generic_error_notification));
                             }
                         }
                     });
