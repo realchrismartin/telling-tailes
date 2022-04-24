@@ -3,19 +3,14 @@ package com.telling.tailes.card;
 import com.telling.tailes.model.AuthorProfile;
 
 public class AuthorRviewCard {
-    private AuthorProfile author;
-    private boolean isFollowed;
+    private String authorId;
 
-    public AuthorRviewCard(AuthorProfile authorProfile) {
-        this.author = authorProfile;
+    public AuthorRviewCard(String author) {
+        this.authorId = author;
     }
 
     public String getAuthor() {
-        return author.getAuthorId();
-    }
-
-    public boolean isFollowed() {
-        return author.following();
+        return authorId;
     }
 
 }

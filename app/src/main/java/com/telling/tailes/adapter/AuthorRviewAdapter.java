@@ -42,5 +42,5 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter<AuthorRviewHolder> 
     }
 
     @Override
-    public int getItemCount() { return authorCardList.size(); }
+    public int getItemCount() { return authorCardList != null ? authorCardList.size() : 0; }
 }
