@@ -78,6 +78,18 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
         activateListeners();
 
         toast = Toast.makeText(getContext(),"",Toast.LENGTH_SHORT);
+
+        Preference logoutPreference = findPreference(getString(R.string.setting_logout_title));
+
+        if(logoutPreference != null) {
+            logoutPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    handleLogout();
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
@@ -163,7 +175,15 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
     }
 
     private Boolean validatePassword(Object object) {
-        return true; //TODO
+        String value = (String)object;
+
+        if(value.contains(" ") || value.length() < 5) {
+            toast.setText(R.string.password_complexity_error_notification);
+            toast.show();
+            return false;
+        }
+
+        return true;
     }
 
     //Handle user clicking hide setting
@@ -174,8 +194,15 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
     //Handle user submitting a password change via setting
     private void handlePasswordChange(SharedPreferences sharedPreferences, String s) {
-        int i = 0;
-        //TODO
+        Preference preference = preferences.get(getString(R.string.setting_password_title));
+
+        if(preference == null) {
+            return;
+        }
+
+        String value = asterisks(s.length());
+        preference.setDefaultValue(value);
+        preference.setSummary(value);
     }
 
     //Handle user clicking logout setting

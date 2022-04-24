@@ -41,6 +41,8 @@
     <string name="setting_description">Wow these are great</string>
     <string name="setting_hide_title">Hide</string>
     <string name="setting_hide_description">Hide in plain sight</string>
-    <string name="setting_password_title">Password</string>
-    <string name="setting_password_description">Change your password</string>
+    <string name="setting_password_title">Change your password</string>
+    <string name="setting_password_description">****</string>
+    <string name="setting_logout_title">Log Out</string>
+    <string name="setting_logout_description"> </string>
 </resources>

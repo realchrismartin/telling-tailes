@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <Preference
+            android:key="@string/setting_logout_title"
+            android:title="@string/setting_logout_title"
+            android:summary="@string/setting_logout_description"
+            android:icon="@drawable/ic_baseline_profile_24"
+            />
+
         <SwitchPreferenceCompat
             android:key="@string/setting_hide_title"
             android:title="@string/setting_hide_title"
             android:summary="@string/setting_hide_description"
             android:icon="@drawable/ic_baseline_profile_24"
             />
+
         <EditTextPreference
             android:key="@string/setting_password_title"
             android:title="@string/setting_password_title"
             android:summary="@string/setting_password_description"
-            android:defaultValue=""
-            android:icon="@drawable/ic_baseline_profile_24"
+            android:inputType="textPassword"
+            android:icon="@drawable/ic_baseline_post_add_24"
             />
+
 </PreferenceScreen>
