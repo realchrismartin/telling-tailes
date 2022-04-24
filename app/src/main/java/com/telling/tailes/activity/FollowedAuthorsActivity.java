@@ -38,8 +38,6 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
     private ArrayList<String> followedAuthorIds;
 
     private SwipeRefreshLayout authorPullRefresh;
-
-
     private Toast toast;
 
     @Override
@@ -82,7 +80,6 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
         createAuthorRecyclerView();
         loadFirstAuthors();
     }
-
 
     private void createAuthorRecyclerView() {
         authorCardList = new ArrayList<>();
@@ -136,7 +133,6 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
     private void refreshAuthors() {
         authorCardList.clear();
         authorRviewAdapter.notifyDataSetChanged();
-
         loadFollowedAuthors(); //which then calls loadAuthorData
     }
 
