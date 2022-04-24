@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.telling.tailes.R;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
@@ -77,6 +78,7 @@ public class MessagingService extends FirebaseMessagingService {
                 .setContentText(remoteMessageNotification.getBody())
                 .setColor(Color.argb(100, 100,100, 100))
                 .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_baseline_favorite_story_24)
                 .setContentIntent(pendingIntent)
                 .build();
 
