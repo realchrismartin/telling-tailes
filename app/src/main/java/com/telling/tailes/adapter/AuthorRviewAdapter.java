@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.telling.tailes.R;
+import com.telling.tailes.activity.OnUnfollowClickCallbackListener;
 import com.telling.tailes.card.AuthorRviewCard;
 import com.telling.tailes.card.AuthorRviewCardClickListener;
 
@@ -17,16 +18,22 @@ import java.util.ArrayList;
 public class AuthorRviewAdapter extends RecyclerView.Adapter<AuthorRviewHolder> {
     private ArrayList<AuthorRviewCard> authorCardList;
     private AuthorRviewCardClickListener listener;
+    private OnUnfollowClickCallbackListener unfollowClickCallbackListener;
     Context context;
 
-    public AuthorRviewAdapter(ArrayList<AuthorRviewCard> authorCardList, Context context) {
+    public AuthorRviewAdapter(ArrayList<AuthorRviewCard> authorCardList, Context context,
+                              OnUnfollowClickCallbackListener unfollowClickCallbackListener) {
         this.authorCardList = authorCardList;
         this.context = context;
+        this.unfollowClickCallbackListener = unfollowClickCallbackListener;
     }
 
     public void setOnAuthorClickListener(AuthorRviewCardClickListener listener) {
         this.listener = listener;
     }
+
+
+
 
     @NonNull
     @Override
@@ -39,6 +46,12 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter<AuthorRviewHolder> 
     public void onBindViewHolder(AuthorRviewHolder holder, int position) {
         AuthorRviewCard currentItem = authorCardList.get(position);
         holder.authorName.setText(currentItem.getAuthor());
+        holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                unfollowClickCallbackListener.handleUnfollowClick(currentItem.getAuthor());
+            }
+        });
     }
 
     @Override

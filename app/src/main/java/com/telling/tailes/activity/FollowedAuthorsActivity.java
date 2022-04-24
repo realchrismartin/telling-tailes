@@ -16,6 +16,8 @@ import com.telling.tailes.R;
 import com.telling.tailes.adapter.AuthorRviewAdapter;
 import com.telling.tailes.card.AuthorRviewCard;
 import com.telling.tailes.card.AuthorRviewCardClickListener;
+import com.telling.tailes.fragment.AuthorProfileDialogFragment;
+import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
@@ -25,7 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class FollowedAuthorsActivity extends AppCompatActivity {
+public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfollowClickCallbackListener {
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -36,6 +38,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
     private AuthorRviewAdapter authorRviewAdapter;
 
     private ArrayList<String> followedAuthorIds;
+    private AuthorProfileDialogFragment authorProfileDialogFragment;
 
     private SwipeRefreshLayout authorPullRefresh;
     private Toast toast;
@@ -56,7 +59,23 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                 }
 
                 switch (msg.getData().getString("type")) {
-                    case("followedAuthors"): {
+                    case("unfollowAuthor"): {
+                        if (msg.getData()== null || msg.getData().getInt("error") > 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                            return;
+                        }
+                        String removedId = msg.getData().getString("username");
+                        for (AuthorRviewCard authorCard : authorCardList) {
+                            if (authorCard.getAuthor() == removedId) {
+                                authorCardList.remove(authorCard);
+                                authorRviewAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    case ("followedAuthors"): {
                         followedAuthorIds = msg.getData().getStringArrayList("follows");
                         for (String authorId : followedAuthorIds) {
                             authorCardList.add(new AuthorRviewCard(authorId));
@@ -65,6 +84,27 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                         authorPullRefresh.setRefreshing(false);
                         break;
                     }
+
+                    case ("authorProfile"): {
+
+                        if (authorProfileDialogFragment != null) {
+                            authorProfileDialogFragment.dismiss();
+                        }
+
+                        //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                        if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                            return;
+                        }
+
+                        //If all is well, show the author profile fragment with the retrieved data
+                        authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                        authorProfileDialogFragment.setArguments(msg.getData());
+                        authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
+                        break;
+                    }
+
                     default: {
                         if (msg.getData() == null || msg.getData().getInt("result") > 0) {
                             toast.setText(R.string.generic_error_notification);
@@ -86,13 +126,17 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
         authorRviewLayoutManager = new LinearLayoutManager(this);
         authorRview = findViewById(R.id.author_recycler_view);
         authorRview.setHasFixedSize(true);
-        authorRviewAdapter = new AuthorRviewAdapter(authorCardList, getApplicationContext());
+        authorRviewAdapter = new AuthorRviewAdapter(authorCardList, getApplicationContext(), this);
         AuthorRviewCardClickListener authorClickListener = new AuthorRviewCardClickListener() {
             @Override
             public void onAuthorClick(int position) {
-                Log.d("Author Feed", "handle card click");
+                Log.d("Author list", "handle card click");
+                String username = authorCardList.get(position).getAuthor();
+                handleAuthorClick(username);
             }
         };
+
+
         authorRviewAdapter.setOnAuthorClickListener(authorClickListener);
 
         authorRview.setAdapter(authorRviewAdapter);
@@ -113,7 +157,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
                         resultData.putString("type", "followedAuthors");
-                        resultData.putStringArrayList("follows",user.getFollows());
+                        resultData.putStringArrayList("follows", user.getFollows());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -149,4 +193,61 @@ public class FollowedAuthorsActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void handleAuthorClick(String username) {
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FBUtils.getAuthorProfile(getApplicationContext(), username, new Consumer<AuthorProfile>() {
+                    @Override
+                    public void accept(AuthorProfile authorProfile) {
+
+                        //Set up a bundle of author profile result data
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "authorProfile");
+                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+
+                        if (authorProfile != null) {
+                            resultData.putString("authorId", authorProfile.getAuthorId());
+                            resultData.putInt("storyCount", authorProfile.getStoryCount());
+                            resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            resultData.putInt("followCount", authorProfile.getFollowCount());
+                            resultData.putBoolean("following", authorProfile.following());
+                            resultData.putInt("profileIcon", authorProfile.getProfileIcon());
+                        }
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        //Notify the activity that profile data has been retrieved
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
+            }
+        });
+    }
+
+    public void handleUnfollowClick(String username) {
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FBUtils.updateFollow(getApplicationContext(), username, new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "unfollowAuthor");
+                        resultData.putInt("error", user != null ? 0:1);
+                        if (user != null) {
+                            resultData.putString("username", username);
+                        }
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
+
+            }
+        });
+
+    }
+
 }

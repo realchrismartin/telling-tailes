@@ -27,6 +27,9 @@ public class AuthorRviewHolder extends RecyclerView.ViewHolder {
                 if (listener != null) {
                     int position = getLayoutPosition();
                     Log.d("AuthorCardClick", "author card was clicked");
+                    if(position != RecyclerView.NO_POSITION) {
+                        listener.onAuthorClick(position);
+                    }
                 }
             }
         });
