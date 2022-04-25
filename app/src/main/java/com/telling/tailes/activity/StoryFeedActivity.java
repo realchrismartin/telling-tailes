@@ -118,6 +118,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 }
 
                 switch(msg.getData().getString("type")) {
+                    case("storyData"): {
+
+                        //TODO
+                       break ;
+                    }
                     case("bookmarks"): {
                         currentFilter = FilterType.get("Bookmarks");
                         currentFilter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
