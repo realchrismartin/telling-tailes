@@ -103,5 +103,32 @@
         <item name="android:textColor">@color/pitch</item>
     </style>
 
+    <style name="AuthorProfileTitle" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/pitch</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AuthorProfileLabel" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/pitch</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AuthorProfileValue" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/pitch</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
 
 </resources>

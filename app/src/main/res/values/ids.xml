@@ -2,4 +2,5 @@
 <resources>
     <item name="testMenuButton" type="id" />
     <item name="testDrawerMenuButton" type="id" />
+    <item name="author_profile_user_profile_image" type="id" />
 </resources>

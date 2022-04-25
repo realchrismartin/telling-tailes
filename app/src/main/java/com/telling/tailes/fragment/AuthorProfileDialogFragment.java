@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,25 +11,21 @@ import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.telling.tailes.R;
 import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
-import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
-import java.text.DecimalFormat;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -52,7 +47,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String readOptionText;
     private Toast profileToast;
     private TextView profileUserNameView;
-    private Button profileButtonView;
+    private ImageView profileButtonView;
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -80,7 +75,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         TextView loveCountView = content.findViewById(R.id.author_profile_love_count_view);
         loveCountView.setText(Integer.toString(loveCount));
 
-        TextView followCountView = content.findViewById(R.id.author_profile_follow_count_view);
+        TextView followCountView = content.findViewById(R.id.author_profile_follower_count_view);
         followCountView.setText(Integer.toString(followCount));
 
         TextView ratingView = content.findViewById(R.id.author_profile_rating_view);
@@ -89,8 +84,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         profileUserNameView = content.findViewById(R.id.author_profile_user_name_view);
         profileUserNameView.setText(authorId);
 
-        profileButtonView = content.findViewById(R.id.author_profile_user_profile_button);
-        profileButtonView.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon)),null,null,null);
+        profileButtonView = content.findViewById(R.id.author_profile_user_profile_image);
+//        profileButtonView.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon)),null,null,null);
 
         final ListView items = content.findViewById(R.id.author_profile_options_view);
         items.setAdapter(arrayAdapterItems);
