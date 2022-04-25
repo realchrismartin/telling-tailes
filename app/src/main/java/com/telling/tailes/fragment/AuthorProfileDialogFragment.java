@@ -126,16 +126,24 @@ public class AuthorProfileDialogFragment extends DialogFragment {
 
                 CheckedTextView checkView = (CheckedTextView) content.findViewById(R.id.author_profile_check_view);
 
+                Bundle bundle = new Bundle();
+                bundle.putString("username",authorId);
+
                 if(following) {
                     authorProfileFollowButton.setText(unfollowOptionText);
                     profileToast.setText(getText(R.string.author_profile_follow_notification) + " " + authorId);
                     followCount += 1;
+                    bundle.putBoolean("followed",true);
                 } else {
                     authorProfileFollowButton.setText(followOptionText);
                     profileToast.setText(getText(R.string.author_profile_unfollow_notification) + " " + authorId);
                     followCount -= 1;
+                    bundle.putBoolean("followed",false);
                 }
 
+
+                //Inform the parent activity of the follow/unfollow activity
+                getParentFragmentManager().setFragmentResult("AuthorProfileDialogFragmentFollow",bundle);
                 followCountView.setText(Integer.toString(followCount));
                 profileToast.show();
 
