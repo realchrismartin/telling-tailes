@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/Theme"
     tools:context=".activity.UserSettingsActivity">
-
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
@@ -23,38 +23,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/story_card"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/readActivityStoryCard" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/readActivityStoryCard"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/readActivityStoryCard">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/readPrompTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="13dp"
-                        android:layout_marginEnd="13dp"
-                        android:textAlignment="textStart"
-                        app:layout_constraintTop_toBottomOf="parent" />
+                <TextView
+                    android:id="@+id/readPrompTextView"
+                    style="@style/PromptText"
+                    app:layout_constraintTop_toBottomOf="parent" />
 
-                    <TextView
-                        android:id="@+id/readStoryTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="13dp"
-                        android:layout_marginEnd="13dp"
-                        android:textAlignment="textStart"
-                        app:layout_constraintTop_toBottomOf="@+id/readPrompTextView"/>
+                <TextView
+                    android:id="@+id/readStoryTextView"
+                    style="@style/StoryText"
+                    app:layout_constraintTop_toBottomOf="@+id/readPrompTextView" />
 
-                </LinearLayout>
+            </LinearLayout>
 
         </ScrollView>
 
