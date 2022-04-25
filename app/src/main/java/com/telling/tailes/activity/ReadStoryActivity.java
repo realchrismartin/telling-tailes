@@ -34,6 +34,7 @@ public class ReadStoryActivity extends AppCompatActivity {
 
     private TextView titleTextView;
     private TextView storyTextView;
+    private TextView promptTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
     private ImageButton recycleButton;
@@ -61,6 +62,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         //Find all views
         titleTextView = findViewById(R.id.storyCardTitle);
         storyTextView = findViewById(R.id.readStoryTextView);
+        promptTextView = findViewById(R.id.readPrompTextView);
 
         bookmarkButton = findViewById(R.id.storyCardBookmarkButton);
         loveButton = findViewById(R.id.storyCardLoveButton);
@@ -121,20 +123,25 @@ public class ReadStoryActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void initViews(Story story) {
         //Make story text scrollable
-        storyTextView.setMovementMethod(new ScrollingMovementMethod());
+//        storyTextView.setMovementMethod(new ScrollingMovementMethod());
 
         //Set font size to preference setting
         try {
+            promptTextView.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
             storyTextView.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
         } catch(Exception ex) {
             ex.printStackTrace();
+            promptTextView.setTextSize(storyTextDefaultSize);
             storyTextView.setTextSize(storyTextDefaultSize);
         }
 
         //Set up views with story data
         titleTextView.setText(story.getTitle());
         authorProfileButton.setText(story.getAuthorID());
-        storyTextView.setText(story.getPromptText() + " " + story.getStoryText()); //TODO: spacing
+        String p = story.getPromptText();
+        promptTextView.setText(p);
+        String s = story.getStoryText();
+        storyTextView.setText(s); //TODO: spacing
 
         //Set up private variables
         storyText = story.getStoryText();

@@ -50,7 +50,6 @@ public class GPTUtils {
                 break;
             }
         }
-
         return story;
     }
 

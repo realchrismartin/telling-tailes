@@ -39,8 +39,10 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String genericErrorNotification;
 
     private DatabaseReference ref;
-    private TextView storyTextView;
+
     private TextView titleView;
+    private TextView storyTextView;
+    private TextView promptTextView;
     private ProgressBar loadingWheel;
     private Toast toast;
 
@@ -72,6 +74,9 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+
+        //Set up prompt text view
+        promptTextView = findViewById(R.id.publishPromptTextView);
 
         //Set up story text view
         storyTextView = findViewById(R.id.publishStoryTextView);
@@ -115,8 +120,9 @@ public class PublishStoryActivity extends AppCompatActivity {
         //Note that this will override anything loaded in from save state
         loadIntentData(getIntent());
 
-        //Set the story text to whatever the prompt and story text are, post load
-        storyTextView.setText(promptText + " " + storyText);
+        //Set the story text and prompt text independently
+        promptTextView.setText(promptText);
+        storyTextView.setText(storyText);
 
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {

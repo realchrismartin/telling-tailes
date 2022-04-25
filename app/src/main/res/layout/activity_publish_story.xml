@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.UserSettingsActivity">
 
-    <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:name="com.telling.tailes.fragment.HamburgerMenuFragment"
         android:layout_width="match_parent"
@@ -16,6 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
         app:layout_anchor="@+id/fragment_container_view"
         app:layout_anchorGravity="center"
         tools:context=".model.PublishStoryActivity">
@@ -30,7 +31,6 @@
             android:textColor="#283593"
             app:layout_constraintBottom_toTopOf="@+id/publishButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -43,18 +43,8 @@
             android:textColor="#283593"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.572" />
-
-        <TextView
-            android:id="@+id/publishStoryTextView"
-            android:layout_width="331dp"
-            android:layout_height="574dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/titleTextView"
@@ -63,10 +53,25 @@
             android:ems="10"
             android:hint="@string/publish_story_title_hint"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/publishPromptTextView"
+            android:layout_width="331dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+
+        <TextView
+            android:id="@+id/publishStoryTextView"
+            android:layout_width="331dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
 
         <Button
             android:id="@+id/publishButton"
