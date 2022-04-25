@@ -10,8 +10,14 @@
     <string name="gpt_api_token">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</string>
     <string name="length_selector_min_text">Hemingway</string>
     <string name="length_selector_max_text">Dostoyevsky</string>
+    <string name="temperature_selector_max_text">Tight</string>
+    <string name="temperature_selector_min_text">Loose</string>
+    <string name="presence_selector_max_text">Careful</string>
+    <string name="presence_selector_min_text">Sloppy</string>
+    <string name="frequency_selector_max_text">Tame</string>
+    <string name="frequency_selector_min_text">Wild</string>
     <string name="create_story_button_text">Tell a Taile</string>
-    <string name="create_story_prompt_hint">Enter a story prompt</string>
+    <string name="create_story_prompt_hint">Enter the beginning of your tale. Make sure to include detail!</string>
     <string name="publish_story_button_text">Publish</string>
     <string name="publish_story_title_hint">Enter a story title</string>
     <string name="publish_story_draft_saved_notification">Saving a draft of this taile…</string>

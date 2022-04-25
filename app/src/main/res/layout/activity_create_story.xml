@@ -21,45 +21,104 @@
         app:layout_anchorGravity="center"
         tools:context=".activity.CreateStoryActivity">
 
-        <TextView
-            android:id="@+id/lengthSelectorMin"
-            android:layout_width="wrap_content"
+        <SeekBar
+            android:id="@+id/lengthSlider"
+            android:layout_width="179dp"
             android:layout_height="wrap_content"
-            android:text="@string/length_selector_min_text"
-            app:layout_constraintEnd_toStartOf="@+id/lengthSelectorMax"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lengthSlider" />
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/lengthSelectorMax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="32dp"
             android:text="@string/length_selector_max_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/lengthSelectorMin"
-            app:layout_constraintTop_toBottomOf="@+id/lengthSlider" />
+            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
+            app:layout_constraintStart_toEndOf="@+id/lengthSlider" />
+
+        <TextView
+            android:id="@+id/lengthSelectorMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/length_selector_min_text"
+            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
+            app:layout_constraintEnd_toStartOf="@+id/lengthSlider" />
+
+        <TextView
+            android:id="@+id/temperatureSelectorMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/temperature_selector_min_text"
+            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
+            app:layout_constraintEnd_toStartOf="@+id/temperatureSlider" />
+
+        <TextView
+            android:id="@+id/temperatureSelectorMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/temperature_selector_max_text"
+            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
+            app:layout_constraintStart_toEndOf="@+id/temperatureSlider" />
+
+        <TextView
+            android:id="@+id/presenceSelectorMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/presence_selector_min_text"
+            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
+            app:layout_constraintEnd_toStartOf="@+id/presenceSlider" />
+
+        <TextView
+            android:id="@+id/presenceSelectorMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/presence_selector_max_text"
+            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
+            app:layout_constraintStart_toEndOf="@+id/presenceSlider" />
+
+        <TextView
+            android:id="@+id/frequencySelectorMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/frequency_selector_min_text"
+            app:layout_constraintBottom_toTopOf="@+id/promptView"
+            app:layout_constraintEnd_toStartOf="@+id/frequencySlider" />
+
+        <TextView
+            android:id="@+id/frequencySelectorMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="32dp"
+            android:text="@string/frequency_selector_max_text"
+            app:layout_constraintBottom_toTopOf="@+id/promptView"
+            app:layout_constraintStart_toEndOf="@+id/frequencySlider" />
 
         <Button
             android:id="@+id/createStoryButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/create_story_button_text"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <SeekBar
-            android:id="@+id/lengthSlider"
-            android:layout_width="179dp"
-            android:layout_height="19dp"
-            app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.452" />
+            app:layout_constraintTop_toBottomOf="@+id/promptView" />
 
         <TextView
             android:id="@+id/storyView"
@@ -72,16 +131,17 @@
 
         <EditText
             android:id="@+id/promptView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="195dp"
+            android:layout_height="139dp"
             android:ems="10"
             android:gravity="start|top"
             android:hint="@string/create_story_prompt_hint"
             android:inputType="textMultiLine"
-            app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lengthSlider" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
             android:id="@+id/storyCreateLoadingWheel"
@@ -90,9 +150,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/createStoryButton"
-            app:layout_constraintHorizontal_bias="0.398"
+            app:layout_constraintHorizontal_bias="0.708"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/createStoryButton"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageButton
             android:id="@+id/recordButton"
@@ -102,7 +163,36 @@
             app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
             app:layout_constraintEnd_toStartOf="@+id/promptView"
             app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
+            app:layout_constraintVertical_bias="0.72"
             app:srcCompat="@drawable/ic_baseline_mic_border_24" />
 
+        <SeekBar
+            android:id="@+id/frequencySlider"
+            android:layout_width="179dp"
+            android:layout_height="19dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/promptView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <SeekBar
+            android:id="@+id/temperatureSlider"
+            android:layout_width="179dp"
+            android:layout_height="19dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <SeekBar
+            android:id="@+id/presenceSlider"
+            android:layout_width="179dp"
+            android:layout_height="19dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
