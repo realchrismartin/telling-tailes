@@ -42,10 +42,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private int loveCount;
     private int followCount;
     private boolean following;
-    private String[] menuOptions;
-    private String placeholderUsernameText;
-    private String readUserStoriesText;
-    private String readOptionText;
     private Toast profileToast;
     private TextView profileUserNameView;
     private ImageView profileButtonView;
@@ -123,8 +119,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                 }
 
                 boolean following = msg.getData().getBoolean("following");
-
-                CheckedTextView checkView = (CheckedTextView) content.findViewById(R.id.author_profile_check_view);
 
                 Bundle bundle = new Bundle();
                 bundle.putString("username",authorId);
