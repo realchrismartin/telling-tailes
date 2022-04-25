@@ -133,4 +133,8 @@ public enum FilterType {
     public void setFollowsFilter(ArrayList<String> follows) {
         this.followsFilter = follows;
     }
+
+    public void addFollowFilter(String username) {this.followsFilter.add(username); }
+
+    public void removeFollowFilter(String username) { this.followsFilter.remove(username); }
 }

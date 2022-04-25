@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -97,13 +98,24 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
 
-        doLoginCheck(); //TODO: DO THIS FIRST
+        doLoginCheck();
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
         createFilterSpinner();
+        createListeners();
 
         loadFirstStories();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        doLoginCheck();
+    }
+
+    //Set up listeners
+    private void createListeners() {
 
         //Define handling for data results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
@@ -168,7 +180,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         //Stop refreshing when complete
                         feedSwipeRefresh.setRefreshing(false);
-                       break;
+                        break;
                     }
                     case("bookmarks"): {
                         currentFilter = FilterType.get("Bookmarks");
@@ -200,7 +212,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         authorProfileDialogFragment.setArguments(msg.getData());
                         authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
                         break;
-                   }
+                    }
                 }
             }
         };
@@ -215,7 +227,29 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 loadNextStories();
             }
         };
+
         storyRview.addOnScrollListener(scrollListener);
+
+        //Set up a listener to receive follow/unfollow data from the profile dialog and act accordingly if the current filter is Following
+        getSupportFragmentManager().setFragmentResultListener("AuthorProfileDialogFragmentFollow", this, new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+
+                if(currentFilter == FilterType.FOLLOWING) {
+
+                    boolean followed = bundle.getBoolean("followed");
+                    String username = bundle.getString("username");
+
+                    if(followed) {
+                        currentFilter.addFollowFilter(username);
+                    } else {
+                        currentFilter.removeFollowFilter(username);
+                    }
+
+                    refreshStories();
+                }
+            }
+        });
 
         findViewById(R.id.goToCreateStoryButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,12 +257,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 goToCreateStory();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        doLoginCheck();
     }
 
     //Set up the filter spinner
