@@ -321,10 +321,6 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                 });
             }
         });
-
-
-
-
     }
 
     //Handle user clicking logout setting

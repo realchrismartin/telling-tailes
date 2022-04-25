@@ -254,7 +254,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private String calculateRating() {
         // I HATE JAVA'S INTEGER DIVISION -- wrc
         double number = (loveCount + followCount)/((double)storyCount);
-        String rtn = "(" + String.format("%.1f", number) + ")";
-        return rtn;
+        return String.format("%.1f", number);
     }
 }
