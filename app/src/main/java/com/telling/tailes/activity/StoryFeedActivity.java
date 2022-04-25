@@ -120,8 +120,58 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 switch(msg.getData().getString("type")) {
                     case("storyData"): {
 
-                        //TODO
-                       break ;
+                        if(msg.getData().getInt("result") != 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                            return;
+                        }
+
+                        if(msg.getData().getString("last_type") == null) {
+                            return;
+                        }
+
+                        //Set data type of last loaded story sort value
+                        if(msg.getData().getString("last_type").equals("double")) {
+                            lastLoadedStorySortValue = msg.getData().getDouble("last_story");
+                        } else {
+                            lastLoadedStorySortValue = msg.getData().getString("last_story");
+                        }
+
+                        int storyCount=msg.getData().getInt("story_count");
+
+                        for(int i=0;i<storyCount;i++) {
+
+                            Story story = (Story)msg.getData().getSerializable("story_" + (i + 1));
+                            boolean replaced = false;
+                            int pos = 0;
+
+                            for (pos = 0; pos < storyCardList.size(); pos++) {
+
+                                if (storyCardList.get(pos).getID().equals(story.getId())) {
+                                    storyCardList.set(pos, new StoryRviewCard(story));
+                                    storyRviewAdapter.notifyItemChanged(pos);
+                                    replaced = true;
+                                }
+                            }
+
+                            if (!replaced) {
+                                storyCardList.add(pos, new StoryRviewCard(story));
+                                storyRviewAdapter.notifyItemInserted(pos);
+                            }
+
+                            loadedFirstStories = true;
+                        }
+
+                        //Recurse if the story card list isn't loaded yet
+                        if (storyCardList.size() <= maxStoryCards && refreshIterations < maxRefreshIterations) {
+                            refreshIterations++;
+                            loadStoryData();
+                            return;
+                        }
+
+                        //Stop refreshing when complete
+                        feedSwipeRefresh.setRefreshing(false);
+                       break;
                     }
                     case("bookmarks"): {
                         currentFilter = FilterType.get("Bookmarks");
@@ -184,6 +234,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         doLoginCheck();
     }
 
+    //Set up the filter spinner
     private void createFilterSpinner() {
         filterSpinnerItems = new ArrayList<>();
         String[] resourceArray = getResources().getStringArray(R.array.filter_spinner_options);
@@ -206,6 +257,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
 
+    //Set up the swipe refresh functionality
     private void createStorySwipeToRefresh() {
         feedSwipeRefresh = findViewById(R.id.feedSwipeRefresh);
         feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -220,6 +272,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
+    //Set up the recycler view
     private void createStoryRecyclerView() {
         storyRviewLayoutManager = new LinearLayoutManager(this);
         storyRview = findViewById(R.id.story_recycler_view);
@@ -246,6 +299,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.setLayoutManager(storyRviewLayoutManager);
     }
 
+    //Load initial stories, setting up any filter passed in from the current intent
     private void loadFirstStories() {
 
         FilterType filter = FilterType.NONE;
@@ -275,6 +329,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
     }
 
+    //Show a toast indicating more stories are being loaded, then load more stories (in a background thread)
     private void loadNextStories() {
         if (storyCardList.size() <= 0) {
             return;
@@ -288,66 +343,72 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         loadStoryData();
     }
 
+
+    //Load story data in a background thread after applying filter
+    //Call the main thread when done
     private void loadStoryData() {
 
         applyFilter(currentFilter);
 
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        backgroundTaskExecutor.execute(new Runnable() {
+           @Override
+           public void run() {
 
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Story story = dataSnapshot.getValue(Story.class);
+               query.addValueEventListener(new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                       Message message = new Message();
+                       Bundle data = new Bundle();
+
+                       int storyCount = 0;
+
+                       for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                           Story story = dataSnapshot.getValue(Story.class);
+
+                           if (story == null) {
+                               return;
+                           }
+
+                           if(currentFilter.getSortPropertyValue(story) instanceof Double) {
+                               data.putDouble("last_story",(Double)currentFilter.getSortPropertyValue(story));
+                               data.putString("last_type","double");
+                           } else {
+                               data.putString("last_story",(String)currentFilter.getSortPropertyValue(story));
+                               data.putString("last_type","string");
+                           }
 
 
-                    if (story == null) {
-                        return;
-                    }
+                           if (currentFilter.includes(getApplicationContext(), story)) {
+                               storyCount++;
+                               data.putSerializable("story_" + storyCount,story);
+                           }
+                       }
 
-                    //Track the last seen id, even if excluded by filter
-                    lastLoadedStorySortValue = currentFilter.getSortPropertyValue(story);
-                    //wrc
-                    int i = 44;
+                       data.putInt("story_count",storyCount);
+                       data.putString("type","storyData");
+                       data.putInt("result",0);
+                       message.setData(data);
 
-                    if (currentFilter.includes(getApplicationContext(), story)) {
-                        //TODO: this could be more efficient the way it was originally
-                        int pos;
-                        boolean replaced = false;
-                        for (pos = 0; pos < storyCardList.size(); pos++) {
-                            if (storyCardList.get(pos).getID().equals(story.getId())) {
-                                storyCardList.set(pos, new StoryRviewCard(story));
-                                storyRviewAdapter.notifyItemChanged(pos);
-                                replaced = true;
-                            }
-                        }
+                       backgroundTaskResultHandler.sendMessage(message);
 
-                        if (!replaced) {
-                            storyCardList.add(pos, new StoryRviewCard(story));
-                            storyRviewAdapter.notifyItemInserted(pos);
-                        }
+                   }
 
-                        loadedFirstStories = true;
-                    }
-
-                    feedSwipeRefresh.setRefreshing(false);
-                }
-
-                if (storyCardList.size() <= maxStoryCards && refreshIterations < maxRefreshIterations) {
-                    refreshIterations++;
-                    loadStoryData();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.d("loadTest:onCancelled", "AUGH");
-                // ...
-            }
-        });
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError databaseError) {
+                       Message message = new Message();
+                       Bundle data = new Bundle();
+                       data.putString("type","storyData");
+                       data.putInt("result",1);
+                       message.setData(data);
+                       backgroundTaskResultHandler.sendMessage(message);
+                   }
+               });
+           }
+       });
     }
 
+    //Handle pull-down refresh for feed
     private void refreshStories() {
         storyCardList.clear();
         storyRviewAdapter.notifyDataSetChanged();
@@ -358,11 +419,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         loadStoryData();
     }
 
+    //Navigate to the Create Story activity
     private void goToCreateStory() {
         Intent intent = new Intent(this, CreateStoryActivity.class);
         startActivity(intent);
     }
 
+    //Navigate to the Login activity
     private void goToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -378,6 +441,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         startActivity(intent);
     }
 
+    //Navigate to the Read Story activity
     private void goToReadStory(Story story) {
         Intent intent = new Intent(this, ReadStoryActivity.class);
         intent.putExtra("story", story);
