@@ -105,13 +105,13 @@ public enum FilterType {
                 return story.getAuthorID().equals(AuthUtils.getLoggedInUserID(context)) && story.getIsDraft();
             }
             case BOOKMARKS: {
-                return bookmarksFilter.contains(story.getId());
+                return bookmarksFilter.contains(story.getId()) && !story.getIsDraft();
             }
             case AUTHOR: {
-               return authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter);
+               return (authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter)) && !story.getIsDraft();
             }
             case FOLLOWING: {
-                return followsFilter.contains(story.getAuthorID());
+                return followsFilter.contains(story.getAuthorID()) && !story.getIsDraft();
             }
             case POPULAR: {
                 return story.getLovers().size() > 1 && !story.getIsDraft();
