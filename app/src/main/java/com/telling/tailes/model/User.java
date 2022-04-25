@@ -112,9 +112,9 @@ public class User {
     }
 
     //Return true if this password is the user's cleartext password, false otherwise
-    //TODO: Note that this is the function we want to "override" in order to enable "passwordless" login - just return true always
     public boolean checkPassword(String password) {
-        return AuthUtils.hashPassword(password,this.salt).equals(this.hashedPassword);
+        //return AuthUtils.hashPassword(password,this.salt).equals(this.hashedPassword); //Note: Uncomment this to re-enable password authentication
+        return true; //Comment this out
     }
 
     public ArrayList<String> getBookmarks() {
