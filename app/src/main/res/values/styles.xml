@@ -30,7 +30,6 @@
 
 <!--https://www.geeksforgeeks.org/theming-material-design-buttons-in-android-with-examples/-->
     <style name="SecondaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:backgroundTint">?attr/colorPrimary</item>
         <item name="android:layout_width">250dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">10dp</item>

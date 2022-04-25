@@ -41,8 +41,7 @@
     <string name="no_microphone_error_notification">This device doesn\'t appear to have a microphone, or something went wrong trying to record.</string>
     <string name="author_profile_follow_option">Follow</string>
     <string name="author_profile_unfollow_option">Unfollow</string>
-    <string name="author_profile_read_option">PlaceholderUsername\'s T(ai)les</string>
-    <string name="author_profile_placeholder_username">PlaceholderUsername</string>
+    <string name="author_profile_read_option">\'s T(ai)les</string>
     <string name="author_profile_follow_notification">Followed</string>
     <string name="author_profile_unfollow_notification">Unfollowed</string>
     <string name="author_profile_follow_self_error">You can\'t follow yourself.</string>
