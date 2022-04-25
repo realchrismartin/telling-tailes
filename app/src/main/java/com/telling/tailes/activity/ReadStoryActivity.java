@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -72,82 +71,53 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
+        initViews(story);
+        initListeners();
+
         //Set up background executor for handling author profile data request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 
-        //Define handling for author profile data results from the background thread
+        //Define handling for results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
 
-                if (authorProfileDialogFragment != null) {
-                    authorProfileDialogFragment.dismiss();
-                }
-
-                //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                //Show a generic error instead if data wasn't retrieved properly
                 if (msg.getData() == null || msg.getData().getInt("result") > 0) {
                     readStoryToast.setText(R.string.generic_error_notification);
                     readStoryToast.show();
                     return;
                 }
 
-                //If all is well, show the author profile fragment with the retrieved data
-                authorProfileDialogFragment = new AuthorProfileDialogFragment();
-                authorProfileDialogFragment.setArguments(msg.getData());
-                authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+                String type = msg.getData().getString("type");
 
+                switch(type) {
+                    case "authorProfile": {
+                        if (authorProfileDialogFragment != null) {
+                            authorProfileDialogFragment.dismiss();
+                        }
+
+                        authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                        authorProfileDialogFragment.setArguments(msg.getData());
+                        authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+                        break;
+                    }
+
+                    case "love": {
+                        story = (Story)msg.getData().getSerializable("story");
+                        updateLoveButtonState();
+                        break;
+                    }
+
+                    case "bookmark" : {
+                        story = (Story)msg.getData().getSerializable("story");
+                        updateBookmarkButtonState();
+                        break;
+                    }
+                }
             }
         };
 
-        //Define onClick handler for opening author profile
-        authorProfileButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               handleAuthorClick();
-            }
-        });
-
-        initViews(story);
-        initListeners();
-    }
-
-    /*
-        Card onClick handler for opening an author profile
-     */
-    public void handleAuthorClick()
-    {
-        String username = story.getAuthorID();
-
-        backgroundTaskExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                FBUtils.getAuthorProfile(getApplicationContext(),username, new Consumer<AuthorProfile>() {
-                    @Override
-                    public void accept(AuthorProfile authorProfile) {
-
-                        //Set up a bundle of author profile result data
-                        Bundle resultData = new Bundle();
-                        resultData.putString("type", "authorProfile");
-                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
-
-                        if (authorProfile != null) {
-                            resultData.putString("authorId", authorProfile.getAuthorId());
-                            resultData.putInt("storyCount", authorProfile.getStoryCount());
-                            resultData.putInt("loveCount", authorProfile.getLoveCount());
-                            resultData.putInt("profileIcon",authorProfile.getProfileIcon());
-                            resultData.putBoolean("following", authorProfile.following());
-                        }
-
-                        Message resultMessage = new Message();
-                        resultMessage.setData(resultData);
-
-                        //Notify the activity that profile data has been retrieved
-                        backgroundTaskResultHandler.sendMessage(resultMessage);
-                    }
-                });
-            }
-        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -207,6 +177,13 @@ public class ReadStoryActivity extends AppCompatActivity {
 
             }
         });
+
+        authorProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleAuthorClick();
+            }
+        });
     }
 
    private void updateLoveButtonState() {
@@ -225,18 +202,66 @@ public class ReadStoryActivity extends AppCompatActivity {
         }
     }
 
-    private void handleClickBookmark() {
-        FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
+    /*
+        Card onClick handler for opening an author profile
+     */
+    public void handleAuthorClick()
+    {
+        String username = story.getAuthorID();
+
+        backgroundTaskExecutor.execute(new Runnable() {
             @Override
-            public void accept(Story result) {
-                if(result == null) {
-                    readStoryToast.setText(R.string.generic_error_notification);
-                } else {
-                    story = result;
-                    updateBookmarkButtonState();
-                }
+            public void run() {
+
+                FBUtils.getAuthorProfile(getApplicationContext(),username, new Consumer<AuthorProfile>() {
+                    @Override
+                    public void accept(AuthorProfile authorProfile) {
+
+                        //Set up a bundle of author profile result data
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "authorProfile");
+                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+
+                        if (authorProfile != null) {
+                            resultData.putString("authorId", authorProfile.getAuthorId());
+                            resultData.putInt("storyCount", authorProfile.getStoryCount());
+                            resultData.putInt("loveCount", authorProfile.getLoveCount());
+                            resultData.putInt("profileIcon",authorProfile.getProfileIcon());
+                            resultData.putBoolean("following", authorProfile.following());
+                        }
+
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        //Notify the activity that profile data has been retrieved
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
             }
         });
+    }
+
+    private void handleClickBookmark() {
+        backgroundTaskExecutor.execute(new Runnable() {
+               @Override
+               public void run() {
+
+                   FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
+                       @Override
+                       public void accept(Story result) {
+                           Bundle resultData = new Bundle();
+                           resultData.putString("type", "bookmark");
+                           resultData.putInt("result", result != null ? 0 : 1);
+                           resultData.putSerializable("story",result);
+
+                           Message resultMessage = new Message();
+                           resultMessage.setData(resultData);
+
+                           backgroundTaskResultHandler.sendMessage(resultMessage);
+                       }
+                   });
+               }
+           });
     }
 
     private void handleClickRecycle() {
@@ -249,20 +274,32 @@ public class ReadStoryActivity extends AppCompatActivity {
     private void handleClickLove() {
 
         if(AuthUtils.getLoggedInUserID(getApplicationContext()).equals(story.getAuthorID())) {
-           readStoryToast.setText(R.string.love_own_story_error);
-           readStoryToast.show();
-           return;
+            readStoryToast.setText(R.string.love_own_story_error);
+            readStoryToast.show();
+            return;
         }
 
-        FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
+        backgroundTaskExecutor.execute(new Runnable() {
             @Override
-            public void accept(Story result) {
-                if(result == null) {
-                    readStoryToast.setText(R.string.generic_error_notification);
-                } else {
-                    story = result;
-                    updateLoveButtonState();
-                }
+            public void run() {
+
+                FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
+                    @Override
+                    public void accept(Story result) {
+
+                        //Set up a bundle of data
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "love");
+                        resultData.putInt("result", result != null ? 0 : 1);
+                        resultData.putSerializable("story",result);
+
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+
+                    }
+                });
             }
         });
     }

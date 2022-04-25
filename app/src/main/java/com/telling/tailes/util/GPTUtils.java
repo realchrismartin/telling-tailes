@@ -26,7 +26,7 @@ public class GPTUtils {
         Given a prompt and length, generate a story
         If the story is not appropriate, keep generating stories until we find an appropriate one
      */
-    public static String getStory(Context context, String prompt, int length) {
+    public static String getStory(Context context, String prompt, int length, double temperature, double presence, double frequency) {
 
         boolean appropriate = false;
         int maxIterations = 5;
@@ -36,7 +36,7 @@ public class GPTUtils {
         for (int i = 0; i < maxIterations; i++) {
 
             //Complete the prompt and create a story
-            possibleStory = getPromptCompletion(context, prompt, length);
+            possibleStory = getPromptCompletion(context, prompt, length,temperature,presence,frequency);
 
             if (possibleStory.length() <= 0) {
                 break;
@@ -152,14 +152,42 @@ public class GPTUtils {
         return false;
     }
 
-    private static String getPromptCompletion(Context context, String prompt, int length) {
+    private static String getPromptCompletion(Context context, String prompt, int length, double temperature, double presence, double frequency) {
         try {
+
+            if(length < 5) {
+               length = 5;
+            }
+
+            if(length > 2048) {
+                length = 2048;
+            }
+
+            if(presence < -2.0) {
+               presence = -2.0;
+            }
+
+            if (presence > 2.0) {
+                presence = 2.0;
+            }
+
+            if(frequency < -2.0) {
+                frequency = -2.0;
+            }
+
+            if(frequency > 2.0) {
+                frequency = 2.0;
+            }
+
+            if(temperature < 0.0) {;
+                temperature = 0.0;
+            }
+
+            if(temperature > 1.0) {
+                temperature = 1.0;
+            }
+
             String serverToken = context.getString(R.string.gpt_api_token);
-
-            //TODO: update length to be something more realistic
-            //Probably do some math on the length value to translate it to number of tokens
-            //Example default length is 5
-
             URL url = new URL(context.getString(R.string.gpt_api_completion_uri));
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -173,6 +201,9 @@ public class GPTUtils {
             try {
                 body.put("prompt", prompt);
                 body.put("max_tokens", length);
+                body.put("presence_penalty",presence);
+                body.put("frequency_penalty",frequency);
+                body.put("temperature",temperature);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return "";

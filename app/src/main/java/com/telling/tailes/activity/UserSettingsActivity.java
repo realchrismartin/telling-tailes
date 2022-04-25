@@ -21,6 +21,4 @@ public class UserSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_settings);
         getSupportFragmentManager().beginTransaction().replace(R.id.setting_view, new UserSettingsDialogFragment()).commit();
     }
-
-
 }

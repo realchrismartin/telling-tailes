@@ -9,18 +9,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -31,8 +28,6 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.util.GPTUtils;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -62,6 +57,9 @@ public class CreateStoryActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> launcher;
 
     private SeekBar lengthSeekBar;
+    private SeekBar temperatureSeekBar;
+    private SeekBar presenceSeekBar;
+    private SeekBar frequencySeekBar;
     private TextView promptView;
     private ProgressBar loadingWheel;
     private Toast toast;
@@ -85,6 +83,10 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         //Set up views
         lengthSeekBar = findViewById(R.id.lengthSlider);
+        temperatureSeekBar = findViewById(R.id.temperatureSlider);
+        presenceSeekBar = findViewById(R.id.presenceSlider);
+        frequencySeekBar = findViewById(R.id.frequencySlider);
+
         promptView = findViewById(R.id.promptView);
         loadingWheel = findViewById(R.id.storyCreateLoadingWheel);
 
@@ -100,6 +102,15 @@ public class CreateStoryActivity extends AppCompatActivity {
         //Set seekbar min and max
         lengthSeekBar.setMin(lengthMin);
         lengthSeekBar.setMax(lengthMax);
+
+        temperatureSeekBar.setMin(0);
+        temperatureSeekBar.setMax(100);
+
+        presenceSeekBar.setMin(0);
+        presenceSeekBar.setMax(100);
+
+        frequencySeekBar.setMin(0);
+        frequencySeekBar.setMax(100);
 
         //Set up background executor for handling web request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
@@ -305,8 +316,12 @@ public class CreateStoryActivity extends AppCompatActivity {
             @Override
             public void run() {
 
+                double temperature = 0.9 - temperatureSeekBar.getProgress() * .002; //Inverted from selection - left is creative, attenuated to be .1x as strong
+                double presence = presenceSeekBar.getProgress() / 50.0; //Only allows positive values
+                double frequency = frequencySeekBar.getProgress() / 50.0;
+
                 //Ask GPT to complete the prompt
-                String story = GPTUtils.getStory(getApplicationContext(), promptView.getText().toString().trim(), lengthSeekBar.getProgress());
+                String story = GPTUtils.getStory(getApplicationContext(), promptView.getText().toString().trim(), lengthSeekBar.getProgress(),temperature,presence,frequency);
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
                 //Set up a bundle
