@@ -6,6 +6,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -50,9 +53,9 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     private Toast profileToast;
     private TextView profileUserNameView;
     private Button profileButtonView;
-    private double rating;
 
     private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
 
     @SuppressLint("SetTextI18n")
     @NonNull
@@ -93,11 +96,48 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         items.setAdapter(arrayAdapterItems);
         items.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+        //Handle background task interactions with the follow/unfollow toggle
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (msg.getData() == null) {
+                    return;
+                }
+
+                int result = msg.getData().getInt("result");
+
+                if(result != 0) {
+                    profileToast.setText(R.string.generic_error_notification);
+                    return;
+                }
+
+                boolean following = msg.getData().getBoolean("following");
+
+                CheckedTextView checkView = (CheckedTextView) content.findViewById(R.id.author_profile_check_view);
+
+                if(following) {
+                    checkView.setChecked(true);
+                    checkView.setText(unfollowOptionText);
+                    profileToast.setText(getText(R.string.author_profile_follow_notification) + " " + authorId);
+                    followCount += 1;
+                } else {
+                    checkView.setChecked(false);
+                    checkView.setText(followOptionText);
+                    profileToast.setText(getText(R.string.author_profile_unfollow_notification) + " " + authorId);
+                    followCount -= 1;
+                }
+
+                followCountView.setText(Integer.toString(followCount));
+                profileToast.show();
+
+            }
+        };
+
         //Set up item onClick listener for dialog options
         items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                CheckedTextView checkView = (CheckedTextView) view.findViewById(R.id.author_profile_check_view);
                 String option = adapterView.getItemAtPosition(i).toString();
 
                 if (option.equals(followOptionText) || option.equals(unfollowOptionText)) {
@@ -114,28 +154,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                         return;
                     }
 
-                    //Handle following the author in the current activity, assumed to be StoryFeedActivity
-                    //When follow is complete, update here
-                    handleAuthorFollow(authorId,new Consumer<User>() {
-                        @Override
-                        public void accept(User user) {
-                            if(user.getFollows().contains(authorId)) {
-                               checkView.setChecked(true);
-                               checkView.setText(unfollowOptionText);
-                               profileToast.setText(getText(R.string.author_profile_follow_notification) + " " + authorId);
-                               followCount += 1;
-                            } else {
-                                checkView.setChecked(false);
-                                checkView.setText(followOptionText);
-                                profileToast.setText(getText(R.string.author_profile_unfollow_notification) + " " + authorId);
-                                followCount -= 1;
-                            }
-
-                            followCountView.setText(Integer.toString(followCount));
-                            profileToast.show();
-                        }
-                    });
-
+                    //Handle following the author if not following self
+                    handleAuthorFollow(authorId);
                     return;
                 }
 
@@ -241,16 +261,27 @@ public class AuthorProfileDialogFragment extends DialogFragment {
     /*
         Fragment onClick handler for following or unfollowing an author
      */
-    public void handleAuthorFollow(String username,Consumer<User> callback) {
+    public void handleAuthorFollow(String username) {
 
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                FBUtils.updateFollow(getContext(), username, callback);
+                FBUtils.updateFollow(getContext(), username, new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Message message = new Message();
+                        Bundle data = new Bundle();
+                        data.putInt("result", user == null ? 1 : 0);
+                        data.putBoolean("following", user != null && user.getFollows() != null && user.getFollows().contains(authorId));
+                        message.setData(data);
+                        backgroundTaskResultHandler.sendMessage(message);
+                    }
+                });
             }
         });
     }
 
+    @SuppressLint("DefaultLocale")
     private String calculateRating() {
         // I HATE JAVA'S INTEGER DIVISION -- wrc
         double number = (loveCount + followCount)/((double)storyCount);
