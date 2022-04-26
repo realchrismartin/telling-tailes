@@ -18,8 +18,12 @@
 
         <TextView
             android:id="@+id/authorCardName"
+            style="@style/AuthorProfileTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="AuthorName"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,12 +31,13 @@
 
         <Button
             android:id="@+id/authorCardFollowButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:text="Un/Follow"
-            app:layout_constraintEnd_toEndOf="parent" />
+            style="@style/PrimaryButton"
+            android:layout_width="100dp"
+            android:layout_marginEnd="20dp"
+            android:text="Unfollow"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/authorCardName"
+            app:layout_constraintTop_toTopOf="@+id/authorCardName"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
