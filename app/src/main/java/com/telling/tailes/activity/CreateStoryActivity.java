@@ -83,9 +83,9 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         //Set up views
         lengthSeekBar = findViewById(R.id.lengthSlider);
-        temperatureSeekBar = findViewById(R.id.temperatureSlider);
+//        temperatureSeekBar = findViewById(R.id.temperatureSlider);
         presenceSeekBar = findViewById(R.id.presenceSlider);
-        frequencySeekBar = findViewById(R.id.frequencySlider);
+//        frequencySeekBar = findViewById(R.id.frequencySlider);
 
         promptView = findViewById(R.id.promptView);
         loadingWheel = findViewById(R.id.storyCreateLoadingWheel);
@@ -103,14 +103,14 @@ public class CreateStoryActivity extends AppCompatActivity {
         lengthSeekBar.setMin(lengthMin);
         lengthSeekBar.setMax(lengthMax);
 
-        temperatureSeekBar.setMin(0);
-        temperatureSeekBar.setMax(100);
+        /*temperatureSeekBar.setMin(0);
+        temperatureSeekBar.setMax(100);*/
 
         presenceSeekBar.setMin(0);
         presenceSeekBar.setMax(100);
 
-        frequencySeekBar.setMin(0);
-        frequencySeekBar.setMax(100);
+        /*frequencySeekBar.setMin(0);
+        frequencySeekBar.setMax(100);*/
 
         //Set up background executor for handling web request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
@@ -316,12 +316,12 @@ public class CreateStoryActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                double temperature = 0.9 - temperatureSeekBar.getProgress() * .002; //Inverted from selection - left is creative, attenuated to be .1x as strong
+//                double temperature = 0.9 - temperatureSeekBar.getProgress() * .002; //Inverted from selection - left is creative, attenuated to be .1x as strong
                 double presence = presenceSeekBar.getProgress() / 50.0; //Only allows positive values
-                double frequency = frequencySeekBar.getProgress() / 50.0;
+//                double frequency = frequencySeekBar.getProgress() / 50.0;
 
                 //Ask GPT to complete the prompt
-                String story = GPTUtils.getStory(getApplicationContext(), promptView.getText().toString().trim(), lengthSeekBar.getProgress(),temperature,presence,frequency);
+                String story = GPTUtils.getStory(getApplicationContext(), promptView.getText().toString().trim(), lengthSeekBar.getProgress(),presence);
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
                 //Set up a bundle
