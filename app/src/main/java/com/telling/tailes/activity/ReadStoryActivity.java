@@ -128,15 +128,15 @@ public class ReadStoryActivity extends AppCompatActivity {
         }
 
         initListeners();
-
-
     }
 
+    /*
+        handler for fetching story from FireBase if coming from intent not story feed
+    */
     private void handleStory(String storyID) {
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                int i = 7;
                 FBUtils.getStory(getApplicationContext(), storyID, new Consumer<Story>() {
                     @Override
                     public void accept(Story story) {
