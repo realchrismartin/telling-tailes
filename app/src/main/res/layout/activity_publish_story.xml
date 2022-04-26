@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
+        android:elevation="0dp"
         app:layout_anchor="@+id/fragment_container_view"
         app:layout_anchorGravity="center"
         tools:context=".model.PublishStoryActivity">
@@ -52,57 +53,78 @@
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
+            app:layout_constraintBottom_toTopOf="@+id/storyAddButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView"
-            app:layout_constraintBottom_toTopOf="@+id/publishButton"/>
-
-        <Button
-            android:id="@+id/storyRecycleButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="4dp"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toTopOf="@+id/publishButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.54" />
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
 
         <Button
             android:id="@+id/storyAddButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:drawableLeft="@drawable/ic_baseline_favorite_story_24"
-            android:text=""
-            android:textColor="#000000"
-            app:layout_constraintBottom_toTopOf="@+id/storyRecycleButton"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/storyDeleteButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.572" />
-
-        <Button
-            android:id="@+id/publishButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/publish_story_button_text"
+            android:drawableLeft="@drawable/ic_baseline_favorite_story_24"
+            android:text="Extend"
+            android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishDeleteFAB"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_delete_outline_24" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishRecycleFAB"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_replay_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishPublishFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_publish_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/famFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_expand_up_white_24" />
 
         <ProgressBar
             android:id="@+id/storyPublishLoadingWheel"
@@ -110,8 +132,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

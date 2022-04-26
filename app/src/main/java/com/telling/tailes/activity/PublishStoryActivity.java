@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
@@ -23,6 +24,7 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.FloatingActionMenuUtil;
 import com.telling.tailes.util.GPTUtils;
 
 import java.util.ArrayList;
@@ -51,6 +53,13 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String promptText;
     private String storyText;
     private String lastStoryChunk;
+
+    private boolean isFamOpen;
+    private FloatingActionButton deleteFAB;
+    private FloatingActionButton recycleFAB;
+    private FloatingActionButton publishFAB;
+    private FloatingActionButton famMenu;
+    private ArrayList<FloatingActionButton> famList;
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -143,8 +152,25 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setText(storyText);
         lastStoryChunk = storyText;
 
+        deleteFAB = findViewById(R.id.publishDeleteFAB);
+        recycleFAB = findViewById(R.id.publishRecycleFAB);
+        publishFAB = findViewById(R.id.publishPublishFAB);
+        famList = new ArrayList<>();
+        famList.add(publishFAB);
+        famList.add(recycleFAB);
+        famList.add(deleteFAB);
+        isFamOpen = false;
+
+        famMenu = findViewById(R.id.famFAB);
+        famMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
+            }
+        });
+
         //Define click handler for publishing a story
-        findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
+        publishFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -156,7 +182,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyDeleteButton).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.publishDeleteFAB).setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view)  {
                handleClickDeleteDraft();
@@ -164,7 +190,7 @@ public class PublishStoryActivity extends AppCompatActivity {
            }
         });
 
-        findViewById(R.id.storyRecycleButton).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.publishRecycleFAB).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleClickDeleteDraft();
