@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,9 +58,11 @@ public class PublishStoryActivity extends AppCompatActivity {
     private boolean isFamOpen;
     private FloatingActionButton deleteFAB;
     private FloatingActionButton recycleFAB;
-    private FloatingActionButton publishFAB;
+    private FloatingActionButton extendFAB;
     private FloatingActionButton famMenu;
     private ArrayList<FloatingActionButton> famList;
+
+    private Button publishButton;
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -152,11 +155,12 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setText(storyText);
         lastStoryChunk = storyText;
 
+        publishButton = findViewById(R.id.publishButton);
         deleteFAB = findViewById(R.id.publishDeleteFAB);
         recycleFAB = findViewById(R.id.publishRecycleFAB);
-        publishFAB = findViewById(R.id.publishPublishFAB);
+        extendFAB = findViewById(R.id.publishExtendFAB);
         famList = new ArrayList<>();
-        famList.add(publishFAB);
+        famList.add(extendFAB);
         famList.add(recycleFAB);
         famList.add(deleteFAB);
         isFamOpen = false;
@@ -166,11 +170,16 @@ public class PublishStoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
+                if (isFamOpen) {
+                    famMenu.setImageResource(R.drawable.ic_baseline_expand_down_24);
+                    return;
+                }
+                famMenu.setImageResource(R.drawable.ic_baseline_expand_up_white_24);
             }
         });
 
         //Define click handler for publishing a story
-        publishFAB.setOnClickListener(new View.OnClickListener() {
+        publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -182,7 +191,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.publishDeleteFAB).setOnClickListener(new View.OnClickListener() {
+        deleteFAB.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view)  {
                handleClickDeleteDraft();
@@ -190,7 +199,7 @@ public class PublishStoryActivity extends AppCompatActivity {
            }
         });
 
-        findViewById(R.id.publishRecycleFAB).setOnClickListener(new View.OnClickListener() {
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleClickDeleteDraft();
@@ -198,7 +207,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyAddButton).setOnClickListener(new View.OnClickListener() {
+        extendFAB.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view)   {
              handleAppendText();

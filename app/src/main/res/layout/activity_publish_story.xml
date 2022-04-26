@@ -53,17 +53,17 @@
             android:ems="10"
             android:gravity="start|top"
             android:inputType="textMultiLine"
-            app:layout_constraintBottom_toTopOf="@+id/storyAddButton"
+            app:layout_constraintBottom_toTopOf="@+id/publishButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
 
         <Button
-            android:id="@+id/storyAddButton"
+            android:id="@+id/publishButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_baseline_favorite_story_24"
-            android:text="Extend"
+            android:text="Publish"
             android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +101,7 @@
             app:srcCompat="@drawable/ic_baseline_replay_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/publishPublishFAB"
+            android:id="@+id/publishExtendFAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="0dp"
@@ -111,7 +111,7 @@
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
-            app:srcCompat="@drawable/ic_baseline_publish_24" />
+            app:srcCompat="@drawable/ic_baseline_playlist_add_24" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/famFAB"
