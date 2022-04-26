@@ -426,6 +426,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             public void run() {
 
                 //Ask GPT to complete the prompt... again
+                //TODO: change to unhardcode
                 String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,1.0,0.0,0.0);
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
