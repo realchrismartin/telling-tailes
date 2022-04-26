@@ -68,7 +68,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        titleView = findViewById(R.id.titleTextView);
+        titleView = findViewById(R.id.titleEditText);
         loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
 
         //Set up DB ref
