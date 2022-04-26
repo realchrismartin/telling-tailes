@@ -26,7 +26,7 @@ public class GPTUtils {
         Given a prompt and length, generate a story
         If the story is not appropriate, keep generating stories until we find an appropriate one
      */
-    public static String getStory(Context context, String prompt, int length, double temperature, double presence, double frequency) {
+    public static String getStory(Context context, String prompt, int length, double presence) {
 
         boolean appropriate = false;
         int maxIterations = 5;
@@ -36,7 +36,7 @@ public class GPTUtils {
         for (int i = 0; i < maxIterations; i++) {
 
             //Complete the prompt and create a story
-            possibleStory = getPromptCompletion(context, prompt, length,temperature,presence,frequency);
+            possibleStory = getPromptCompletion(context, prompt, length,presence);
 
             if (possibleStory.length() <= 0) {
                 break;
@@ -152,7 +152,7 @@ public class GPTUtils {
         return false;
     }
 
-    private static String getPromptCompletion(Context context, String prompt, int length, double temperature, double presence, double frequency) {
+    private static String getPromptCompletion(Context context, String prompt, int length, double presence) {
         try {
 
             if(length < 5) {
@@ -171,7 +171,8 @@ public class GPTUtils {
                 presence = 2.0;
             }
 
-            if(frequency < -2.0) {
+            //TODO
+            /*if(frequency < -2.0) {
                 frequency = -2.0;
             }
 
@@ -185,7 +186,7 @@ public class GPTUtils {
 
             if(temperature > 1.0) {
                 temperature = 1.0;
-            }
+            }*/
 
             String serverToken = context.getString(R.string.gpt_api_token);
             URL url = new URL(context.getString(R.string.gpt_api_completion_uri));
@@ -202,8 +203,9 @@ public class GPTUtils {
                 body.put("prompt", prompt);
                 body.put("max_tokens", length);
                 body.put("presence_penalty",presence);
-                body.put("frequency_penalty",frequency);
-                body.put("temperature",temperature);
+                //TODO
+                /*body.put("frequency_penalty",frequency);
+                body.put("temperature",temperature);*/
             } catch (JSONException e) {
                 e.printStackTrace();
                 return "";

@@ -17,6 +17,17 @@
         <item name="android:layout_marginTop">10dp</item>
     </style>
 
+    <style name="LargeTextInput" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">serif-monospace</item>
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:ems">10</item>
+        <item name="android:gravity">start|top</item>
+        <item name="android:inputType">textMultiLine</item>
+    </style>
+
     <style name="PrimaryButton" parent="@android:style/Widget.Button">
         <item name="android:backgroundTint">?attr/colorSecondary</item>
         <item name="android:layout_width">250dp</item>
@@ -128,6 +139,27 @@
         <item name="android:textColor">@color/pitch</item>
         <item name="android:textSize">24sp</item>
     </style>
+
+    <style name="SeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="android:layout_width">180dp</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="SeekBarLabelLeft" parent="Widget.AppCompat.SeekBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">5dp</item>
+    </style>
+
+    <style name="SeekBarLabelRight" parent="Widget.AppCompat.SeekBar">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">5dp</item>
+    </style>
+
+
+    <!--<item name=""></item>
+    <item name=""></item>-->
 
 
 </resources>
