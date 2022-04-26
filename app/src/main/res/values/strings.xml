@@ -16,7 +16,7 @@
     <string name="presence_selector_min_text">Sloppy</string>
     <string name="frequency_selector_max_text">Tame</string>
     <string name="frequency_selector_min_text">Wild</string>
-    <string name="create_story_button_text">Tell a Taile</string>
+    <string name="create_story_button_text">Start Your Story</string>
     <string name="create_story_prompt_hint">Enter the beginning of your tale. Make sure to include detail!</string>
     <string name="publish_story_button_text">Publish</string>
     <string name="publish_story_title_hint">Enter a story title</string>
