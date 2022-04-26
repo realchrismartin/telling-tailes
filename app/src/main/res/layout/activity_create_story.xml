@@ -27,7 +27,7 @@
             android:id="@+id/promptView"
             style="@style/LargeTextInput"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
+            android:layout_height="450dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
@@ -57,7 +57,7 @@
         <SeekBar
             android:id="@+id/lengthSlider"
             style="@style/SeekBar"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintTop_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -81,7 +81,7 @@
         <SeekBar
             android:id="@+id/presenceSlider"
             style="@style/SeekBar"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
