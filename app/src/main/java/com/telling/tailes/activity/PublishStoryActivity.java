@@ -11,11 +11,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
@@ -23,6 +25,7 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.FloatingActionMenuUtil;
 import com.telling.tailes.util.GPTUtils;
 
 import java.util.ArrayList;
@@ -52,6 +55,15 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String storyText;
     private String lastStoryChunk;
 
+    private boolean isFamOpen;
+    private FloatingActionButton deleteFAB;
+    private FloatingActionButton recycleFAB;
+    private FloatingActionButton extendFAB;
+    private FloatingActionButton famMenu;
+    private ArrayList<FloatingActionButton> famList;
+
+    private Button publishButton;
+
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
@@ -68,8 +80,9 @@ public class PublishStoryActivity extends AppCompatActivity {
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        titleView = findViewById(R.id.titleTextView);
+        titleView = findViewById(R.id.titleEditText);
         loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
+        loadingWheel.setVisibility(View.INVISIBLE);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
@@ -143,8 +156,31 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setText(storyText);
         lastStoryChunk = storyText;
 
+        publishButton = findViewById(R.id.publishButton);
+        deleteFAB = findViewById(R.id.publishDeleteFAB);
+        recycleFAB = findViewById(R.id.publishRecycleFAB);
+        extendFAB = findViewById(R.id.publishExtendFAB);
+        famList = new ArrayList<>();
+        famList.add(extendFAB);
+        famList.add(recycleFAB);
+        famList.add(deleteFAB);
+        isFamOpen = false;
+
+        famMenu = findViewById(R.id.famFAB);
+        famMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
+                if (isFamOpen) {
+                    famMenu.setImageResource(R.drawable.ic_baseline_expand_down_24);
+                    return;
+                }
+                famMenu.setImageResource(R.drawable.ic_baseline_expand_up_white_24);
+            }
+        });
+
         //Define click handler for publishing a story
-        findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
+        publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -156,7 +192,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyDeleteButton).setOnClickListener(new View.OnClickListener() {
+        deleteFAB.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view)  {
                handleClickDeleteDraft();
@@ -164,7 +200,7 @@ public class PublishStoryActivity extends AppCompatActivity {
            }
         });
 
-        findViewById(R.id.storyRecycleButton).setOnClickListener(new View.OnClickListener() {
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleClickDeleteDraft();
@@ -172,7 +208,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyAddButton).setOnClickListener(new View.OnClickListener() {
+        extendFAB.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view)   {
              handleAppendText();
