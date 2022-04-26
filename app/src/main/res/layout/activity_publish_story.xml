@@ -34,8 +34,7 @@
 
         <TextView
             android:id="@+id/publishPromptTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/PromptText"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
@@ -50,7 +49,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
             android:ems="10"
+            android:fontFamily="serif-monospace"
             android:gravity="start|top"
             android:inputType="textMultiLine"
             app:layout_constraintBottom_toTopOf="@+id/publishButton"
@@ -60,22 +61,16 @@
 
         <Button
             android:id="@+id/publishButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_baseline_favorite_story_24"
+            style="@style/PrimaryButton"
+            android:layout_marginBottom="20dp"
             android:text="Publish"
-            android:textColor="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishDeleteFAB"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:elevation="0dp"
+            style="@style/FloatingAction"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
@@ -87,10 +82,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishRecycleFAB"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
+            style="@style/FloatingAction"
             android:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
@@ -102,9 +94,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishExtendFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="0dp"
+            style="@style/FloatingAction"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
@@ -115,9 +105,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/famFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="0dp"
+            style="@style/FloatingAction"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
