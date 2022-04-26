@@ -23,6 +23,7 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.GPTUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,6 +50,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String storyId;
     private String promptText;
     private String storyText;
+    private String lastStoryChunk;
 
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
@@ -98,18 +100,34 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                 String errorMsg = msg.getData().getString("error");
 
-                if(errorMsg.length() > 0) {
-                    toast.setText(errorMsg);
-                    toast.show();
-                }
-
                 hideLoadingWheel();
 
-                String publishMsg = msg.getData().getString("published");
-
-                if (publishMsg != null && publishMsg.equals("true")) {
-                    goToFeed();
+                if(errorMsg != null && errorMsg.length() > 0) {
+                    toast.setText(errorMsg);
+                    toast.show();
+                    return;
                 }
+
+                String type = msg.getData().getString("type") != null ? msg.getData().getString("type") : "publish";
+
+                switch(type) {
+                    case("storyData") : {
+                        lastStoryChunk = msg.getData().getString("story");
+                        storyText += lastStoryChunk;
+                        storyTextView.setText(storyText);
+                        handleClickPublish(true);
+                        break;
+                    }
+                    case("publish") : {
+                        String publishMsg = msg.getData().getString("published");
+
+                        if (publishMsg != null && publishMsg.equals("true")) {
+                            goToFeed();
+                        }
+                        break;
+                    }
+                }
+
             }
         };
 
@@ -123,6 +141,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         //Set the story text and prompt text independently
         promptTextView.setText(promptText);
         storyTextView.setText(storyText);
+        lastStoryChunk = storyText;
 
         //Define click handler for publishing a story
         findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
@@ -151,6 +170,13 @@ public class PublishStoryActivity extends AppCompatActivity {
                 handleClickDeleteDraft();
                 handleClickRecycle();
             }
+        });
+
+        findViewById(R.id.storyAddButton).setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view)   {
+             handleAppendText();
+          }
         });
 
         //If hasn't been saved as a draft, publish draft of this
@@ -260,6 +286,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                         storyDeleteTask.addOnFailureListener(task -> {
                             Bundle resultData = new Bundle();
                             resultData.putString("error", "");
+                            resultData.putString("type","publish");
 
                             Message resultMessage = new Message();
                             resultMessage.setData(resultData);
@@ -269,8 +296,6 @@ public class PublishStoryActivity extends AppCompatActivity {
                     }
                 }
         );
-
-
     }
 
     /*
@@ -383,6 +408,42 @@ public class PublishStoryActivity extends AppCompatActivity {
                });
            }
        });
+    }
+
+    /*
+     */
+    private void handleAppendText()
+    {
+        showLoadingWheel();
+
+        //Freeze text
+        //Update story text as well
+        storyText = storyTextView.getText().toString();
+        String inputText = promptText + storyText;
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                //Ask GPT to complete the prompt... again
+                //TODO: change to unhardcode
+                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,1.0,0.0,0.0);
+                int resultCode = story.length() <= 0 ? 1 : 0;
+
+                //Set up a bundle
+                //Result code != 0 means something in GPT failed
+                Bundle resultData = new Bundle();
+                resultData.putInt("result", resultCode);
+                resultData.putString("story",story);
+                resultData.putString("type","storyData");
+
+                Message resultMessage = new Message();
+                resultMessage.setData(resultData);
+
+                //Notify the activity that the API call is done
+                backgroundTaskResultHandler.sendMessage(resultMessage);
+            }
+        });
     }
 
     /*
