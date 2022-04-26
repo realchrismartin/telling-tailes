@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -68,6 +70,8 @@ public class PublishStoryActivity extends AppCompatActivity {
     private Handler backgroundTaskResultHandler;
 
     private boolean published = false;
+
+    private boolean unsavedChanges = false;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -179,6 +183,24 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
+        storyTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                storyText = storyTextView.getText().toString();
+                unsavedChanges = true;
+            }
+        });
+
         //Define click handler for publishing a story
         publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,6 +249,15 @@ public class PublishStoryActivity extends AppCompatActivity {
 
     private void showLoadingWheel() {
         loadingWheel.setVisibility(View.VISIBLE);
+    }
+
+    //Handle saving draft on destroy if there's unsaved data
+    @Override
+    protected void onDestroy() {
+       super.onDestroy();
+       if(unsavedChanges) {
+           handleClickPublish(true);
+       }
     }
 
     //Handle saving data on device rotation
@@ -345,6 +376,8 @@ public class PublishStoryActivity extends AppCompatActivity {
             return;
         }
 
+        unsavedChanges = false;
+
         String title = titleView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
         ArrayList<String> lovers = new ArrayList<String>();
@@ -452,9 +485,8 @@ public class PublishStoryActivity extends AppCompatActivity {
     {
         showLoadingWheel();
 
-        //Freeze text
-        //Update story text as well
-        storyText = storyTextView.getText().toString();
+        unsavedChanges = false;
+
         String inputText = promptText + storyText;
 
         backgroundTaskExecutor.execute(new Runnable() {
