@@ -65,15 +65,20 @@ public class MessagingService extends FirebaseMessagingService {
         if (showNotification && remoteMessage.getData().size() > 0) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             if(notification != null) {
-                showNotification(notification);
+                String type = remoteMessage.getData().get("type");
+                showNotification(notification, type);
             }
         }
     }
 
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification) {
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type) {
 
         Intent intent = new Intent(); //TODO?
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        if (type.equals("publish")) {
+            Log.d("message handler", "PUBLISH");
+        }
 
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
 
