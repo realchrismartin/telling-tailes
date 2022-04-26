@@ -78,6 +78,8 @@ public class MessagingService extends FirebaseMessagingService {
 
         if (type != null && type.equals("publish")) {
             Log.d("message handler", "PUBLISH");
+            // create different pending intent to link to read activity
+            // https://developer.android.com/training/notify-user/navigation#build_a_pendingintent_with_a_back_stack
         }
 
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
