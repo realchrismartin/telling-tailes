@@ -23,47 +23,29 @@
         android:layout_marginTop="?attr/actionBarSize"
         tools:context=".activity.CreateStoryActivity">
 
-        <TextView
-            android:id="@+id/storyView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/createStoryButton" />
-
         <EditText
             android:id="@+id/promptView"
+            style="@style/LargeTextInput"
             android:layout_width="match_parent"
             android:layout_height="500dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:ems="10"
-            android:fontFamily="serif-monospace"
-            android:gravity="start|top"
             android:hint="@string/create_story_prompt_hint"
-            android:inputType="textMultiLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recordButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            app:borderWidth="2dp"
-            app:elevation="0dp"
+            style="@style/FloatingAction"
             app:layout_constraintBottom_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="@+id/promptView"
             app:layout_constraintHorizontal_bias="0.97"
             app:layout_constraintStart_toStartOf="@+id/promptView"
             app:layout_constraintTop_toTopOf="@+id/promptView"
-            app:layout_constraintVertical_bias="0.07"
+            app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/ic_baseline_mic_border_24" />
-
-
 
         <!--android:backgroundTint="#00ffffff"
         android:clickable="true"
@@ -74,57 +56,47 @@
 
         <SeekBar
             android:id="@+id/lengthSlider"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
+            style="@style/SeekBar"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/lengthSelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/length_selector_max_text"
-            app:layout_constraintTop_toTopOf="@+id/lengthSlider"
-            app:layout_constraintBottom_toBottomOf="@+id/lengthSlider"
-            app:layout_constraintStart_toEndOf="@+id/lengthSlider" />
-
-        <TextView
             android:id="@+id/lengthSelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            style="@style/SeekBarLabelLeft"
             android:text="@string/length_selector_min_text"
             app:layout_constraintTop_toTopOf="@+id/lengthSlider"
             app:layout_constraintBottom_toBottomOf="@+id/lengthSlider"
             app:layout_constraintEnd_toStartOf="@+id/lengthSlider" />
 
         <TextView
-            android:id="@+id/presenceSelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/presence_selector_min_text"
-            app:layout_constraintTop_toTopOf="@+id/presenceSlider"
-            app:layout_constraintBottom_toBottomOf="@+id/presenceSlider"
-            app:layout_constraintEnd_toStartOf="@+id/presenceSlider" />
+            android:id="@+id/lengthSelectorMax"
+            style="@style/SeekBarLabelRight"
+            android:text="@string/length_selector_max_text"
+            app:layout_constraintTop_toTopOf="@+id/lengthSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/lengthSlider"
+            app:layout_constraintStart_toEndOf="@+id/lengthSlider" />
 
         <SeekBar
             android:id="@+id/presenceSlider"
-            android:layout_width="179dp"
-            android:layout_height="19dp"
+            style="@style/SeekBar"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
+            android:id="@+id/presenceSelectorMin"
+            style="@style/SeekBarLabelLeft"
+            android:text="@string/presence_selector_min_text"
+            app:layout_constraintTop_toTopOf="@+id/presenceSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/presenceSlider"
+            app:layout_constraintEnd_toStartOf="@+id/presenceSlider" />
+
+        <TextView
             android:id="@+id/presenceSelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            style="@style/SeekBarLabelRight"
             android:text="@string/presence_selector_max_text"
             app:layout_constraintTop_toTopOf="@+id/presenceSlider"
             app:layout_constraintBottom_toBottomOf="@+id/presenceSlider"
