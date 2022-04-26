@@ -76,7 +76,7 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent = new Intent(); //TODO?
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        if (type.equals("publish")) {
+        if (type != null && type.equals("publish")) {
             Log.d("message handler", "PUBLISH");
         }
 
