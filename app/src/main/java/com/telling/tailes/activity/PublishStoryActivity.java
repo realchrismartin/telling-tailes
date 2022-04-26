@@ -82,6 +82,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
         titleView = findViewById(R.id.titleEditText);
         loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
+        loadingWheel.setVisibility(View.INVISIBLE);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
