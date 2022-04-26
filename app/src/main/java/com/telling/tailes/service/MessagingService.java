@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 public class MessagingService extends FirebaseMessagingService {
 
     private static final String CHANNEL_ID = "CHANNEL_ID";
+    private Story story = null;
 
     @Override
     public void onNewToken(String newToken) {
@@ -77,16 +78,20 @@ public class MessagingService extends FirebaseMessagingService {
                 String type = remoteMessage.getData().get("type");
                 if (type == null) {
                     type = "";
-                    Log.e("Message Received Error", "FCM type member is blank");
+                    Log.e("Message Received", "FCM type member is null");
                 }
-                //TODO: get story ID, too... ugh
-                showNotification(notification, type);
+                String storyId = remoteMessage.getData().get("storyId");
+                if (storyId == null) {
+                    storyId = "";
+                    Log.e("Message Received", "FCM storyId member is null");
+                }
+                showNotification(notification, type, storyId);
             }
         }
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type) {
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type, String storyId) {
 
         Intent intent;
         PendingIntent pendingIntent;
@@ -97,8 +102,8 @@ public class MessagingService extends FirebaseMessagingService {
                 // Create an Intent for the activity you want to start
                 intent = new Intent(this, ReadStoryActivity.class);
                 // add story here
-                //TODO: getStoryOffMainThread(storyID);
-                //TODO: intent.putExtra("story", story);
+                getStoryOffMainThread(storyId);
+                intent.putExtra("story", story);
 
                 // Create the TaskStackBuilder and add the intent, which inflates the back stack
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -134,13 +139,11 @@ public class MessagingService extends FirebaseMessagingService {
     }
 
     private void getStoryOffMainThread(String storyId) {
-        Story story = null;
         Executor backgroundTaskExecutor = Executors.newFixedThreadPool(2);
         Handler backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
-
-                getStoryHelper(story);
+                story = (Story) msg.getData().getSerializable("story");
             }
         };
 
@@ -152,8 +155,8 @@ public class MessagingService extends FirebaseMessagingService {
                     public void accept(Story story) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        // How to put a story object into a bundle?
-                        // resultData.putS
+                        resultData.putString("type", "story");
+                        resultData.putSerializable("story", story);
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
 
@@ -163,10 +166,9 @@ public class MessagingService extends FirebaseMessagingService {
                 });
             }
         });
-
     }
 
-    private Story getStoryHelper(Story story) {
+/*    private Story getStoryHelper(Story story) {
         return story;
-    }
+    }*/
 }
