@@ -155,7 +155,7 @@ public class FBUtils {
     }
 
     //Get the current state of the specified story
-    private static void getStory(Context context, String storyId, Consumer<Story> callback) {
+    public static void getStory(Context context, String storyId, Consumer<Story> callback) {
         Task<DataSnapshot> getUserTask = storiesRef.child(storyId).get();
 
         getUserTask.addOnCompleteListener(task -> {
@@ -679,6 +679,7 @@ public class FBUtils {
             jNotification.put("badge", "1");
             data.put("content", content);
             data.put("type", type);
+            //TODO: add story ID, too...
             jsonObject.put("to", recipientFCMToken);
             jsonObject.put("priority", "high");
             jsonObject.put("notification", jNotification);
