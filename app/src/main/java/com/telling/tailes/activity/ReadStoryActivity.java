@@ -69,17 +69,6 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
-        if (getIntent().getSerializableExtra("story") !=null) {
-            story = (Story) getIntent().getSerializableExtra("story");
-            initViews(story);
-        }
-        if (getIntent().getStringExtra("storyID")!= null) {
-            handleStory(getIntent().getStringExtra("storyID"));
-        }
-
-        initListeners();
-
-
         //Set up background executor for handling author profile data request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 
@@ -130,6 +119,16 @@ public class ReadStoryActivity extends AppCompatActivity {
             }
         };
 
+        if (getIntent().getSerializableExtra("story") !=null) {
+            story = (Story) getIntent().getSerializableExtra("story");
+            initViews(story);
+        }
+        if (getIntent().getStringExtra("storyID")!= null) {
+            handleStory(getIntent().getStringExtra("storyID"));
+        }
+
+        initListeners();
+
 
     }
 
@@ -137,6 +136,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
+                int i = 7;
                 FBUtils.getStory(getApplicationContext(), storyID, new Consumer<Story>() {
                     @Override
                     public void accept(Story story) {
