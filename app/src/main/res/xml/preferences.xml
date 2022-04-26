@@ -12,6 +12,7 @@
             android:title="@string/setting_hide_title"
             android:summary="@string/setting_hide_description"
             android:icon="@drawable/ic_baseline_profile_24"
+            android:defaultValue="true"
             />
         <SeekBarPreference
             android:key="@string/setting_text_size_title"
