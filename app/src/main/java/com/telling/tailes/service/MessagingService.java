@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 public class MessagingService extends FirebaseMessagingService {
 
     private static final String CHANNEL_ID = "CHANNEL_ID";
-    private Story story = null;
 
     @Override
     public void onNewToken(String newToken) {
@@ -102,8 +101,7 @@ public class MessagingService extends FirebaseMessagingService {
                 // Create an Intent for the activity you want to start
                 intent = new Intent(this, ReadStoryActivity.class);
                 // add story here
-                getStoryOffMainThread(storyId);
-                intent.putExtra("story", story);
+                intent.putExtra("storyID", storyId);
 
                 // Create the TaskStackBuilder and add the intent, which inflates the back stack
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -138,37 +136,4 @@ public class MessagingService extends FirebaseMessagingService {
         notificationManager.notify(0, notification);
     }
 
-    private void getStoryOffMainThread(String storyId) {
-        Executor backgroundTaskExecutor = Executors.newFixedThreadPool(2);
-        Handler backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                story = (Story) msg.getData().getSerializable("story");
-            }
-        };
-
-        backgroundTaskExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                FBUtils.getStory(getApplicationContext(), storyId, new Consumer<Story>() {
-                    @Override
-                    public void accept(Story story) {
-                        //Set up a bundle
-                        Bundle resultData = new Bundle();
-                        resultData.putString("type", "story");
-                        resultData.putSerializable("story", story);
-                        Message resultMessage = new Message();
-                        resultMessage.setData(resultData);
-
-                        //Notify the activity that bookmarks have been retrieved
-                        backgroundTaskResultHandler.sendMessage(resultMessage);
-                    }
-                });
-            }
-        });
-    }
-
-/*    private Story getStoryHelper(Story story) {
-        return story;
-    }*/
 }
