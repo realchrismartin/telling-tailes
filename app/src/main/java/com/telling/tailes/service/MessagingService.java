@@ -79,7 +79,7 @@ public class MessagingService extends FirebaseMessagingService {
                     type = "";
                     Log.e("Message Received", "FCM type member is null");
                 }
-                String storyId = remoteMessage.getData().get("storyId");
+                String storyId = remoteMessage.getData().get("storyID");
                 if (storyId == null) {
                     storyId = "";
                     Log.e("Message Received", "FCM storyId member is null");
