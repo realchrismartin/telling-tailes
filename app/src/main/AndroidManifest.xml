@@ -16,9 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".activity.FollowedAuthorsActivity"
-            android:exported="false" />
-        <activity
             android:name=".activity.StoryFeedActivity"
             android:exported="true">
             <intent-filter>
@@ -28,20 +25,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".activity.FollowedAuthorsActivity"
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
+        <activity
             android:name=".fragment.HamburgerMenuFragment"
             android:exported="false" />
         <activity
             android:name=".activity.UserSettingsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.ReadStoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.PublishStoryActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CreateStoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.CreateAccountActivity"
             android:exported="false" />
