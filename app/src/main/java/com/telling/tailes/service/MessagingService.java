@@ -36,26 +36,13 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String newToken) {
 
-        //Note: not in background thread
-        FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
+        //Note: may not run in a separate thread if this class doesn't already
+        AuthUtils.updateUserToken(getApplicationContext(), newToken, new Consumer<User>() {
             @Override
             public void accept(User user) {
-
-               if(user == null) {
-                   Log.e("MessageService","User was null, couldn't update token");
-                   return;
-               }
-
-               user.setMessagingToken(newToken);
-
-               FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
-                   @Override
-                   public void accept(Boolean aBoolean) {
-                      if(!aBoolean)  {
-                          Log.e("MessageService","Failed to update user token for current user");
-                      }
-                   }
-               });
+                if(user == null) {
+                    Log.e("MessagingService.onNewToken","User returned from updateUserToken was null, token may not have been updated");
+                }
             }
         });
     }
