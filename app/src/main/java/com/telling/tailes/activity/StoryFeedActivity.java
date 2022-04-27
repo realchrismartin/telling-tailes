@@ -149,6 +149,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         int storyCount=msg.getData().getInt("story_count");
 
+                        removeLoadingCard();
+
                         for(int i=0;i<storyCount;i++) {
 
                             Story story = (Story)msg.getData().getSerializable("story_" + (i + 1));
@@ -170,6 +172,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             }
 
                             loadedFirstStories = true;
+
                         }
 
                         //Recurse if the story card list isn't loaded yet
@@ -349,7 +352,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-
+        addLoadingCard();
         loadStoryData();
 
     }
@@ -365,6 +368,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 Toast.LENGTH_SHORT)
                 .show();
 
+        addLoadingCard();
         loadStoryData();
     }
 
@@ -372,6 +376,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Load story data in a background thread after applying filter
     //Call the main thread when done
     private void loadStoryData() {
+
+
 
         applyFilter(currentFilter);
 
@@ -440,6 +446,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
 
+        addLoadingCard();
         loadStoryData();
     }
 
