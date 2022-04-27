@@ -1,6 +1,5 @@
 package com.telling.tailes.card;
 
-
 import com.telling.tailes.model.Story;
 
 import java.util.ArrayList;
@@ -41,6 +40,10 @@ public class StoryRviewCard {
     }
 
     public Story getStory() { return story; }
+
+    public ArrayList<String> getBookmarkers() {
+        return story.getBookmarkers();
+    }
 
     public void setStory(Story story) { this.story = story; }
 

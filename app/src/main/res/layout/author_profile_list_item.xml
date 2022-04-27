@@ -9,3 +9,21 @@
     android:paddingStart="?android:attr/listPreferredItemPaddingStart"
     android:checkMark="@null"
     android:paddingEnd="?android:attr/listPreferredItemPaddingEnd" />
+
+
+<!--<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/author_profile_check_view"
+    android:backgroundTint="?attr/colorSecondary"
+    android:fontFamily="monospace"
+    android:textStyle="bold"
+    android:textAllCaps="true"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:textColor="?attr/colorOnSecondary"
+    android:layout_marginTop="10dp"
+    android:gravity="center_vertical"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:checkMark="@null"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd" />-->
+
+

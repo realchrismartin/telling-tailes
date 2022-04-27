@@ -1,7 +1,9 @@
 <resources>
     <string-array name="filter_spinner_options">
         <item>All T(ai)les</item>
+        <item>Popular</item>
         <item>My T(ai)les</item>
+        <item>Followed Authors</item>
         <item>Drafts</item>
         <item>Bookmarks</item>
         <item>By Author</item>

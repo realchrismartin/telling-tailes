@@ -1,7 +1,7 @@
 package com.telling.tailes.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -20,8 +20,8 @@ import com.telling.tailes.R;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
+import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
-import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
 
 import java.util.concurrent.Executor;
@@ -30,14 +30,14 @@ import java.util.function.Consumer;
 
 public class ReadStoryActivity extends AppCompatActivity {
 
-    private static final int storyTextSize = 20;
+    private static final int storyTextDefaultSize = 25; //Default text size if not overridden by prefs
 
     private TextView titleTextView;
-    private TextView authorTextView;
     private TextView storyTextView;
+    private TextView promptTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
-    private Button recycleButton;
+    private ImageButton recycleButton;
     private Button authorProfileButton;
 
     private Executor backgroundTaskExecutor;
@@ -50,6 +50,8 @@ public class ReadStoryActivity extends AppCompatActivity {
     private String storyText;
     private Story story;
 
+    private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,8 +61,8 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         //Find all views
         titleTextView = findViewById(R.id.storyCardTitle);
-        authorTextView = findViewById(R.id.storyCardAuthor);
         storyTextView = findViewById(R.id.readStoryTextView);
+        promptTextView = findViewById(R.id.readPrompTextView);
 
         bookmarkButton = findViewById(R.id.storyCardBookmarkButton);
         loveButton = findViewById(R.id.storyCardLoveButton);
@@ -69,43 +71,135 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
 
+        initViews(story);
+        initListeners();
+
         //Set up background executor for handling author profile data request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
 
-        //Define handling for author profile data results from the background thread
+        //Define handling for results from the background thread
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
 
-                if (authorProfileDialogFragment != null) {
-                    authorProfileDialogFragment.dismiss();
-                }
-
-                //Show a generic error instead of loading author profile if data wasn't retrieved properly
+                //Show a generic error instead if data wasn't retrieved properly
                 if (msg.getData() == null || msg.getData().getInt("result") > 0) {
                     readStoryToast.setText(R.string.generic_error_notification);
                     readStoryToast.show();
                     return;
                 }
 
-                //If all is well, show the author profile fragment with the retrieved data
-                authorProfileDialogFragment = new AuthorProfileDialogFragment();
-                authorProfileDialogFragment.setArguments(msg.getData());
-                authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+                String type = msg.getData().getString("type");
 
+                switch(type) {
+                    case "authorProfile": {
+                        if (authorProfileDialogFragment != null) {
+                            authorProfileDialogFragment.dismiss();
+                        }
+
+                        authorProfileDialogFragment = new AuthorProfileDialogFragment();
+                        authorProfileDialogFragment.setArguments(msg.getData());
+                        authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+                        break;
+                    }
+
+                    case "love": {
+                        story = (Story)msg.getData().getSerializable("story");
+                        updateLoveButtonState();
+                        break;
+                    }
+
+                    case "bookmark" : {
+                        story = (Story)msg.getData().getSerializable("story");
+                        updateBookmarkButtonState();
+                        break;
+                    }
+                }
             }
         };
 
-        //Define onClick handler for opening author profile
-        authorProfileButton.setOnClickListener(new View.OnClickListener() {
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initViews(Story story) {
+        //Make story text scrollable
+//        storyTextView.setMovementMethod(new ScrollingMovementMethod());
+
+        //Set font size to preference setting
+        try {
+            promptTextView.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
+            storyTextView.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            promptTextView.setTextSize(storyTextDefaultSize);
+            storyTextView.setTextSize(storyTextDefaultSize);
+        }
+
+        //Set up views with story data
+        titleTextView.setText(story.getTitle());
+        authorProfileButton.setText(story.getAuthorID());
+        String p = story.getPromptText();
+        promptTextView.setText(p);
+        String s = story.getStoryText();
+        storyTextView.setText(s); //TODO: spacing
+
+        //Set up private variables
+        storyText = story.getStoryText();
+        promptText = story.getPromptText();
+
+        //Set love button default state
+        updateLoveButtonState();
+
+        //Set bookmark button default state
+        updateBookmarkButtonState();
+    }
+
+    private void initListeners() {
+
+        bookmarkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               handleAuthorClick();
+                handleClickBookmark();
             }
         });
 
-        initViews(story);
-        initListeners();
+        loveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickLove();
+            }
+        });
+
+        recycleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickRecycle();
+
+            }
+        });
+
+        authorProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleAuthorClick();
+            }
+        });
+    }
+
+   private void updateLoveButtonState() {
+        if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+        } else {
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+        }
+    }
+
+    private void updateBookmarkButtonState() {
+        if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+        } else {
+            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+        }
     }
 
     /*
@@ -147,67 +241,27 @@ public class ReadStoryActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("SetTextI18n")
-    private void initViews(Story story) {
-        //Make story text scrollable
-        storyTextView.setMovementMethod(new ScrollingMovementMethod());
-        storyTextView.setTextSize(storyTextSize);
-
-        //Set up views with story data
-        titleTextView.setText(story.getTitle());
-        authorTextView.setText(story.getAuthorID());
-        storyTextView.setText(story.getPromptText() + " " + story.getStoryText());
-
-        //Set up private variables
-        storyText = story.getStoryText();
-        promptText = story.getPromptText();
-
-        //Set love button default state
-        updateLoveButtonState();
-
-        //Set bookmark button default state
-        updateBookmarkButtonState();
-    }
-
-    private void initListeners() {
-
-        bookmarkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleClickBookmark();
-            }
-        });
-
-        loveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleClickLove();
-            }
-        });
-
-        recycleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleClickRecycle();
-
-            }
-        });
-    }
-
-   private void updateLoveButtonState() {
-        if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-        } else {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-        }
-    }
-
-    private void updateBookmarkButtonState() {
-        //TODO: set the bookmark state according to the Story - like with Love button
-    }
-
     private void handleClickBookmark() {
-        //TODO: handle clicking on a bookmark doing stuff in FB, etc., then updating the Story
+        backgroundTaskExecutor.execute(new Runnable() {
+               @Override
+               public void run() {
+
+                   FBUtils.updateBookmark(getApplicationContext(), story, new Consumer<Story>() {
+                       @Override
+                       public void accept(Story result) {
+                           Bundle resultData = new Bundle();
+                           resultData.putString("type", "bookmark");
+                           resultData.putInt("result", result != null ? 0 : 1);
+                           resultData.putSerializable("story",result);
+
+                           Message resultMessage = new Message();
+                           resultMessage.setData(resultData);
+
+                           backgroundTaskResultHandler.sendMessage(resultMessage);
+                       }
+                   });
+               }
+           });
     }
 
     private void handleClickRecycle() {
@@ -218,15 +272,34 @@ public class ReadStoryActivity extends AppCompatActivity {
     }
 
     private void handleClickLove() {
-        FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
+
+        if(AuthUtils.getLoggedInUserID(getApplicationContext()).equals(story.getAuthorID())) {
+            readStoryToast.setText(R.string.love_own_story_error);
+            readStoryToast.show();
+            return;
+        }
+
+        backgroundTaskExecutor.execute(new Runnable() {
             @Override
-            public void accept(Story result) {
-                if(result == null) {
-                    readStoryToast.setText(R.string.generic_error_notification);
-                } else {
-                    story = result;
-                    updateLoveButtonState();
-                }
+            public void run() {
+
+                FBUtils.updateLove(getApplicationContext(), story, new Consumer<Story>() {
+                    @Override
+                    public void accept(Story result) {
+
+                        //Set up a bundle of data
+                        Bundle resultData = new Bundle();
+                        resultData.putString("type", "love");
+                        resultData.putInt("result", result != null ? 0 : 1);
+                        resultData.putSerializable("story",result);
+
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+
+                    }
+                });
             }
         });
     }

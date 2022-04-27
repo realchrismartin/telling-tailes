@@ -24,12 +24,16 @@ public class StoryRviewAdapter extends RecyclerView.Adapter {
     private ArrayList<StoryRviewCard> storyCardList;
     private StoryRviewCardClickListener listener;
     private Context context;
+    private String currentUser;
     private OnAuthorClickCallbackListener authorClickCallbackListener;
+
 
     public StoryRviewAdapter(ArrayList<StoryRviewCard> storyCardList, Context context, OnAuthorClickCallbackListener authorClickCallbackListener) {
         this.storyCardList = storyCardList;
         this.context = context;
+        this.currentUser = AuthUtils.getLoggedInUserID(context);
         this.authorClickCallbackListener = authorClickCallbackListener;
+
     }
 
     public void setOnStoryClickListener(StoryRviewCardClickListener listener) {
@@ -69,63 +73,97 @@ public class StoryRviewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         StoryRviewCard currentItem = storyCardList.get(position);
+
         switch (currentItem.getType()) {
-            case 0:
-                StoryRviewStoryHolder sHolder = (StoryRviewStoryHolder) holder;
+            case 0: {
+                StoryRviewStoryHolder stHolder = (StoryRviewStoryHolder) holder;
+                stHolder.titleText.setText(currentItem.getTitle());
+                updateLoveIconState(currentItem, currentUser, stHolder);
+                stHolder.loveButton.setText(
+                        currentItem.getStory().getLovers().size() > 0 ?
+                                Integer.toString(currentItem.getStory().getLovers().size())
+                                :
+                                ""
+                );
+                stHolder.loveButton.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View view) {
 
+                         if(currentUser.equals(currentItem.getStory().getAuthorID())) {
+                             return; //TODO: indicate to user that love failed?
+                         }
+                         FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
+                             @Override
+                             public void accept(Story result) {
 
-                sHolder.titleText.setText(currentItem.getTitle());
-                sHolder.authorText.setText(currentItem.getAuthorId());
+                                 if (result == null) {
+                                     return; //TODO: indicate to user that love failed?
+                                 }
 
-                if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-                } else {
-                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-                }
+                                 currentItem.setStory(result);
 
-                sHolder.loveButton.setText(Integer.toString(currentItem.getStory().getLovers().size()));
+                                 stHolder.loveButton.setText(
+                                         result.getLovers().size() > 0 ?
+                                                 Integer.toString(result.getLovers().size())
+                                                 :
+                                                 ""
+                                 );
+                                 updateLoveIconState(currentItem, currentUser, stHolder);
+                             }
+                         });
+                    }
+                });
 
-                sHolder.loveButton.setOnClickListener(new View.OnClickListener() {
+                updateBookmarkIconState(currentItem, currentUser, stHolder);
+
+                stHolder.bookmarkButton.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
-                        FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
+                        FBUtils.updateBookmark(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
                             @Override
                             public void accept(Story result) {
-
                                 if (result == null) {
-                                    return; //TODO: indicate to user that love failed?
+                                    return;
                                 }
-
-                                currentItem.setStory(result);
-
-                                sHolder.loveButton.setText(result.getLovers().size() > 0 ? Integer.toString(result.getLovers().size()) : "");
-
-                                if (result.getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-                                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
-                                } else {
-                                    sHolder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
-                                }
+                                updateBookmarkIconState(currentItem, currentUser, stHolder);
                             }
                         });
                     }
                 });
 
-                sHolder.profileButton.setOnClickListener(new View.OnClickListener() {
+
+                stHolder.profileButton.setText(currentItem.getAuthorId());
+                stHolder.profileButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         authorClickCallbackListener.handleAuthorClick(currentItem.getAuthorId());
                     }
                 });
-                return;
+
+            }
             case 1:
-                return;
             default:
-                return;
+                break;
         }
-
-
     }
 
     @Override
     public int getItemCount() { return storyCardList.size(); }
+
+    private void updateBookmarkIconState(StoryRviewCard currentItem, String currentUser, StoryRviewStoryHolder holder) {
+        if (currentItem.getBookmarkers().contains(currentUser)) {
+            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+        } else {
+            holder.bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewStoryHolder holder) {
+        if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+        } else {
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+        }
+    }
 }

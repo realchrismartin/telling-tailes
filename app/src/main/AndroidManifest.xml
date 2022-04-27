@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.telling.tailes">
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-feature
+        android:name="android.hardware.microphone"
+        android:required="false" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,16 +15,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".fragment.HamburgerMenuFragment"
-            android:exported="false"/>
+        <activity
+            android:name=".activity.FollowedAuthorsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.StoryFeedActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".fragment.HamburgerMenuFragment"
+            android:exported="false" />
         <activity
             android:name=".activity.UserSettingsActivity"
             android:exported="false" />
         <activity
             android:name=".activity.ReadStoryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".activity.StoryFeedActivity"
             android:exported="false" />
         <activity
             android:name=".activity.PublishStoryActivity"
@@ -31,13 +47,18 @@
             android:exported="false" />
         <activity
             android:name=".activity.LoginActivity"
-            android:exported="true">
+            android:exported="false" />
+        <service
+            android:name=".service.MessagingService"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </activity>
+        </service>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

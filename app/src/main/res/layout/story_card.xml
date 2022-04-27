@@ -2,87 +2,69 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/story_card"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:layout_margin="3dp"
-    app:cardElevation="10dp"
-    app:cardCornerRadius="5dp"
-    app:cardBackgroundColor="#FFF"
-    android:id="@+id/story_card">
+    app:cardBackgroundColor="#fafafa"
+    app:cardElevation="0dp"
+    app:contentPaddingTop="25dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp">
+        android:background="#fafafa">
 
-        <Button
-            android:id="@+id/storyCardLoveButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="96dp"
-            android:layout_height="45dp"
-            android:drawableLeft="@drawable/ic_baseline_favorite_border_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <TextView
+            android:id="@+id/storyCardTitle"
+            style="@style/StoryTitle"
+            android:text="Title Placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/storyCardRecycleButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/storyCardAuthorProfileButton"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="54dp"
-            android:layout_height="48dp"
-            android:drawableLeft="@drawable/ic_baseline_profile_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_baseline_profile_24"
+            android:drawablePadding="8dp"
+            android:text="author"
+            android:textColor="@color/pitch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/storyCardTitle" />
+
+        <Button
+            android:id="@+id/storyCardLoveButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_baseline_favorite_border_24"
             android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/storyCardTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
-            app:layout_constraintHorizontal_bias="0.502"
-            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.056" />
-
-        <TextView
-            android:id="@+id/storyCardAuthor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Author"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
-            app:layout_constraintStart_toEndOf="@+id/storyCardLoveButton"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.943" />
+            android:textColor="@color/pitch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/storyCardTitle" />
 
         <ImageButton
             android:id="@+id/storyCardBookmarkButton"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="61dp"
-            android:layout_height="45dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_bookmark_border_24"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/storyCardLoveButton"
+            app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton" />
+
+        <ImageButton
+            android:id="@+id/storyCardRecycleButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_recycle_24"
+            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
+            app:layout_constraintTop_toTopOf="@+id/storyCardBookmarkButton" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

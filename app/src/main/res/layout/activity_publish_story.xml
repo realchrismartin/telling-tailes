@@ -3,51 +3,127 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.UserSettingsActivity">
 
-    <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:name="com.telling.tailes.fragment.HamburgerMenuFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:elevation="0dp"
+        app:layout_anchor="@+id/fragment_container_view"
+        app:layout_anchorGravity="center"
         tools:context=".model.PublishStoryActivity">
 
-        <TextView
-            android:id="@+id/publishStoryTextView"
-            android:layout_width="331dp"
-            android:layout_height="574dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <EditText
+            android:id="@+id/titleEditText"
+            style="@style/LargeTextInput"
+            android:hint="@string/publish_story_title_hint"
+            android:inputType="textCapSentences"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/publish_story_title_hint"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/publishStoryTextView"
+        <TextView
+            android:id="@+id/publishPromptTextView"
+            style="@style/PromptText"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/titleEditText" />
+
+        <EditText
+            android:id="@+id/publishStoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:ems="10"
+            android:fontFamily="serif-monospace"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            app:layout_constraintBottom_toTopOf="@+id/publishButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
 
         <Button
             android:id="@+id/publishButton"
+            style="@style/PrimaryButton"
+            android:layout_marginBottom="20dp"
+            android:text="Publish"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishDeleteFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_delete_outline_24" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishRecycleFAB"
+            style="@style/FloatingAction"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_replay_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishExtendFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_playlist_add_24" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/famFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/ic_baseline_expand_up_white_24" />
+
+        <ProgressBar
+            android:id="@+id/storyPublishLoadingWheel"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/publish_story_button_text"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/publishStoryTextView"
-            tools:layout_editor_absoluteX="155dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

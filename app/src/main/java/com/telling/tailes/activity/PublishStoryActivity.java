@@ -6,12 +6,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
@@ -19,9 +27,13 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.FloatingActionMenuUtil;
+import com.telling.tailes.util.GPTUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class PublishStoryActivity extends AppCompatActivity {
@@ -33,14 +45,33 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String genericErrorNotification;
 
     private DatabaseReference ref;
-    private TextView storyTextView;
+
     private TextView titleView;
+    private TextView storyTextView;
+    private TextView promptTextView;
+    private ProgressBar loadingWheel;
     private Toast toast;
 
+    private String storyId;
     private String promptText;
     private String storyText;
+    private String lastStoryChunk;
+
+    private boolean isFamOpen;
+    private FloatingActionButton deleteFAB;
+    private FloatingActionButton recycleFAB;
+    private FloatingActionButton extendFAB;
+    private FloatingActionButton famMenu;
+    private ArrayList<FloatingActionButton> famList;
+
+    private Button publishButton;
+
+    private Executor backgroundTaskExecutor;
+    private Handler backgroundTaskResultHandler;
 
     private boolean published = false;
+
+    private boolean unsavedChanges = false;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -48,16 +79,23 @@ public class PublishStoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_story);
 
+        storyId = ""; //Set once a draft is saved
+
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        titleView = findViewById(R.id.titleTextView);
+        titleView = findViewById(R.id.titleEditText);
+        loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
+        loadingWheel.setVisibility(View.INVISIBLE);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
 
         //Set up toast
         toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+
+        //Set up prompt text view
+        promptTextView = findViewById(R.id.publishPromptTextView);
 
         //Set up story text view
         storyTextView = findViewById(R.id.publishStoryTextView);
@@ -66,20 +104,105 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setMovementMethod(new ScrollingMovementMethod());
         storyTextView.setTextSize(storyTextSize);
 
+        backgroundTaskExecutor = Executors.newFixedThreadPool(10);
+
+        //Define handling for data results from the background thread
+        backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
+            int i = 0;
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.getData() == null) {
+                    return;
+                }
+
+                String errorMsg = msg.getData().getString("error");
+
+                hideLoadingWheel();
+
+                if(errorMsg != null && errorMsg.length() > 0) {
+                    toast.setText(errorMsg);
+                    toast.show();
+                    return;
+                }
+
+                String type = msg.getData().getString("type") != null ? msg.getData().getString("type") : "publish";
+
+                switch(type) {
+                    case("storyData") : {
+                        lastStoryChunk = msg.getData().getString("story");
+                        storyText += lastStoryChunk;
+                        storyTextView.setText(storyText);
+                        handleClickPublish(true);
+                        break;
+                    }
+                    case("publish") : {
+                        String publishMsg = msg.getData().getString("published");
+
+                        if (publishMsg != null && publishMsg.equals("true")) {
+                            goToFeed();
+                        }
+                        break;
+                    }
+                }
+
+            }
+        };
+
         //Load data from device rotation
-        //TODO: This doesn't do anything due to lifecycle method override - turning the display saves as draft instead.
-        //We may wish to address this.
         loadInstanceState(savedInstanceState);
 
         //Load data from intent passed here by CreateStoryActivity
         //Note that this will override anything loaded in from save state
         loadIntentData(getIntent());
 
-        //Set the story text to whatever the prompt and story text are, post load
-        storyTextView.setText(promptText + " " + storyText);
+        //Set the story text and prompt text independently
+        promptTextView.setText(promptText);
+        storyTextView.setText(storyText);
+        lastStoryChunk = storyText;
+
+        publishButton = findViewById(R.id.publishButton);
+        deleteFAB = findViewById(R.id.publishDeleteFAB);
+        recycleFAB = findViewById(R.id.publishRecycleFAB);
+        extendFAB = findViewById(R.id.publishExtendFAB);
+        famList = new ArrayList<>();
+        famList.add(extendFAB);
+        famList.add(recycleFAB);
+        famList.add(deleteFAB);
+        isFamOpen = false;
+
+        famMenu = findViewById(R.id.famFAB);
+        famMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
+                if (isFamOpen) {
+                    famMenu.setImageResource(R.drawable.ic_baseline_expand_down_24);
+                    return;
+                }
+                famMenu.setImageResource(R.drawable.ic_baseline_expand_up_white_24);
+            }
+        });
+
+        storyTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                storyText = storyTextView.getText().toString();
+                unsavedChanges = true;
+            }
+        });
 
         //Define click handler for publishing a story
-        findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
+        publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -87,9 +210,54 @@ public class PublishStoryActivity extends AppCompatActivity {
                     return;
                 }
 
-                handlePublishStory(false);
+                handleClickPublish(false);
             }
         });
+
+        deleteFAB.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view)  {
+               handleClickDeleteDraft();
+               goToFeed();
+           }
+        });
+
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickDeleteDraft();
+                handleClickRecycle();
+            }
+        });
+
+        extendFAB.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view)   {
+             handleAppendText();
+          }
+        });
+
+        //If hasn't been saved as a draft, publish draft of this
+        if(storyId.equals("") && storyText.length() > 0) {
+           handleClickPublish(true);
+        }
+    }
+
+    private void hideLoadingWheel() {
+        loadingWheel.setVisibility(View.INVISIBLE);
+    }
+
+    private void showLoadingWheel() {
+        loadingWheel.setVisibility(View.VISIBLE);
+    }
+
+    //Handle saving draft on destroy if there's unsaved data
+    @Override
+    protected void onDestroy() {
+       super.onDestroy();
+       if(unsavedChanges) {
+           handleClickPublish(true);
+       }
     }
 
     //Handle saving data on device rotation
@@ -98,12 +266,14 @@ public class PublishStoryActivity extends AppCompatActivity {
         state.putString("story",storyText);
         state.putString("prompt",promptText);
         state.putString("title",titleView.getText().toString());
+        state.putString("storyId",storyId);
         super.onSaveInstanceState(state);
     }
 
     //Handle loading data on activity creation, if any is saved
     protected void loadInstanceState(@NonNull Bundle state) {
 
+        //Note: this is intentional, sometimes "nonnull" state is null for some reason
         if(state == null) {
             return;
         }
@@ -111,6 +281,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyText = state.getString("story");
         promptText = state.getString("prompt");
         titleView.setText(state.getString("title"));
+        storyId = state.getString("storyId");
 
     }
 
@@ -118,6 +289,10 @@ public class PublishStoryActivity extends AppCompatActivity {
     protected void loadIntentData(Intent intent) {
 
         //Only load data if extras are present
+        if(intent.hasExtra("storyId")) {
+            storyId = intent.getStringExtra("storyId");
+        }
+
         if(intent.hasExtra("story")) {
             storyText = intent.getStringExtra("story");
         }
@@ -127,54 +302,21 @@ public class PublishStoryActivity extends AppCompatActivity {
         }
     }
 
-    //Handle saving drafts on stop
-    //TODO: may need to override other lifecycle methods in order to save drafts in all cases
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        if(!published && storyTextView.getText().length() > 0)
-        {
-            handlePublishStory(true);
-            toast.setText(draftSaveNotification);
-            toast.show();
-        }
-
-        storyTextView.setText("");
-        titleView.setText("");
-        published = false;
-    }
-
-    @Override
-    protected void onResume() {
-       super.onResume();
-
-       //Redirect to feed on resume if there's nothing to publish here
-        //TODO: this makes the back button work weirdly. We probably don't want to do this.
-       if(storyTextView.getText().length() <= 0)
-       {
-           goToFeed();
-       }
-    }
-
     /*
         Validate that story can be published
      */
-    private boolean validatePublishStory()
-    {
+    private boolean validatePublishStory() {
         boolean valid = true;
 
         String error = "";
 
         String title = titleView.getText().toString();
 
-        if(title.length() < titleCharacterLength)
-        {
+        if(title.length() < titleCharacterLength) {
             error = "Enter a title that is at least " + titleCharacterLength + " characters (currently using " + title.length() + " character(s))";
         }
 
-        if(error.length() > 0 )
-        {
+        if(error.length() > 0 ) {
             valid = false;
             toast.setText(error);
             toast.show();
@@ -183,81 +325,201 @@ public class PublishStoryActivity extends AppCompatActivity {
         return valid;
     }
 
+    //Handle user clicking recycle
+    private void handleClickRecycle() {
+        //Navigate to the Create Story activity with a recycled prompt
+        Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
+        intent.putExtra("prompt",promptText);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    //Handle user clicking delete draft
+    private void handleClickDeleteDraft() {
+
+        if(storyId.equals("")) {
+            return;
+        }
+
+        showLoadingWheel();
+
+        backgroundTaskExecutor.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
+
+                        storyDeleteTask.addOnFailureListener(task -> {
+                            Bundle resultData = new Bundle();
+                            resultData.putString("error", "");
+                            resultData.putString("type","publish");
+
+                            Message resultMessage = new Message();
+                            resultMessage.setData(resultData);
+
+                            backgroundTaskResultHandler.sendMessage(resultMessage);
+                        });
+                    }
+                }
+        );
+    }
+
     /*
+        Handle user clicking publish
         Publish a story to the feed, or save a draft, then redirect to the feed if successful (if not drafting)
      */
-    private void handlePublishStory(boolean asDraft)
-    {
+    private void handleClickPublish(boolean asDraft) {
 
         if(!AuthUtils.userIsLoggedIn(getApplicationContext()))
         {
             return;
         }
 
+        unsavedChanges = false;
+
         String title = titleView.getText().toString();
-        String storyText = storyTextView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
         ArrayList<String> lovers = new ArrayList<String>();
+        ArrayList<String> bookmarkers = new ArrayList<String>();
 
-        String storyId = userId + new Date().toString().replace(" ",""); //TODO: make this ID nicer
+        if(storyId.equals("")) {
+            storyId = new Date().toString().replace(" ","") + "-" + userId;
+        }
 
         //Ensure that title is always entered, even if it's a draft
         if(title.length() <= 0) {
-            title = storyId; //TODO: make this nicer?
+            title = storyId;
         }
 
-        //TODO: do this all in a background thread
-        //TODO: loading wheel
+        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers, bookmarkers,0,System.currentTimeMillis());
 
-        Story story = new Story(storyId,userId,asDraft,title,promptText,storyText,lovers);
+        backgroundTaskExecutor.execute(
+            new Runnable() {
+               @Override
+           public void run() {
 
-        Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
+               Task<Void> storyPublishTask = ref.child(story.getId()).setValue(story);
 
-        storyPublishTask.addOnCompleteListener(task -> {
+               storyPublishTask.addOnCompleteListener(task -> {
 
-            published = true;
+                   //Only increment story count if this isn't a draft
+                   if(asDraft) {
+                       Bundle resultData = new Bundle();
+                       resultData.putString("error", "");
 
-            //Only increment story count if this isn't a draft
-            if(asDraft) {
-                goToFeed();
-               return;
-            }
+                       Message resultMessage = new Message();
+                       resultMessage.setData(resultData);
 
-            FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
-                        @Override
-                        public void accept(User user) {
-                            if(user != null) {
-                               user.incrementStoryCount();
-                               FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
-                                   @Override
-                                   public void accept(Boolean result) {
-                                       if(!result) {
-                                           toast.setText(genericErrorNotification);
-                                           toast.show();
-                                       }
+                       backgroundTaskResultHandler.sendMessage(resultMessage);
+                       return;
+                   }
 
-                                       goToFeed();
+                   published = true;
+
+                   FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
+                       @Override
+                       public void accept(User user) {
+
+                           if(user == null) {
+                               Bundle resultData = new Bundle();
+                               resultData.putString("error", getString(R.string.user_get_error));
+
+                               Message resultMessage = new Message();
+                               resultMessage.setData(resultData);
+
+                               backgroundTaskResultHandler.sendMessage(resultMessage);
+                              return;
+                           }
+
+                           user.incrementStoryCount();
+                           FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
+                               @Override
+                               public void accept(Boolean result) {
+
+                                   if(!result) {
+                                       Bundle resultData = new Bundle();
+                                       resultData.putString("error", getString(R.string.user_update_error));
+
+                                       Message resultMessage = new Message();
+                                       resultMessage.setData(resultData);
+
+                                       backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       return;
                                    }
-                               });
-                            }
-                        }
-                    });
-        });
 
-        storyPublishTask.addOnFailureListener(task -> {
-            toast.setText(genericErrorNotification);
-            toast.show();
-            published = false;
-        });
+                                   String body = user.getUsername() + getString(R.string.message_published_story_body);
+
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", new Consumer<Boolean>() {
+                                       @Override
+                                       public void accept(Boolean messageResult) {
+                                           Bundle resultData = new Bundle();
+                                           resultData.putString("error", messageResult ? "" : getString(R.string.generic_error_notification));
+                                           resultData.putString("published", "true");
+
+                                           //Send meesage rom thresd
+                                           Message resultMessage = new Message();
+                                           resultMessage.setData(resultData);
+
+                                           backgroundTaskResultHandler.sendMessage(resultMessage);
+                                       }
+                                   });
+                               }
+                           });
+                       }
+                   });
+               });
+
+               storyPublishTask.addOnFailureListener(task -> {
+                   toast.setText(genericErrorNotification);
+                   toast.show();
+                   published = false;
+               });
+           }
+       });
     }
 
+    /*
+     */
+    private void handleAppendText()
+    {
+        showLoadingWheel();
+
+        unsavedChanges = false;
+
+        String inputText = promptText + storyText;
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+
+                //Ask GPT to complete the prompt... again
+                //TODO: change to unhardcode
+                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,0.0);
+                int resultCode = story.length() <= 0 ? 1 : 0;
+
+                //Set up a bundle
+                //Result code != 0 means something in GPT failed
+                Bundle resultData = new Bundle();
+                resultData.putInt("result", resultCode);
+                resultData.putString("story",story);
+                resultData.putString("type","storyData");
+
+                Message resultMessage = new Message();
+                resultMessage.setData(resultData);
+
+                //Notify the activity that the API call is done
+                backgroundTaskResultHandler.sendMessage(resultMessage);
+            }
+        });
+    }
 
     /*
         Go back to the feed after having published a story
      */
-    private void goToFeed()
-    {
+    private void goToFeed() {
         Intent intent = new Intent(this,StoryFeedActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }

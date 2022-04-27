@@ -1,106 +1,180 @@
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/author_profile_layout"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="3dp">
 
-    <LinearLayout
-        android:id="@+id/author_profile_user_layout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/author_profile_user_name_view"
+        style="@style/AuthorProfileTitle"
+        android:text="AuthorName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/author_profile_user_profile_image"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="3dp">
+        android:enabled="false"
+        android:src="@drawable/ic_baseline_profile_24"
+        android:textColor="#283593"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_user_name_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_user_name_view" />
 
-        <Button
-            android:id="@+id/author_profile_user_profile_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="52dp"
-            android:layout_height="47dp"
-            android:drawableStart="@drawable/ic_baseline_profile_24"
-            android:enabled="false"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/author_profile_user_name_view"
-            android:layout_width="234dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:textAppearance="?android:attr/textAppearanceListItem"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <LinearLayout
-    android:id="@+id/author_profile_stories_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="3dp">
-
-        <Button
-            android:id="@+id/author_profile_story_count_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="52dp"
-            android:layout_height="47dp"
-            android:drawableStart="@drawable/ic_baseline_favorite_story_24"
-            android:enabled="false"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/author_profile_story_count_view"
-            android:layout_width="234dp"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:textAppearance="?android:attr/textAppearanceListItem"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/author_profile_loves_layout"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/author_ratio_image"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="3dp">
+        android:enabled="false"
+        android:src="@drawable/ic_baseline_ratio_24"
+        android:textColor="#283593"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_rating_label"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_rating_label" />
 
-        <Button
-            android:id="@+id/author_profile_love_count_button"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="47dp"
-            android:drawableStart="@drawable/ic_baseline_totalloves_24"
-            android:enabled="false"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/author_profile_rating_label"
+        style="@style/AuthorProfileLabel"
+        android:text="Rating:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/author_profile_user_name_view" />
 
-        <TextView
-            android:id="@+id/author_profile_love_count_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:textAppearance="?android:attr/textAppearanceListItem"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/author_profile_rating_view"
+        style="@style/AuthorProfileValue"
+        android:text="5.0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_rating_label" />
 
-    <ListView
+    <ImageView
+        android:id="@+id/author_profile_story_count_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:src="@drawable/ic_baseline_favorite_story_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_story_count_label"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_story_count_label" />
+
+    <TextView
+        android:id="@+id/author_profile_story_count_label"
+        style="@style/AuthorProfileLabel"
+        android:text="Published:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/author_profile_rating_label" />
+
+    <TextView
+        android:id="@+id/author_profile_story_count_view"
+        style="@style/AuthorProfileValue"
+        android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_story_count_label" />
+
+    <ImageView
+        android:id="@+id/author_profile_love_count_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_totalloves_24"
+        android:enabled="false"
+        android:text=""
+        android:textColor="#283593"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_love_count_label"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_love_count_label" />
+
+    <TextView
+        android:id="@+id/author_profile_love_count_label"
+        style="@style/AuthorProfileLabel"
+        android:text="All Loves:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/author_profile_story_count_label" />
+
+    <TextView
+        android:id="@+id/author_profile_love_count_view"
+        style="@style/AuthorProfileValue"
+        android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_love_count_label" />
+
+    <ImageView
+        android:id="@+id/author_profile_follower_count_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_people_24"
+        android:enabled="false"
+        android:text=""
+        android:textColor="#283593"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_follower_count_label"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_follower_count_label" />
+
+    <TextView
+        android:id="@+id/author_profile_follower_count_label"
+        style="@style/AuthorProfileLabel"
+        android:text="Followers:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/author_profile_love_count_label" />
+
+    <TextView
+        android:id="@+id/author_profile_follower_count_view"
+        style="@style/AuthorProfileValue"
+        android:text="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/author_profile_follower_count_label" />
+
+    <Button
+        android:id="@+id/authorProfileFollowButton"
+        style="@style/PrimaryButton"
+        android:text="Follow"
+        app:layout_constraintEnd_toEndOf="@+id/author_profile_follower_count_view"
+        app:layout_constraintStart_toStartOf="@+id/author_profile_follower_count_image"
+        app:layout_constraintTop_toBottomOf="@+id/author_profile_follower_count_label" />
+
+    <Button
+        android:id="@+id/authorProfileStoriesButton"
+        style="@style/SecondaryButton"
+        android:text="Author's Tailes"
+        app:layout_constraintEnd_toEndOf="@+id/authorProfileFollowButton"
+        app:layout_constraintStart_toStartOf="@+id/authorProfileFollowButton"
+        app:layout_constraintTop_toBottomOf="@+id/authorProfileFollowButton" />
+
+<!--    <ListView
         android:id="@+id/author_profile_options_view"
-        android:layout_width="match_parent"
-        android:layout_height="117dp"
-        android:divider="@null" />
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:divider="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorProfileStoriesButton" />-->
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
