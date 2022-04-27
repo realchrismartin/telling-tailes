@@ -31,4 +31,8 @@
     <item android:title="Settings"
         android:id="@+id/view_settings"
         app:showAsAction="never"/>
+
+    <item android:title="About GPT-3"
+        android:id="@+id/about_gpt_3"
+        app:showAsAction="never" />
 </menu>
