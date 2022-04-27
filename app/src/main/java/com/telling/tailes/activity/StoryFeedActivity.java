@@ -334,10 +334,20 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
                 int pos = 0;
-                for (FilterSpinnerItem item : filterSpinnerItems) {
-                    if (item.getFilterTitle().equals(intentFilter)) {
-                        pos = filterSpinnerItems.indexOf(item);
-                        break;
+                if (intentFilter.equals("By Author")) {
+                    if (extras.containsKey("authorId")) {
+                        String authorId = extras.getString("authorId");
+
+                        filterSpinnerItems.add(new FilterSpinnerItem(authorId + getString(R.string.author_profile_read_option)));
+                        spinnerAdapter.notifyDataSetChanged();
+                        pos = filterSpinnerItems.size() - 1;
+                    }
+                } else {
+                    for (FilterSpinnerItem item : filterSpinnerItems) {
+                        if (item.getFilterTitle().equals(intentFilter)) {
+                            pos = filterSpinnerItems.indexOf(item);
+                            break;
+                        }
                     }
                 }
                 filterSpinner.setSelection(pos);
