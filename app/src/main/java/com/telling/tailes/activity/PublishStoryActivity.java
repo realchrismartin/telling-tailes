@@ -448,7 +448,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   String body = user.getUsername() + getString(R.string.message_published_story_body) + ": " + story.getTitle();
+                                   String body = user.getUsername() + " " + getString(R.string.message_published_story_body) + ": " + story.getTitle();
 
                                    FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", "publish", storyId, new Consumer<Boolean>() {
                                        @Override
