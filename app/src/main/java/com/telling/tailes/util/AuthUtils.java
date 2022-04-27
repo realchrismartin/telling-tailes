@@ -193,16 +193,19 @@ public class AuthUtils {
     public static void logOutUser(Context context, Consumer<String> callback) {
 
         //Log out locally
-        updateUsernameSharedPreference(context,"");
-        updateTokenSharedPreference(context,"");
 
         updateUserToken(context, "", new Consumer<User>() {
             @Override
             public void accept(User user) {
+
+                updateUsernameSharedPreference(context,"");
+                updateTokenSharedPreference(context,"");
+
                 if(user == null) {
                     callback.accept("Failed to update user token in logOutUser");
                     return;
                 }
+
 
                 callback.accept("");
             }
