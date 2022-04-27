@@ -128,7 +128,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 switch(msg.getData().getString("type")) {
                     case("storyData"): {
-
                         if(msg.getData().getInt("result") != 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();

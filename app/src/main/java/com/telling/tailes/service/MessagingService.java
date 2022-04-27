@@ -4,8 +4,13 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -14,10 +19,14 @@ import androidx.preference.PreferenceManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.telling.tailes.R;
+import com.telling.tailes.activity.ReadStoryActivity;
+import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class MessagingService extends FirebaseMessagingService {
@@ -65,17 +74,50 @@ public class MessagingService extends FirebaseMessagingService {
         if (showNotification && remoteMessage.getData().size() > 0) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             if(notification != null) {
-                showNotification(notification);
+                String type = remoteMessage.getData().get("type");
+                if (type == null) {
+                    type = "";
+                    Log.e("Message Received", "FCM type member is null");
+                }
+                String storyId = remoteMessage.getData().get("storyID");
+                if (storyId == null) {
+                    storyId = "";
+                    Log.e("Message Received", "FCM storyId member is null");
+                }
+                showNotification(notification, type, storyId);
             }
         }
     }
 
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification) {
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type, String storyId) {
 
-        Intent intent = new Intent(); //TODO?
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent;
+        PendingIntent pendingIntent;
 
-        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+        switch (type) {
+            case ("publish"): {
+                Log.d("message handler", "PUBLISH");
+                // Create an Intent for the activity you want to start
+                intent = new Intent(this, ReadStoryActivity.class);
+                // add story here
+                intent.putExtra("storyID", storyId);
+
+                // Create the TaskStackBuilder and add the intent, which inflates the back stack
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addNextIntentWithParentStack(intent);
+                // Get the PendingIntent containing the entire back stack
+                pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                break;
+            }
+            case ("follow") :
+            case ("love"):
+            default:
+                Log.d("message handler", "default");
+                intent = new Intent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         Notification notification;
 
@@ -93,4 +135,5 @@ public class MessagingService extends FirebaseMessagingService {
 
         notificationManager.notify(0, notification);
     }
+
 }
