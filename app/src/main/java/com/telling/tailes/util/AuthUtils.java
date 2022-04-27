@@ -32,6 +32,15 @@ public class AuthUtils {
     }
 
     /*
+        Return the last locally saved messaging token for the current user
+        Used to determine if we need to retrieve / update token or not when a user visits the feed on a device
+     */
+    public static String getMessagingToken(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        return sharedPref.getString("messagingToken",""); //TODO: unhardcode
+    }
+
+    /*
         Return true if a user is logged in, false otherwise
      */
     public static boolean userIsLoggedIn(Context context) {
@@ -62,41 +71,118 @@ public class AuthUtils {
                             return;
                         }
 
-                        //User's password is valid
-                        //Get a new messaging token for this user on login
-                        Task<String> tokenTask = FirebaseMessaging.getInstance().getToken();
+                        //Update user in local shared preferences to be "logged in"
+                        updateUsernameSharedPreference(context,username);
 
-                        tokenTask.addOnFailureListener(new OnFailureListener() {
-                                                           @Override
-                                                           public void onFailure(@NonNull Exception e) {
-                                                               callback.accept(e.getMessage());
-                                                           }
-                                                       });
-
-                        tokenTask.addOnCompleteListener(new OnCompleteListener<String>() {
+                        //Update user's token on login
+                        updateUserToken(context, null, new Consumer<User>() {
                             @Override
-                            public void onComplete(@NonNull Task<String> task) {
-                                //Token is obtained, update user in DB
-                                String token = task.getResult();
+                            public void accept(User user) {
 
-                                user.setMessagingToken(token);
+                                if(user == null) {
+                                    callback.accept("User was null after token update during login");
+                                    return;
+                                }
 
-                                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
-                                    @Override
-                                    public void accept(Boolean aBoolean) {
-                                        if(!aBoolean) {
-                                            callback.accept(context.getResources().getString(R.string.login_error_notification));
-                                        }
-
-                                        //If user exists and password is valid, log the user in
-                                        //Note: this could be more secure.
-                                        updateLogin(context,username);
-
-                                        callback.accept(""); //Indicate that all is well and complete login
-                                    }
-                                });
+                                callback.accept("");
                             }
                         });
+
+                    }
+                });
+            }
+        });
+    }
+
+    //Attempts to update the current logged in user to set a device token
+    //If a non null optionalExistingToken is provided, update to use this token (e.g. when called by MessageService)
+    //Otherwise, get a new token
+    //Call the callback with the updated User when done, or null if it fails
+    public static void updateUserToken(Context context, String optionalExistingToken, Consumer<User> callback)  {
+
+        FBUtils.getUser(context, AuthUtils.getLoggedInUserID(context), new Consumer<User>() {
+            @Override
+            public void accept(User user) {
+
+                if(user == null) {
+                    Log.e("AuthUtils.updateUserToken","User was null, couldn't update token");
+                    return;
+                }
+
+                if(optionalExistingToken == null) {
+
+                    Task<String> tokenTask = FirebaseMessaging.getInstance().getToken();
+
+                    tokenTask.addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                            callback.accept(null);
+                        }
+                    });
+
+                    tokenTask.addOnCompleteListener(new OnCompleteListener<String>() {
+                        @Override
+                        public void onComplete(@NonNull Task<String> task) {
+
+                            //Token is obtained, update user in DB
+                            user.setMessagingToken(task.getResult());
+
+                            FBUtils.updateUser(context, user, new Consumer<Boolean>() {
+                                @Override
+                                public void accept(Boolean result) {
+                                    if(!result)  {
+                                        Log.e("AuthUtils.updateUserToken","Failed to update user token for current user");
+                                        callback.accept(null);
+                                        return;
+                                    }
+
+                                    //Set token to shared preferences
+                                    updateTokenSharedPreference(context,task.getResult());
+
+                                    callback.accept(user);
+                                }
+                            });
+                        }
+                    });
+
+                    return;
+                }
+
+                if(user.getMessagingToken().equals("") && optionalExistingToken.equals("")) {
+                    //Recurse and call this method to get an actual token, then return
+                    updateUserToken(context, null, new Consumer<User>() {
+                        @Override
+                        public void accept(User innerUser) {
+                            callback.accept(innerUser);
+                        }
+                    });
+
+                    return;
+                }
+
+                //If no update is required because tokens are already equivalent, skip the update
+                if(user.getMessagingToken().equals(optionalExistingToken)) {
+                    callback.accept(user);
+                    return;
+                }
+
+                //Set messaging token
+                user.setMessagingToken(optionalExistingToken);
+
+                //Set token to shared preferences
+                updateTokenSharedPreference(context,optionalExistingToken);
+
+                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
+                    @Override
+                    public void accept(Boolean result) {
+                        if(!result)  {
+                            Log.e("AuthUtils.updateUserToken","Failed to update user token for current user");
+                            callback.accept(null);
+                            return;
+                        }
+
+                        callback.accept(user);
                     }
                 });
             }
@@ -106,34 +192,22 @@ public class AuthUtils {
     //Log out - very simply, just delete the username from shared preferences and update the user's token
     public static void logOutUser(Context context, Consumer<String> callback) {
 
-        //Persist username temporarily
-        String username = getLoggedInUserID(context);
-
         //Log out locally
-        updateLogin(context,"");
 
-        //Update user to clear messaging token
-        FBUtils.getUser(context,username, new Consumer<User>() {
+        updateUserToken(context, "", new Consumer<User>() {
             @Override
             public void accept(User user) {
-                if (user == null) {
-                    callback.accept(context.getResources().getString(R.string.generic_error_notification));
+
+                updateUsernameSharedPreference(context,"");
+                updateTokenSharedPreference(context,"");
+
+                if(user == null) {
+                    callback.accept("Failed to update user token in logOutUser");
                     return;
                 }
 
-                user.setMessagingToken("");
 
-                FBUtils.updateUser(context, user, new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) {
-                        if (!aBoolean) {
-                            callback.accept(context.getResources().getString(R.string.login_error_notification));
-                            return;
-                        }
-
-                        callback.accept(""); //Indicate that all is well and complete login
-                    }
-                });
+                callback.accept("");
             }
         });
     }
@@ -187,11 +261,17 @@ public class AuthUtils {
         });
     }
 
-    //Called on either login or logout
-    private static void updateLogin(Context context, String username) {
+    private static void updateUsernameSharedPreference(Context context, String username) {
         SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("username", username); //TODO: unhardcode
+        editor.apply();
+    }
+
+    private static void updateTokenSharedPreference(Context context, String messagingToken) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("messagingToken", messagingToken); //TODO: unhardcode
         editor.apply();
     }
 
