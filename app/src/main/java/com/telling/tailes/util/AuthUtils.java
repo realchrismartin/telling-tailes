@@ -32,6 +32,15 @@ public class AuthUtils {
     }
 
     /*
+        Return the last locally saved messaging token for the current user
+        Used to determine if we need to retrieve / update token or not when a user visits the feed on a device
+     */
+    public static String getMessagingToken(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        return sharedPref.getString("messagingToken",""); //TODO: unhardcode
+    }
+
+    /*
         Return true if a user is logged in, false otherwise
      */
     public static boolean userIsLoggedIn(Context context) {
@@ -61,6 +70,9 @@ public class AuthUtils {
                             callback.accept(context.getResources().getString(R.string.login_error_notification));
                             return;
                         }
+
+                        //Update user in local shared preferences to be "logged in"
+                        updateUsernameSharedPreference(context,username);
 
                         //Update user's token on login
                         updateUserToken(context, null, new Consumer<User>() {
@@ -125,6 +137,9 @@ public class AuthUtils {
                                         return;
                                     }
 
+                                    //Set token to shared preferences
+                                    updateTokenSharedPreference(context,task.getResult());
+
                                     callback.accept(user);
                                 }
                             });
@@ -134,7 +149,29 @@ public class AuthUtils {
                     return;
                 }
 
+                if(user.getMessagingToken().equals("") && optionalExistingToken.equals("")) {
+                    //Recurse and call this method to get an actual token, then return
+                    updateUserToken(context, null, new Consumer<User>() {
+                        @Override
+                        public void accept(User innerUser) {
+                            callback.accept(innerUser);
+                        }
+                    });
+
+                    return;
+                }
+
+                //If no update is required because tokens are already equivalent, skip the update
+                if(user.getMessagingToken().equals(optionalExistingToken)) {
+                    callback.accept(user);
+                    return;
+                }
+
+                //Set messaging token
                 user.setMessagingToken(optionalExistingToken);
+
+                //Set token to shared preferences
+                updateTokenSharedPreference(context,optionalExistingToken);
 
                 FBUtils.updateUser(context, user, new Consumer<Boolean>() {
                     @Override
@@ -156,7 +193,8 @@ public class AuthUtils {
     public static void logOutUser(Context context, Consumer<String> callback) {
 
         //Log out locally
-        updateLogin(context,"");
+        updateUsernameSharedPreference(context,"");
+        updateTokenSharedPreference(context,"");
 
         updateUserToken(context, "", new Consumer<User>() {
             @Override
@@ -220,11 +258,17 @@ public class AuthUtils {
         });
     }
 
-    //Called on either login or logout
-    private static void updateLogin(Context context, String username) {
+    private static void updateUsernameSharedPreference(Context context, String username) {
         SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("username", username); //TODO: unhardcode
+        editor.apply();
+    }
+
+    private static void updateTokenSharedPreference(Context context, String messagingToken) {
+        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("messagingToken", messagingToken); //TODO: unhardcode
         editor.apply();
     }
 
