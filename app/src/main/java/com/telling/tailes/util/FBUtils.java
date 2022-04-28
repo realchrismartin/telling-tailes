@@ -107,7 +107,7 @@ public class FBUtils {
 
                                            String body = currentUser + " " +  context.getString(R.string.message_loved_body) + " \"" + story.getTitle() + "\"";
 
-                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", "love", story.getId(), new Consumer<Boolean>() {
+                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", "love", story.getId(), "", new Consumer<Boolean>() {
                                                @Override
                                                public void accept(Boolean aBoolean) {
 
@@ -381,7 +381,7 @@ public class FBUtils {
 
                                         // send notification if following
                                         String body = follower.getUsername() + " " + context.getString(R.string.message_followed_body);
-                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, "", "follow", "", new Consumer<Boolean>() {
+                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, "", "follow", "", follower.getUsername(), new Consumer<Boolean>() {
                                             @Override
                                             public void accept(Boolean aBoolean) {
 
@@ -595,7 +595,7 @@ public class FBUtils {
                 ArrayList<String> followers = user.getFollowers();
 
                 for(String followerUsername : followers) {
-                    sendNotification(context, followerUsername, title, body, content, type, storyId, new Consumer<Boolean>() {
+                    sendNotification(context, followerUsername, title, body, content, type, storyId, "", new Consumer<Boolean>() {
                         @Override
                         public void accept(Boolean aBoolean) {
                             if(!aBoolean) {
@@ -612,7 +612,7 @@ public class FBUtils {
     }
 
     //Send a FCM message to the specified recipient
-    public static void sendNotification(Context context, String recipientUsername, String title, String body, String content, String type, String storyId, Consumer<Boolean> callback)
+    public static void sendNotification(Context context, String recipientUsername, String title, String body, String content, String type, String storyId, String followerUsername, Consumer<Boolean> callback)
     {
         Task<DataSnapshot> userData = usersRef.child(recipientUsername).get();
 
@@ -646,7 +646,7 @@ public class FBUtils {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        doFCMMessage(context, recipientUser, title, body, content, type, storyId, new Consumer<Boolean>() {
+                        doFCMMessage(context, recipientUser, title, body, content, type, storyId, followerUsername, new Consumer<Boolean>() {
                             @Override
                             public void accept(Boolean aBoolean) {
                                 callback.accept(aBoolean);
@@ -659,7 +659,7 @@ public class FBUtils {
     }
 
     //Helper method to send a FCM message
-    private static void doFCMMessage(Context context, User recipient, String title, String body, String content, String type, String storyId, Consumer<Boolean> callback) {
+    private static void doFCMMessage(Context context, User recipient, String title, String body, String content, String type, String storyId, String followerUsername, Consumer<Boolean> callback) {
 
         String recipientFCMToken = recipient.getMessagingToken();
 
@@ -680,6 +680,7 @@ public class FBUtils {
             data.put("content", content);
             data.put("type", type);
             data.put("storyID", storyId);
+            data.put("followerID", followerUsername);
             jsonObject.put("to", recipientFCMToken);
             jsonObject.put("priority", "high");
             jsonObject.put("notification", jNotification);
