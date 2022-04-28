@@ -20,6 +20,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.telling.tailes.R;
 import com.telling.tailes.activity.ReadStoryActivity;
+import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
@@ -71,13 +72,19 @@ public class MessagingService extends FirebaseMessagingService {
                     storyId = "";
                     Log.e("Message Received", "FCM storyId member is null");
                 }
-                showNotification(notification, type, storyId);
+                String followerUsername = remoteMessage.getData().get("followerUsername");
+                if (followerUsername == null) {
+                    followerUsername = "";
+                    Log.e("Message Received", "FCM followerUsername is null");
+                }
+
+                showNotification(notification, type, storyId, followerUsername);
             }
         }
     }
 
     @SuppressLint("UnspecifiedImmutableFlag")
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type, String storyId) {
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type, String storyId, String followerUsername) {
 
         Intent intent;
         PendingIntent pendingIntent;
@@ -97,7 +104,17 @@ public class MessagingService extends FirebaseMessagingService {
                 pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 break;
             }
-            case ("follow") :
+            case ("follow") : {
+                Log.d("message handler", "follow");
+                intent = new Intent(getApplicationContext(), StoryFeedActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("feedFilter", "By Author");
+                intent.putExtra("authorId", followerUsername);
+
+                pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+                break;
+            }
+
             case ("love"):
             default:
                 Log.d("message handler", "default");
