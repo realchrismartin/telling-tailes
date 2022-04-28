@@ -134,9 +134,9 @@ public class StoryRviewAdapter extends RecyclerView.Adapter<StoryRviewHolder> {
     @SuppressLint("SetTextI18n")
     private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewHolder holder) {
         if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_solid_pitch, 0, 0, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_solid_pitch, 0);
         } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_outline_pitch, 0, 0, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_outline_pitch, 0);
         }
     }
 }

@@ -71,6 +71,7 @@
         <item name="android:textSize">24sp</item>
         <item name="android:fontFamily">sans-serif-smallcaps</item>
         <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/pitch</item>
         <item name="android:singleLine">true</item>
         <item name="android:typeface">sans</item>
         <item name="android:padding">5dp</item>
@@ -84,7 +85,7 @@
         <item name="android:layout_marginEnd">20dp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">2</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/pitch</item>
         <item name="android:textAlignment">textStart</item>
@@ -127,7 +128,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/pitch</item>
         <item name="android:textSize">24sp</item>
     </style>
@@ -135,7 +136,7 @@
     <style name="AuthorProfileValue" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/pitch</item>
         <item name="android:textSize">24sp</item>
     </style>
