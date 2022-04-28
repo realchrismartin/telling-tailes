@@ -372,10 +372,20 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
                 int pos = 0;
-                for (FilterSpinnerItem item : filterSpinnerItems) {
-                    if (item.getFilterTitle().equals(intentFilter)) {
-                        pos = filterSpinnerItems.indexOf(item);
-                        break;
+                if (intentFilter.equals("By Author")) {
+                    if (extras.containsKey("authorId")) {
+                        String authorId = extras.getString("authorId");
+
+                        filterSpinnerItems.add(new FilterSpinnerItem(authorId + getString(R.string.author_profile_read_option)));
+                        spinnerAdapter.notifyDataSetChanged();
+                        pos = filterSpinnerItems.size() - 1;
+                    }
+                } else {
+                    for (FilterSpinnerItem item : filterSpinnerItems) {
+                        if (item.getFilterTitle().equals(intentFilter)) {
+                            pos = filterSpinnerItems.indexOf(item);
+                            break;
+                        }
                     }
                 }
                 filterSpinner.setSelection(pos);
@@ -386,7 +396,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 filter.setAuthorFilter(authorId);
             }
         }
-
 
         loadStoryData();
 
@@ -517,6 +526,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
+
+        if (selection.contains("\'s")) {
+            selection = "By Author";
+        } else {
+            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains("\'s")) {
+                filterSpinnerItems.remove(filterSpinnerItems.size() - 1);
+                spinnerAdapter.notifyDataSetChanged();
+            }
+        }
 
         switch(selection) {
             case("Bookmarks"): {
