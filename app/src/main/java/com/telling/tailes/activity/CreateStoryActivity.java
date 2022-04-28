@@ -236,9 +236,9 @@ public class CreateStoryActivity extends AppCompatActivity {
         int length = lengthSeekBar.getProgress();
         int wordCount = StringUtils.getWordCount(prompt);
 
-        if(wordCount <= promptMinWords)
+        if(wordCount < promptMinWords)
         {
-            error = getString(R.string.prompt_too_short_1) + promptMinWords + getString(R.string.prompt_too_short_2) + wordCount + getString(R.string.prompt_too_short_3);
+            error = getString(R.string.prompt_too_short_1) + " " + promptMinWords + " " + getString(R.string.prompt_too_short_2) + " " + wordCount + " " + getString(R.string.prompt_too_short_3);
         }
 
         if(length < lengthMin)

@@ -4,7 +4,7 @@ public class StringUtils {
 
     //Given a string, get the number of "words" in the string
     public static int getWordCount(String input) {
-        return 0; //TODO
+        return input.split(" ").length;
     }
 
 
