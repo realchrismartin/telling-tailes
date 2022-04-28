@@ -61,5 +61,17 @@
 
         </ScrollView>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/recyclePromptFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/readActivityStoryCard"
+            app:layout_constraintHorizontal_bias="0.87"
+            app:layout_constraintVertical_bias="0.9"
+            app:srcCompat="@drawable/reset_white"
+            android:contentDescription="Recycle Prompt" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

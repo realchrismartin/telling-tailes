@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telling.tailes.R;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
@@ -38,6 +39,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     private ImageButton bookmarkButton;
     private Button loveButton;
     private ImageButton recycleButton;
+    private FloatingActionButton recycleFAB;
     private Button authorProfileButton;
 
     private Executor backgroundTaskExecutor;
@@ -62,6 +64,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         bookmarkButton = findViewById(R.id.storyCardBookmarkButton);
         loveButton = findViewById(R.id.storyCardLoveButton);
         recycleButton = findViewById(R.id.storyCardRecycleButton);
+        recycleFAB = findViewById(R.id.recyclePromptFAB);
         authorProfileButton = findViewById(R.id.storyCardAuthorProfileButton);
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
@@ -204,6 +207,13 @@ public class ReadStoryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 handleClickRecycle();
 
+            }
+        });
+
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleClickRecycle();
             }
         });
 

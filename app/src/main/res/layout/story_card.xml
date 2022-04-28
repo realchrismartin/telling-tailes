@@ -65,7 +65,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/reset_pitch"
             app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
-            app:layout_constraintTop_toTopOf="@+id/storyCardBookmarkButton" />
+            app:layout_constraintTop_toTopOf="@+id/storyCardBookmarkButton"
+            tools:visibility="invisible" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
