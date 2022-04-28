@@ -97,10 +97,9 @@
         <item name="android:layout_marginStart">13dp</item>
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:layout_marginEnd">13dp</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:fontFamily">serif</item>
         <item name="android:textAlignment">textStart</item>
         <item name="android:textColor">@color/pitch</item>
-        <item name="android:textStyle">italic</item>
     </style>
 
     <style name="StoryText" parent="@android:style/Widget.TextView">
@@ -112,6 +111,7 @@
         <item name="android:fontFamily">serif</item>
         <item name="android:textAlignment">textStart</item>
         <item name="android:textColor">@color/pitch</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
     <style name="AuthorProfileTitle" parent="@android:style/Widget.TextView">
