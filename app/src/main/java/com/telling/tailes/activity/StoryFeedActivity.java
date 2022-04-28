@@ -359,7 +359,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-
         loadStoryData();
 
     }
@@ -489,6 +488,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
+
+        if (selection.contains("\'s")) {
+            selection = "By Author";
+        } else {
+            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains("\'s")) {
+                filterSpinnerItems.remove(filterSpinnerItems.size() - 1);
+                spinnerAdapter.notifyDataSetChanged();
+            }
+        }
 
         switch(selection) {
             case("Bookmarks"): {
