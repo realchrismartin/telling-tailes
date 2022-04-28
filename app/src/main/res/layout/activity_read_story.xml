@@ -46,10 +46,16 @@
                     style="@style/PromptText"
                     app:layout_constraintTop_toBottomOf="parent" />
 
+                <ImageView
+                    android:id="@+id/readElipsisTextView"
+                    style="@style/PromptText"
+                    android:src="@drawable/elipsis_pitch"
+                    app:layout_constraintTop_toBottomOf="@+id/readPrompTextView" />
+
                 <TextView
                     android:id="@+id/readStoryTextView"
                     style="@style/StoryText"
-                    app:layout_constraintTop_toBottomOf="@+id/readPrompTextView" />
+                    app:layout_constraintTop_toBottomOf="@+id/readElipsisTextView" />
 
             </LinearLayout>
 
