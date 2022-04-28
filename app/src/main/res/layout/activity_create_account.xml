@@ -17,19 +17,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.40" />
+        app:layout_constraintVertical_bias="0.20" />
 
     <Button
-        android:id="@+id/profileIcon1"
+        android:id="@+id/createAccountIconButton"
         style="?android:attr/borderlessButtonStyle"
-        android:layout_width="50dp"
-        android:layout_height="44dp"
-        android:drawableStart="@drawable/profile_icon_pitch"
-        android:text=""
-        android:textColor="#283593"
-        app:layout_constraintBottom_toBottomOf="@+id/createUsernameView"
-        app:layout_constraintEnd_toStartOf="@+id/createUsernameView"
-        app:layout_constraintTop_toTopOf="@+id/createUsernameView" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawableTop="@drawable/profile_0_large"
+        android:text="(select profile icon)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appTitleView" />
 
     <EditText
         android:id="@+id/createUsernameView"
@@ -38,7 +38,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appTitleView" />
+        app:layout_constraintTop_toBottomOf="@+id/createAccountIconButton" />
 
     <EditText
         android:id="@+id/createPasswordConfirmView"

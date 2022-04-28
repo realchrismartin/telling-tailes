@@ -41,7 +41,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                 usernameView.setText(AuthUtils.getLoggedInUserID(getApplicationContext()));
                 int icon = msg.getData().getInt("icon");
                 ImageView profileIconView = findViewById(R.id.settings_user_profile_image);
-                profileIconView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(icon)));
+                profileIconView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(icon, false)));
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.setting_view, new UserSettingsDialogFragment()).commit();
             }
