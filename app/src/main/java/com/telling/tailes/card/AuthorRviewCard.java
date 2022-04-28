@@ -1,7 +1,5 @@
 package com.telling.tailes.card;
 
-import com.telling.tailes.model.AuthorProfile;
-
 public class AuthorRviewCard {
     public static final Integer CARD_TYPE_AUTHOR = 0;
     public static final Integer CARD_TYPE_LOADING = 1;

@@ -9,12 +9,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -224,7 +220,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         }
 
     }
-
 
     /*
         Fragment onClick handler for following or unfollowing an author
