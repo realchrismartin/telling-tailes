@@ -5,7 +5,7 @@
             android:key="@string/setting_hide_title"
             android:title="@string/setting_hide_title"
             android:summary="@string/setting_hide_description"
-            android:icon="@drawable/ic_baseline_notifications_border_24"
+            android:icon="@drawable/bell_outline_pitch"
             android:defaultValue="true"
             />
 
@@ -16,7 +16,7 @@
             android:min="10"
             android:max="50"
             android:defaultValue="25"
-            android:icon="@drawable/ic_baseline_text_fields_24"
+            android:icon="@drawable/text_pitch"
             />
 
         <EditTextPreference
@@ -24,14 +24,14 @@
             android:title="@string/setting_password_title"
             android:summary="@string/setting_password_description"
             android:inputType="textPassword"
-            android:icon="@drawable/ic_baseline_key_24"
+            android:icon="@drawable/key_pitch"
             />
 
         <Preference
             android:key="@string/setting_logout_title"
             android:title="@string/setting_logout_title"
             android:summary="@string/setting_logout_description"
-            android:icon="@drawable/ic_baseline_logout_24"
+            android:icon="@drawable/logout_pitch"
             />
 
 </PreferenceScreen>

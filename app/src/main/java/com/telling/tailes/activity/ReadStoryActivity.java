@@ -217,17 +217,17 @@ public class ReadStoryActivity extends AppCompatActivity {
 
    private void updateLoveButtonState() {
         if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_solid_pitch, 0, 0, 0);
         } else {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_outline_pitch, 0, 0, 0);
         }
     }
 
     private void updateBookmarkButtonState() {
         if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+            bookmarkButton.setImageResource(R.drawable.bookmark_solid_pitch);
         } else {
-            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+            bookmarkButton.setImageResource(R.drawable.bookmark_outline_pitch);
         }
     }
 

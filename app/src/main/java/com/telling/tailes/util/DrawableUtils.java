@@ -20,7 +20,7 @@ public class DrawableUtils {
                return R.drawable.profile_2;
             }
             default:
-                return R.drawable.ic_baseline_profile_24;
+                return R.drawable.profile_icon_pitch;
         }
     }
 }

@@ -4,7 +4,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="error">#FFdd602e</color>
-    <color name="off_white">#FFfafafa</color>
+    <color name="off_white">#FFfcfcfc</color>
     <color name="medium_grey">#FFc7c7c7</color>
     <color name="pitch">#FF263238</color>
     <color name="slate">#FF37474f</color>

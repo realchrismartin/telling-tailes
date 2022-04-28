@@ -7,14 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
-    app:cardBackgroundColor="#fafafa"
+    app:cardBackgroundColor="#fcfcfc"
     app:cardElevation="0dp"
     app:contentPaddingTop="25dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#fafafa">
+        android:background="#fcfcfc">
 
         <TextView
             android:id="@+id/storyCardTitle"
@@ -30,7 +30,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_baseline_profile_24"
+            android:drawableStart="@drawable/profile_icon_pitch"
             android:drawablePadding="8dp"
             android:text="author"
             android:textColor="@color/pitch"
@@ -42,7 +42,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_baseline_favorite_border_24"
+            android:drawableStart="@drawable/favorite_outline_pitch"
             android:text=""
             android:textColor="@color/pitch"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +53,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_bookmark_border_24"
+            android:src="@drawable/bookmark_outline_pitch"
             app:layout_constraintEnd_toStartOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton" />
 
@@ -62,7 +62,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_recycle_24"
+            android:src="@drawable/reset_pitch"
             app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
             app:layout_constraintTop_toTopOf="@+id/storyCardBookmarkButton" />
 
