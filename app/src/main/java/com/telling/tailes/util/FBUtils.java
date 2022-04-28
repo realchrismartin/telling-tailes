@@ -680,7 +680,7 @@ public class FBUtils {
             data.put("content", content);
             data.put("type", type);
             data.put("storyID", storyId);
-            data.put("followerID", followerUsername);
+            data.put("followerUsername", followerUsername);
             jsonObject.put("to", recipientFCMToken);
             jsonObject.put("priority", "high");
             jsonObject.put("notification", jNotification);
