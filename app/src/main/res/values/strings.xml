@@ -23,6 +23,9 @@
     <string name="publish_story_draft_saved_notification">Saving a draft of this taile…</string>
     <string name="length_long_error_notification">Story length is too long, try selecting a shorter length</string>
     <string name="length_short_error_notification">Story length is too short, try selecting a longer length</string>
+    <string name="prompt_too_short_1">Your prompt isn\'t quite long enough. Please enter at least </string>
+    <string name="prompt_too_short_2"> words (currently entered </string>
+    <string name="prompt_too_short_3"> words)</string>
     <string name="create_in_progress_notification">Please wait while our trained robot monkeys create neo-Shakespeare for you…</string>
     <string name="generic_error_notification">Something went wrong. Check to make sure you have an internet connection. If you do… it might be our fault. Sorry!</string>
     <string name="password_change_notification">Successfully changed password</string>

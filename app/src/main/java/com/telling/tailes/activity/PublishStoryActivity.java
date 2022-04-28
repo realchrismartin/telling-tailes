@@ -164,6 +164,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         deleteFAB = findViewById(R.id.publishDeleteFAB);
         recycleFAB = findViewById(R.id.publishRecycleFAB);
         extendFAB = findViewById(R.id.publishExtendFAB);
+
         famList = new ArrayList<>();
         famList.add(extendFAB);
         famList.add(recycleFAB);
@@ -494,8 +495,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             public void run() {
 
                 //Ask GPT to complete the prompt... again
-                //TODO: change to unhardcode
-                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,0.0);
+                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25); //Note: hardcoded additional length due to minimum length being too short
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
                 //Set up a bundle

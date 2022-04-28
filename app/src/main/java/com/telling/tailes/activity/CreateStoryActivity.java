@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.telling.tailes.R;
 import com.telling.tailes.util.GPTUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.Locale;
 import java.util.concurrent.Executor;
@@ -35,7 +36,7 @@ import java.util.concurrent.Executors;
 public class CreateStoryActivity extends AppCompatActivity {
 
     //Length requirements for validation
-    private static final int promptMinCharacters = 30;
+    private static final int promptMinWords = 30;
     private static final int lengthMin = 40;
     private static final int lengthMax = 2048;
 
@@ -233,11 +234,11 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         String prompt = promptView.getText().toString().trim();
         int length = lengthSeekBar.getProgress();
+        int wordCount = StringUtils.getWordCount(prompt);
 
-        if(prompt.length() <= promptMinCharacters)
+        if(wordCount <= promptMinWords)
         {
-            //TODO: extract string resources
-           error = "Please enter a prompt that is at least " + promptMinCharacters + " character(s) long (currently using " + prompt.length() + " character(s))";
+            error = getString(R.string.prompt_too_short_1) + promptMinWords + getString(R.string.prompt_too_short_2) + wordCount + getString(R.string.prompt_too_short_3);
         }
 
         if(length < lengthMin)
