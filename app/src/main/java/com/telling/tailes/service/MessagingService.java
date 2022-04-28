@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
@@ -14,9 +15,10 @@ import androidx.preference.PreferenceManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.telling.tailes.R;
+import com.telling.tailes.activity.ReadStoryActivity;
+import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
-import com.telling.tailes.util.FBUtils;
 
 import java.util.function.Consumer;
 
@@ -27,26 +29,13 @@ public class MessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String newToken) {
 
-        //Note: not in background thread
-        FBUtils.getUser(getApplicationContext(), AuthUtils.getLoggedInUserID(getApplicationContext()), new Consumer<User>() {
+        //Note: may not run in a separate thread if this class doesn't already
+        AuthUtils.updateUserToken(getApplicationContext(), newToken, new Consumer<User>() {
             @Override
             public void accept(User user) {
-
-               if(user == null) {
-                   Log.e("MessageService","User was null, couldn't update token");
-                   return;
-               }
-
-               user.setMessagingToken(newToken);
-
-               FBUtils.updateUser(getApplicationContext(), user, new Consumer<Boolean>() {
-                   @Override
-                   public void accept(Boolean aBoolean) {
-                      if(!aBoolean)  {
-                          Log.e("MessageService","Failed to update user token for current user");
-                      }
-                   }
-               });
+                if(user == null) {
+                    Log.e("MessagingService.onNewToken","User returned from updateUserToken was null, token may not have been updated");
+                }
             }
         });
     }
@@ -65,17 +54,66 @@ public class MessagingService extends FirebaseMessagingService {
         if (showNotification && remoteMessage.getData().size() > 0) {
             RemoteMessage.Notification notification = remoteMessage.getNotification();
             if(notification != null) {
-                showNotification(notification);
+                String type = remoteMessage.getData().get("type");
+                if (type == null) {
+                    type = "";
+                    Log.e("Message Received", "FCM type member is null");
+                }
+                String storyId = remoteMessage.getData().get("storyID");
+                if (storyId == null) {
+                    storyId = "";
+                    Log.e("Message Received", "FCM storyId member is null");
+                }
+                String followerUsername = remoteMessage.getData().get("followerUsername");
+                if (followerUsername == null) {
+                    followerUsername = "";
+                    Log.e("Message Received", "FCM followerUsername is null");
+                }
+
+                showNotification(notification, type, storyId, followerUsername);
             }
         }
     }
 
-    private void showNotification(RemoteMessage.Notification remoteMessageNotification) {
+    @SuppressLint("UnspecifiedImmutableFlag")
+    private void showNotification(RemoteMessage.Notification remoteMessageNotification, String type, String storyId, String followerUsername) {
 
-        Intent intent = new Intent(); //TODO?
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent;
+        PendingIntent pendingIntent;
 
-        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+        switch (type) {
+            case ("publish"): {
+                Log.d("message handler", "PUBLISH");
+                // Create an Intent for the activity you want to start
+                intent = new Intent(this, ReadStoryActivity.class);
+                // add story here
+                intent.putExtra("storyID", storyId);
+
+                // Create the TaskStackBuilder and add the intent, which inflates the back stack
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addNextIntentWithParentStack(intent);
+                // Get the PendingIntent containing the entire back stack
+                pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                break;
+            }
+            case ("follow") : {
+                Log.d("message handler", "follow");
+                intent = new Intent(getApplicationContext(), StoryFeedActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("feedFilter", "By Author");
+                intent.putExtra("authorId", followerUsername);
+
+                pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+                break;
+            }
+
+            case ("love"):
+            default:
+                Log.d("message handler", "default");
+                intent = new Intent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         Notification notification;
 

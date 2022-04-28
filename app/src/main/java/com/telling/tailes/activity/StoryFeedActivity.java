@@ -99,12 +99,16 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
 
-        doLoginCheck();
-
         createStorySwipeToRefresh();
         createStoryRecyclerView();
         createFilterSpinner();
+
         createListeners();
+
+        //Check if user is logged in
+        //Leave the feed if not
+        //Update the user's messaging token if the local one differs from the database
+        doLoginCheckCreate();
 
         loadFirstStories();
     }
@@ -112,7 +116,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     @Override
     protected void onResume() {
         super.onResume();
-        doLoginCheck();
+        doLoginCheckResume();
     }
 
     //Set up listeners
@@ -129,7 +133,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 switch(msg.getData().getString("type")) {
                     case("storyData"): {
-
                         if(msg.getData().getInt("result") != 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
@@ -184,6 +187,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         //Stop refreshing when complete
                         feedSwipeRefresh.setRefreshing(false);
+                        break;
+                    }
+                    case("tokenRefresh"): {
+                        if(msg.getData().getInt("result") != 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                        }
                         break;
                     }
                     case("bookmarks"): {
@@ -279,12 +289,40 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     //Kick the user out of the Feed if they aren't logged in for some reason
-    private void doLoginCheck() {
+    private boolean doLoginCheckResume() {
         if (!AuthUtils.userIsLoggedIn(getApplicationContext())) {
             goToLogin();
+            return false;
         }
+
+        return true;
     }
 
+    //Kick the user out of the Feed if they aren't logged in for some reason
+    private void doLoginCheckCreate() {
+
+        if(!doLoginCheckResume()) {
+            return;
+        }
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                //Update the locally stored token, or get a new one, if needed
+                AuthUtils.updateUserToken(getApplicationContext(), AuthUtils.getMessagingToken(getApplicationContext()), new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Message resultMessage = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type","tokenRefresh");
+                        bundle.putInt("result", user == null ? 1 : 0);
+                        resultMessage.setData(bundle);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
+            }
+        });
+    }
 
     //Set up the swipe refresh functionality
     private void createStorySwipeToRefresh() {
@@ -337,10 +375,20 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
                 int pos = 0;
-                for (FilterSpinnerItem item : filterSpinnerItems) {
-                    if (item.getFilterTitle().equals(intentFilter)) {
-                        pos = filterSpinnerItems.indexOf(item);
-                        break;
+                if (intentFilter.equals("By Author")) {
+                    if (extras.containsKey("authorId")) {
+                        String authorId = extras.getString("authorId");
+
+                        filterSpinnerItems.add(new FilterSpinnerItem(authorId + getString(R.string.author_profile_read_option)));
+                        spinnerAdapter.notifyDataSetChanged();
+                        pos = filterSpinnerItems.size() - 1;
+                    }
+                } else {
+                    for (FilterSpinnerItem item : filterSpinnerItems) {
+                        if (item.getFilterTitle().equals(intentFilter)) {
+                            pos = filterSpinnerItems.indexOf(item);
+                            break;
+                        }
                     }
                 }
                 filterSpinner.setSelection(pos);
@@ -352,7 +400,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
+
         addLoadingCard();
+
         loadStoryData();
 
     }
@@ -485,6 +535,15 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
+
+        if (selection.contains("\'s")) {
+            selection = "By Author";
+        } else {
+            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains("\'s")) {
+                filterSpinnerItems.remove(filterSpinnerItems.size() - 1);
+                spinnerAdapter.notifyDataSetChanged();
+            }
+        }
 
         switch(selection) {
             case("Bookmarks"): {

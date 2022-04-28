@@ -164,6 +164,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         deleteFAB = findViewById(R.id.publishDeleteFAB);
         recycleFAB = findViewById(R.id.publishRecycleFAB);
         extendFAB = findViewById(R.id.publishExtendFAB);
+
         famList = new ArrayList<>();
         famList.add(extendFAB);
         famList.add(recycleFAB);
@@ -344,24 +345,24 @@ public class PublishStoryActivity extends AppCompatActivity {
         showLoadingWheel();
 
         backgroundTaskExecutor.execute(
-                new Runnable() {
-                    @Override
-                    public void run() {
+            new Runnable() {
+                @Override
+                public void run() {
 
-                        Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
+                    Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
 
-                        storyDeleteTask.addOnFailureListener(task -> {
-                            Bundle resultData = new Bundle();
-                            resultData.putString("error", "");
-                            resultData.putString("type","publish");
+                    storyDeleteTask.addOnFailureListener(task -> {
+                        Bundle resultData = new Bundle();
+                        resultData.putString("error", "");
+                        resultData.putString("type","publish");
 
-                            Message resultMessage = new Message();
-                            resultMessage.setData(resultData);
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
 
-                            backgroundTaskResultHandler.sendMessage(resultMessage);
-                        });
-                    }
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    });
                 }
+            }
         );
     }
 
@@ -448,9 +449,9 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   String body = user.getUsername() + getString(R.string.message_published_story_body);
+                                   String body = user.getUsername() + " " + getString(R.string.message_published_story_body) + ": " + story.getTitle();
 
-                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", new Consumer<Boolean>() {
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", "publish", storyId, new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
                                            Bundle resultData = new Bundle();
@@ -494,8 +495,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             public void run() {
 
                 //Ask GPT to complete the prompt... again
-                //TODO: change to unhardcode
-                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,0.0);
+                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25); //Note: hardcoded additional length due to minimum length being too short
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
                 //Set up a bundle

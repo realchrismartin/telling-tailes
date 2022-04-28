@@ -253,10 +253,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }
                 });
-
             }
         });
-
     }
-
 }

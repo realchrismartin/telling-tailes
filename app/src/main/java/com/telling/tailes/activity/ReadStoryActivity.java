@@ -47,17 +47,12 @@ public class ReadStoryActivity extends AppCompatActivity {
     private Toast readStoryToast;
 
     private String promptText;
-    private String storyText;
     private Story story;
-
-    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_story);
-
-        story = (Story) getIntent().getSerializableExtra("story");
 
         //Find all views
         titleTextView = findViewById(R.id.storyCardTitle);
@@ -70,9 +65,6 @@ public class ReadStoryActivity extends AppCompatActivity {
         authorProfileButton = findViewById(R.id.storyCardAuthorProfileButton);
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
-
-        initViews(story);
-        initListeners();
 
         //Set up background executor for handling author profile data request threads
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
@@ -96,7 +88,6 @@ public class ReadStoryActivity extends AppCompatActivity {
                         if (authorProfileDialogFragment != null) {
                             authorProfileDialogFragment.dismiss();
                         }
-
                         authorProfileDialogFragment = new AuthorProfileDialogFragment();
                         authorProfileDialogFragment.setArguments(msg.getData());
                         authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
@@ -114,16 +105,54 @@ public class ReadStoryActivity extends AppCompatActivity {
                         updateBookmarkButtonState();
                         break;
                     }
+
+                    case "story" : {
+                        story = (Story) msg.getData().getSerializable("story");
+                        initViews(story);
+                        break;
+
+                    }
                 }
             }
         };
 
+        if (getIntent().getSerializableExtra("story") !=null) {
+            story = (Story) getIntent().getSerializableExtra("story");
+            initViews(story);
+        }
+        if (getIntent().getStringExtra("storyID")!= null) {
+            handleStory(getIntent().getStringExtra("storyID"));
+        }
+
+        initListeners();
+    }
+
+    /*
+        handler for fetching story from FireBase if coming from intent not story feed
+    */
+    private void handleStory(String storyID) {
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                FBUtils.getStory(getApplicationContext(), storyID, new Consumer<Story>() {
+                    @Override
+                    public void accept(Story story) {
+                        Bundle resultData = new Bundle();
+                        resultData.putSerializable("story", story);
+                        resultData.putInt("result", story ==null? 1:0);
+                        resultData.putString("type", "story");
+
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
+            }
+        });
     }
 
     @SuppressLint("SetTextI18n")
     private void initViews(Story story) {
-        //Make story text scrollable
-//        storyTextView.setMovementMethod(new ScrollingMovementMethod());
 
         //Set font size to preference setting
         try {
@@ -144,7 +173,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         storyTextView.setText(s); //TODO: spacing
 
         //Set up private variables
-        storyText = story.getStoryText();
+        String storyText = story.getStoryText();
         promptText = story.getPromptText();
 
         //Set love button default state

@@ -1,13 +1,9 @@
 package com.telling.tailes.model;
 
-import com.telling.tailes.util.AuthUtils;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class User {
 
-    private String id;
     private String username;
     private String hashedPassword;
     private String salt;
