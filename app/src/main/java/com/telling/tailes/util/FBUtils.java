@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.telling.tailes.R;
-import com.telling.tailes.card.StoryRviewCard;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;

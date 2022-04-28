@@ -1,7 +1,6 @@
 package com.telling.tailes.model;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Story implements Serializable {

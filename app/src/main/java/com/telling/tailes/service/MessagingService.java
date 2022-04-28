@@ -7,10 +7,6 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -21,13 +17,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.telling.tailes.R;
 import com.telling.tailes.activity.ReadStoryActivity;
 import com.telling.tailes.activity.StoryFeedActivity;
-import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
-import com.telling.tailes.util.FBUtils;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 public class MessagingService extends FirebaseMessagingService {
@@ -139,5 +131,4 @@ public class MessagingService extends FirebaseMessagingService {
 
         notificationManager.notify(0, notification);
     }
-
 }

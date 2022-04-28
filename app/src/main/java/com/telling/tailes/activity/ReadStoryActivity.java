@@ -47,10 +47,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     private Toast readStoryToast;
 
     private String promptText;
-    private String storyText;
     private Story story;
-
-    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,8 +153,6 @@ public class ReadStoryActivity extends AppCompatActivity {
 
     @SuppressLint("SetTextI18n")
     private void initViews(Story story) {
-        //Make story text scrollable
-//        storyTextView.setMovementMethod(new ScrollingMovementMethod());
 
         //Set font size to preference setting
         try {
@@ -178,7 +173,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         storyTextView.setText(s); //TODO: spacing
 
         //Set up private variables
-        storyText = story.getStoryText();
+        String storyText = story.getStoryText();
         promptText = story.getPromptText();
 
         //Set love button default state

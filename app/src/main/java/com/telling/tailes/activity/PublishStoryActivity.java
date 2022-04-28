@@ -345,24 +345,24 @@ public class PublishStoryActivity extends AppCompatActivity {
         showLoadingWheel();
 
         backgroundTaskExecutor.execute(
-                new Runnable() {
-                    @Override
-                    public void run() {
+            new Runnable() {
+                @Override
+                public void run() {
 
-                        Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
+                    Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
 
-                        storyDeleteTask.addOnFailureListener(task -> {
-                            Bundle resultData = new Bundle();
-                            resultData.putString("error", "");
-                            resultData.putString("type","publish");
+                    storyDeleteTask.addOnFailureListener(task -> {
+                        Bundle resultData = new Bundle();
+                        resultData.putString("error", "");
+                        resultData.putString("type","publish");
 
-                            Message resultMessage = new Message();
-                            resultMessage.setData(resultData);
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
 
-                            backgroundTaskResultHandler.sendMessage(resultMessage);
-                        });
-                    }
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    });
                 }
+            }
         );
     }
 
