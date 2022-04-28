@@ -199,7 +199,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         break;
                     }
                     case("followedAuthors"): {
-                        currentFilter = FilterType.get("Followed Authors");
+                        currentFilter = FilterType.get("By Followed Authors");
                         currentFilter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
                         refreshStories();
                         break;
@@ -541,7 +541,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 loadBookmarks();
                 break;
             }
-            case("Followed Authors"): {
+            case("By Followed Authors"): {
                 loadFollowedAuthors();
                 break;
             }
