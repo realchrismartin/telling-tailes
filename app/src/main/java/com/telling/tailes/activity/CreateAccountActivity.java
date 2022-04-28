@@ -85,11 +85,12 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                selectedProfileIcon += 1;
-               p.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(selectedProfileIcon)),null,null,null);
 
                if(selectedProfileIcon > DrawableUtils.profileIconCount()) {
                    selectedProfileIcon = 0;
                }
+
+                p.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(selectedProfileIcon)),null,null,null);
             }
         });
 
