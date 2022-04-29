@@ -92,7 +92,7 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
         }
 
         // If the total item count is zero and the previous isn't, assume the
-        // list is invalidated and should be reset back to initial state
+        // list is invalidated and should be reset back to the initial state
         if (totalItemCount < previousTotalItemCount) {
             this.currentPage = this.startingPageIndex;
             this.previousTotalItemCount = totalItemCount;
