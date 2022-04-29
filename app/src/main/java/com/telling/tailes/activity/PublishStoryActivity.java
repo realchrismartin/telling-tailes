@@ -177,10 +177,10 @@ public class PublishStoryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
                 if (isFamOpen) {
-                    famMenu.setImageResource(R.drawable.ic_baseline_expand_down_24);
+                    famMenu.setImageResource(R.drawable.expand_down_white);
                     return;
                 }
-                famMenu.setImageResource(R.drawable.ic_baseline_expand_up_white_24);
+                famMenu.setImageResource(R.drawable.expand_up_white);
             }
         });
 
