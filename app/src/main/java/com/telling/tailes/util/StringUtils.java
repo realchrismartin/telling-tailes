@@ -1,5 +1,8 @@
 package com.telling.tailes.util;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 public class StringUtils {
 
     //Given a string, get the number of "words" in the string
@@ -20,5 +23,12 @@ public class StringUtils {
         }
 
         return result.toString();
+    }
+
+    //Given an arbitrary string, convert the string to an integer that reasonably corresponds with the input
+    //Used for notification ids based on user / story ids
+    //Note that this is not really unique, which doesn't matter in this use case
+    public static Integer toIntegerId(String input) {
+        return Arrays.hashCode(input.getBytes(StandardCharsets.UTF_8));
     }
 }
