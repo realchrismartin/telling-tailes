@@ -228,6 +228,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
                         break;
                     }
+                    case("timeout"): {
+                        removeLoadingCard();
+                    }
                 }
             }
         };
@@ -401,9 +404,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
-
-        addLoadingCard();
-
         loadStoryData();
 
     }
@@ -414,7 +414,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             return;
         }
 
-        addLoadingCard();
         loadStoryData();
     }
 
@@ -423,7 +422,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Call the main thread when done
     private void loadStoryData() {
 
-
+        addLoadingCard();
 
         applyFilter(currentFilter);
 
@@ -491,8 +490,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener.resetState();
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
-
-        addLoadingCard();
         loadStoryData();
     }
 
@@ -672,12 +669,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
+
     public void addLoadingCard() {
         if (loadingCardIndex < 0) {
             loadingCardIndex = storyCardList.size();
             storyCardList.add(new StoryRviewCard());
             storyRviewAdapter.notifyItemInserted(loadingCardIndex);
-//            storyRviewAdapter.notifyDataSetChanged();
         }
     }
 
