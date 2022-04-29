@@ -557,7 +557,7 @@ public class FBUtils {
         });
 
         getBookmarksTask.addOnFailureListener(task -> {
-          callback.accept(new ArrayList<>()); //TODO?
+          callback.accept(new ArrayList<>());
         });
     }
 

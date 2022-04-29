@@ -90,14 +90,14 @@ public class StoryRviewAdapter extends RecyclerView.Adapter {
                      public void onClick(View view) {
 
                          if(currentUser.equals(currentItem.getStory().getAuthorID())) {
-                             return; //TODO: indicate to user that love failed?
+                             return;
                          }
                          FBUtils.updateLove(context.getApplicationContext(), currentItem.getStory(), new Consumer<Story>() {
                              @Override
                              public void accept(Story result) {
 
                                  if (result == null) {
-                                     return; //TODO: indicate to user that love failed?
+                                     return;
                                  }
 
                                  currentItem.setStory(result);
