@@ -1,6 +1,7 @@
 package com.telling.tailes.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -79,12 +80,16 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private int maxRefreshIterations;
     private int maxStoryCards;
 
+    private long filterLastChangedTimestamp;
+
     boolean loadedFirstStories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
+
+        filterLastChangedTimestamp = new Date().toInstant().toEpochMilli();
 
         loadedFirstStories = false;
         lastLoadedStorySortValue = null;
@@ -140,6 +145,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         }
 
                         if(msg.getData().getString("last_type") == null) {
+                            return;
+                        }
+
+                        //Ignore any result if it was sent by the feed PRIOR to a filter refresh
+                        if(msg.getData().getLong("timestamp") < filterLastChangedTimestamp) {
                             return;
                         }
 
@@ -420,6 +430,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         applyFilter(currentFilter);
 
+        long timestamp = filterLastChangedTimestamp;
+
         backgroundTaskExecutor.execute(new Runnable() {
            @Override
            public void run() {
@@ -457,6 +469,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                        data.putInt("story_count",storyCount);
                        data.putString("type","storyData");
                        data.putInt("result",0);
+                       data.putLong("timestamp",timestamp);
                        message.setData(data);
 
                        backgroundTaskResultHandler.sendMessage(message);
@@ -520,6 +533,10 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+        //Set the timestamp for the filter having been changed
+        filterLastChangedTimestamp = new Date().toInstant().toEpochMilli();
+
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
 
@@ -553,9 +570,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 currentFilter = FilterType.get(selection);
                 currentFilter.setAuthorFilter(authorId);
-                if (loadingCardIndex < 0) {
-                    refreshStories();
-                }
+                refreshStories();
                 break;
             }
         }
