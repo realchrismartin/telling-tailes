@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:fontFamily="monospace"
-        android:text="Already Have An Account"
+        android:text="Already Have An Account?"
         android:textAllCaps="true"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
