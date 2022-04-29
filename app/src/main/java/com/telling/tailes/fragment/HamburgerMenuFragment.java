@@ -48,6 +48,8 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         viewBinding.mainToolbar.inflateMenu(R.menu.main_menu);
+        viewBinding.mainToolbar.setTitle(R.string.login_app_title);
+        viewBinding.mainToolbar.setTitleTextAppearance(getContext(), R.style.ActionBarTitle);
         Drawable drawable = ContextCompat.getDrawable(getContext(),
                 R.drawable.ic_hamburger_menu);
         viewBinding.mainToolbar.setOverflowIcon(drawable);
