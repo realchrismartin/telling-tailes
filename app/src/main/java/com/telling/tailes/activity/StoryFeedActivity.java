@@ -132,7 +132,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 }
 
                 switch(msg.getData().getString("type")) {
-//                      case("thing"): {
                     case("storyData"): {
                         if(msg.getData().getInt("result") != 0) {
                             toast.setText(R.string.generic_error_notification);
@@ -227,9 +226,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         authorProfileDialogFragment.setArguments(msg.getData());
                         authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
                         break;
-                    }
-                    case("timeout"): {
-                        removeLoadingCard();
                     }
                 }
             }
