@@ -14,10 +14,14 @@
         <item name="colorOnSecondary">@color/off_white</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!--<item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>-->
+        <item name="android:actionMenuTextColor">@color/pitch</item>
 
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/off_white</item>
+        <item name="android:statusBarColor">@color/pitch</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
+        <item name="android:textColor">@color/pitch</item>
         <item name="android:textColorPrimary">@color/pitch</item>
         <item name="android:textColorSecondary">@color/pitch</item>
     </style>
