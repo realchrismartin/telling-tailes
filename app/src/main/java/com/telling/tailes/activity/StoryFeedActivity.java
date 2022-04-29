@@ -55,6 +55,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Query query;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private int loadingCardIndex = -1;
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
@@ -131,6 +132,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 }
 
                 switch(msg.getData().getString("type")) {
+//                      case("thing"): {
                     case("storyData"): {
                         if(msg.getData().getInt("result") != 0) {
                             toast.setText(R.string.generic_error_notification);
@@ -150,6 +152,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         }
 
                         int storyCount=msg.getData().getInt("story_count");
+
+                        removeLoadingCard();
 
                         for(int i=0;i<storyCount;i++) {
 
@@ -172,6 +176,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             }
 
                             loadedFirstStories = true;
+
                         }
 
                         //Recurse if the story card list isn't loaded yet
@@ -222,6 +227,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         authorProfileDialogFragment.setArguments(msg.getData());
                         authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
                         break;
+                    }
+                    case("timeout"): {
+                        removeLoadingCard();
                     }
                 }
             }
@@ -326,10 +334,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(StoryFeedActivity.this,
-                        "Pulled to refresh!",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 refreshStories();
             }
         });
@@ -342,7 +346,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.setHasFixedSize(true);
 
         storyRviewAdapter = new StoryRviewAdapter(storyCardList, getApplicationContext(), this);
-
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -407,11 +410,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             return;
         }
 
-        Toast.makeText(StoryFeedActivity.this,
-                "Loading more stories",
-                Toast.LENGTH_SHORT)
-                .show();
-
         loadStoryData();
     }
 
@@ -419,6 +417,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Load story data in a background thread after applying filter
     //Call the main thread when done
     private void loadStoryData() {
+
+        addLoadingCard();
 
         applyFilter(currentFilter);
 
@@ -437,7 +437,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                            Story story = dataSnapshot.getValue(Story.class);
-
                            if (story == null) {
                                return;
                            }
@@ -487,7 +486,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener.resetState();
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
-
         loadStoryData();
     }
 
@@ -557,7 +555,9 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 currentFilter = FilterType.get(selection);
                 currentFilter.setAuthorFilter(authorId);
-                refreshStories();
+                if (loadingCardIndex < 0) {
+                    refreshStories();
+                }
                 break;
             }
         }
@@ -663,5 +663,24 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 });
             }
         });
+    }
+
+
+    public void addLoadingCard() {
+        if (loadingCardIndex < 0) {
+            loadingCardIndex = storyCardList.size();
+            storyCardList.add(new StoryRviewCard());
+            storyRviewAdapter.notifyItemInserted(loadingCardIndex);
+        }
+    }
+
+    public void removeLoadingCard() {
+        if (loadingCardIndex >= 0) {
+            if (storyCardList.size() - 1 == loadingCardIndex) {
+                storyCardList.remove(storyCardList.size() - 1);
+                storyRviewAdapter.notifyItemRemoved(loadingCardIndex);
+                loadingCardIndex = -1;
+            }
+        }
     }
 }
