@@ -45,7 +45,6 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter{
             default:
                 return -1;
         }
-
     }
 
     @NonNull
