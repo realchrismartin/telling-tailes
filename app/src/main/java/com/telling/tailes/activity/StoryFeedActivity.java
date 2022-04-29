@@ -334,10 +334,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(StoryFeedActivity.this,
-                        "Pulled to refresh!",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 refreshStories();
             }
         });
