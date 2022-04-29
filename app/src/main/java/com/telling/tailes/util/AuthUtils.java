@@ -216,9 +216,9 @@ public class AuthUtils {
     //Calls the callback when done - either with a zero length string (on success) or an error message (on failure)
     public static void createUser(Context context, String username, String password, String confirmationPassword, int profileIcon, Consumer<String> callback)
     {
-        boolean usernameTooSimple = username.length() < 5; //TODO?
+        boolean usernameTooSimple = username.length() < 5;
         boolean passwordsDoNotMatch = !password.equals(confirmationPassword);
-        boolean passwordTooSimple = password.length() < 5; //TODO?
+        boolean passwordTooSimple = password.length() < 5;
 
         if(usernameTooSimple) {
             callback.accept(context.getResources().getString(R.string.username_complexity_error_notification));

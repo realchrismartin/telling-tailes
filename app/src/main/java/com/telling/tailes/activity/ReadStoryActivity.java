@@ -171,7 +171,7 @@ public class ReadStoryActivity extends AppCompatActivity {
         String p = story.getPromptText();
         promptTextView.setText(p);
         String s = story.getStoryText();
-        storyTextView.setText(s); //TODO: spacing
+        storyTextView.setText(s);
 
         //Set up private variables
         String storyText = story.getStoryText();

@@ -20,7 +20,7 @@ public class User {
 
     public User(){}
 
-    public User (String username, ArrayList<String> bookmarks) { //TODO: add followedAuthors array list? this is another ticket
+    public User (String username, ArrayList<String> bookmarks) {
         this.username = username;
         this.bookmarks = bookmarks;
     }
