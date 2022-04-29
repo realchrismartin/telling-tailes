@@ -34,7 +34,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/readActivityStoryCard">
+            app:layout_constraintTop_toBottomOf="@+id/readActivityStoryCard" >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,19 +43,21 @@
 
                 <TextView
                     android:id="@+id/readPrompTextView"
-                    style="@style/PromptText"
-                    app:layout_constraintTop_toBottomOf="parent" />
+                    style="@style/PromptText" />
 
                 <ImageView
                     android:id="@+id/readElipsisTextView"
                     style="@style/PromptText"
-                    android:src="@drawable/elipsis_pitch"
-                    app:layout_constraintTop_toBottomOf="@+id/readPrompTextView" />
+                    android:src="@drawable/elipsis_pitch" />
 
                 <TextView
                     android:id="@+id/readStoryTextView"
+                    style="@style/StoryText" />
+
+                <TextView
+                    android:id="@+id/spacer"
                     style="@style/StoryText"
-                    app:layout_constraintTop_toBottomOf="@+id/readElipsisTextView" />
+                    android:layout_height="30dp" />
 
             </LinearLayout>
 
