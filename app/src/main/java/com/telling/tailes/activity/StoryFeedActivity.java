@@ -497,6 +497,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener.resetState();
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
+        loadingCardIndex = -1;
         loadStoryData();
     }
 
