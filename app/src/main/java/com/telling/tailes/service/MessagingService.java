@@ -86,6 +86,7 @@ public class MessagingService extends FirebaseMessagingService {
         int notificationId = 1; //Starts at 0 because summary notification id is 0 and must be unique
 
         switch (type) {
+            case("love"):
             case ("publish"): {
                 Log.d("message handler", "PUBLISH");
                 // Create an Intent for the activity you want to start
@@ -115,10 +116,10 @@ public class MessagingService extends FirebaseMessagingService {
                 break;
             }
 
-            case ("love"):
+
             default:
                 Log.d("message handler", "default");
-                intent = new Intent();
+                intent = new Intent(getApplicationContext(), StoryFeedActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 notificationId = StringUtils.toIntegerId(storyId);
                 pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
