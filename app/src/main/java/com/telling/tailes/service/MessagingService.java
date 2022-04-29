@@ -141,7 +141,8 @@ public class MessagingService extends FirebaseMessagingService {
         Notification summaryNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(remoteMessageNotification.getTitle())
                 .setContentText("New Messages")
-                .setSmallIcon(R.drawable.ic_baseline_favorite_story_24)
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.bookwithmark_pitch)
                 .setGroup(NOTIFICATION_GROUP_ID)
                 .setGroupSummary(true)
                 .build();
