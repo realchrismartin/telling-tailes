@@ -41,7 +41,7 @@ public enum FilterType {
             case ("Popular") : {
                 return POPULAR;
             }
-            case ("Followed Authors"): {
+            case ("By Followed Authors"): {
                 return FOLLOWING;
             }
             default:

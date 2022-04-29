@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         //TODO
         selectedProfileIcon = 0;
 
-        Button p = findViewById(R.id.profileIcon1);
+        Button p = findViewById(R.id.createAccountIconButton);
 
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -85,11 +86,12 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                selectedProfileIcon += 1;
-               p.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(selectedProfileIcon)),null,null,null);
 
                if(selectedProfileIcon > DrawableUtils.profileIconCount()) {
                    selectedProfileIcon = 0;
                }
+
+                p.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(selectedProfileIcon, true)), null, null);
             }
         });
 

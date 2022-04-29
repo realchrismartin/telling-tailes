@@ -83,7 +83,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         profileUserNameView.setText(authorId);
 
         profileButtonView = content.findViewById(R.id.author_profile_user_profile_image);
-        profileButtonView.setImageDrawable(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon)));
+        profileButtonView.setImageDrawable(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon, false)));
 
         authorProfileStoriesButton = content.findViewById(R.id.authorProfileStoriesButton);
         authorProfileStoriesButton.setText(authorId + getString(R.string.author_profile_read_option) );

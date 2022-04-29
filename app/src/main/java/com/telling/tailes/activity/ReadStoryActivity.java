@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.telling.tailes.R;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
@@ -37,7 +38,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     private TextView promptTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
-    private ImageButton recycleButton;
+    private FloatingActionButton recycleFAB;
     private Button authorProfileButton;
 
     private Executor backgroundTaskExecutor;
@@ -61,7 +62,7 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         bookmarkButton = findViewById(R.id.storyCardBookmarkButton);
         loveButton = findViewById(R.id.storyCardLoveButton);
-        recycleButton = findViewById(R.id.storyCardRecycleButton);
+        recycleFAB = findViewById(R.id.recyclePromptFAB);
         authorProfileButton = findViewById(R.id.storyCardAuthorProfileButton);
 
         readStoryToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
@@ -199,11 +200,10 @@ public class ReadStoryActivity extends AppCompatActivity {
             }
         });
 
-        recycleButton.setOnClickListener(new View.OnClickListener() {
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleClickRecycle();
-
             }
         });
 
@@ -217,17 +217,17 @@ public class ReadStoryActivity extends AppCompatActivity {
 
    private void updateLoveButtonState() {
         if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_24, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_solid_pitch, 0, 0, 0);
         } else {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_favorite_border_24, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_outline_pitch, 0, 0, 0);
         }
     }
 
     private void updateBookmarkButtonState() {
         if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_24);
+            bookmarkButton.setImageResource(R.drawable.bookmark_solid_pitch);
         } else {
-            bookmarkButton.setImageResource(R.drawable.ic_baseline_bookmark_border_24);
+            bookmarkButton.setImageResource(R.drawable.bookmark_outline_pitch);
         }
     }
 

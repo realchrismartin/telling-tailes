@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:src="@drawable/ic_baseline_profile_24"
+            android:src="@drawable/profile_icon_pitch"
             android:textColor="#283593"
             app:layout_constraintBottom_toBottomOf="@+id/settings_user_name_view"
             app:layout_constraintEnd_toEndOf="parent"

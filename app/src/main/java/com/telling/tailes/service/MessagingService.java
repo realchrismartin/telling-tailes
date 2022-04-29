@@ -132,7 +132,7 @@ public class MessagingService extends FirebaseMessagingService {
                 .setContentText(remoteMessageNotification.getBody())
                 .setColor(Color.argb(100, 100,100, 100))
                 .setAutoCancel(true)
-                .setSmallIcon(R.drawable.ic_baseline_favorite_story_24)
+                .setSmallIcon(R.drawable.bookwithmark_pitch)
                 .setContentIntent(pendingIntent)
                 .setGroup(NOTIFICATION_GROUP_ID)
                 .build();
