@@ -38,7 +38,6 @@ public class ReadStoryActivity extends AppCompatActivity {
     private TextView promptTextView;
     private ImageButton bookmarkButton;
     private Button loveButton;
-    private ImageButton recycleButton;
     private FloatingActionButton recycleFAB;
     private Button authorProfileButton;
 
@@ -63,7 +62,6 @@ public class ReadStoryActivity extends AppCompatActivity {
 
         bookmarkButton = findViewById(R.id.storyCardBookmarkButton);
         loveButton = findViewById(R.id.storyCardLoveButton);
-        recycleButton = findViewById(R.id.storyCardRecycleButton);
         recycleFAB = findViewById(R.id.recyclePromptFAB);
         authorProfileButton = findViewById(R.id.storyCardAuthorProfileButton);
 
@@ -199,14 +197,6 @@ public class ReadStoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 handleClickLove();
-            }
-        });
-
-        recycleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleClickRecycle();
-
             }
         });
 

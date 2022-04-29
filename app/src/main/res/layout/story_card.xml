@@ -58,17 +58,6 @@
             app:layout_constraintEnd_toStartOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton" />
 
-        <ImageButton
-            android:id="@+id/storyCardRecycleButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/reset_pitch"
-            app:layout_constraintEnd_toStartOf="@+id/storyCardBookmarkButton"
-            app:layout_constraintTop_toTopOf="@+id/storyCardBookmarkButton"
-            tools:visibility="invisible" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
