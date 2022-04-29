@@ -400,6 +400,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
+        currentFilter = filter;
+
         loadStoryData();
 
     }
