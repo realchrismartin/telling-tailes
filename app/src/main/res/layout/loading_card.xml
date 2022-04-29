@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="75dp"
     android:layout_margin="3dp"
-    app:cardElevation="10dp"
-    app:cardCornerRadius="5dp"
-    app:cardBackgroundColor="#FFF"
+    app:cardBackgroundColor="#fcfcfc"
+    app:cardElevation="0dp"
     android:id="@+id/loading_card">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,9 +16,11 @@
 
         <TextView
             android:id="@+id/loadingCardTitle"
+            style="@style/MainTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Loading"
+            android:textColor="@color/pitch"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
