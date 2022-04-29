@@ -19,12 +19,14 @@ import com.telling.tailes.activity.ReadStoryActivity;
 import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.function.Consumer;
 
 public class MessagingService extends FirebaseMessagingService {
 
     private static final String CHANNEL_ID = "CHANNEL_ID";
+    private static final String NOTIFICATION_GROUP_ID = "com.telling.tailes.NOTIFICATION";
 
     @Override
     public void onNewToken(String newToken) {
@@ -81,6 +83,8 @@ public class MessagingService extends FirebaseMessagingService {
         Intent intent;
         PendingIntent pendingIntent;
 
+        int notificationId = 1; //Starts at 0 because summary notification id is 0 and must be unique
+
         switch (type) {
             case ("publish"): {
                 Log.d("message handler", "PUBLISH");
@@ -92,6 +96,9 @@ public class MessagingService extends FirebaseMessagingService {
                 // Create the TaskStackBuilder and add the intent, which inflates the back stack
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addNextIntentWithParentStack(intent);
+
+                notificationId = StringUtils.toIntegerId(storyId);
+
                 // Get the PendingIntent containing the entire back stack
                 pendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
                 break;
@@ -103,6 +110,7 @@ public class MessagingService extends FirebaseMessagingService {
                 intent.putExtra("feedFilter", "By Author");
                 intent.putExtra("authorId", followerUsername);
 
+                notificationId = StringUtils.toIntegerId(followerUsername);
                 pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
                 break;
             }
@@ -112,23 +120,34 @@ public class MessagingService extends FirebaseMessagingService {
                 Log.d("message handler", "default");
                 intent = new Intent();
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                notificationId = StringUtils.toIntegerId(storyId);
                 pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
         }
 
-        Notification notification;
-
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-
-        notification = builder.setContentTitle(remoteMessageNotification.getTitle())
+        //Actual notification
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(remoteMessageNotification.getTitle())
                 .setContentText(remoteMessageNotification.getBody())
                 .setColor(Color.argb(100, 100,100, 100))
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.bookwithmark_pitch)
                 .setContentIntent(pendingIntent)
+                .setGroup(NOTIFICATION_GROUP_ID)
                 .build();
 
-        notificationManager.notify(0, notification);
+        //Summary notification for compatibility with older versions of Android
+        Notification summaryNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(remoteMessageNotification.getTitle())
+                .setContentText("New Messages")
+                .setAutoCancel(true)
+                .setSmallIcon(R.drawable.bookwithmark_pitch)
+                .setGroup(NOTIFICATION_GROUP_ID)
+                .setGroupSummary(true)
+                .build();
+
+        notificationManager.notify(notificationId, notification);
+        notificationManager.notify(0,summaryNotification);
     }
 }
