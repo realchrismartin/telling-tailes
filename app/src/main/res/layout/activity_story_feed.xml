@@ -48,14 +48,16 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToCreateStoryButton"
             style="@style/FloatingAction"
+            android:backgroundTint="#e0e0e0"
+            android:contentDescription="Create New Tail"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.87"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
-            app:layout_constraintHorizontal_bias="0.87"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/add_new_story_white"
-            android:contentDescription="Create New Tail" />
+            app:tint="#4ba3c7"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

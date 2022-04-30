@@ -79,18 +79,21 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishDeleteFAB"
             style="@style/FloatingAction"
+            android:backgroundTint="#e0e0e0"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
-            app:srcCompat="@drawable/delete_outline_white" />
+            app:srcCompat="@drawable/delete_outline_white"
+            app:tint="#9b0000" />
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishRecycleFAB"
             style="@style/FloatingAction"
+            android:backgroundTint="#e0e0e0"
             android:elevation="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
@@ -98,29 +101,34 @@
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
-            app:srcCompat="@drawable/reset_white" />
+            app:srcCompat="@drawable/reset_white"
+            app:tint="#75a478" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishExtendFAB"
             style="@style/FloatingAction"
+            android:backgroundTint="#e0e0e0"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
-            app:srcCompat="@drawable/extend_white" />
+            app:srcCompat="@drawable/extend_white"
+            app:tint="#4ba3c7" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/famFAB"
             style="@style/FloatingAction"
+            android:backgroundTint="#e0e0e0"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
-            app:srcCompat="@drawable/expand_up_white" />
+            app:srcCompat="@drawable/expand_up_white"
+            app:tint="#263238" />
 
         <ProgressBar
             android:id="@+id/storyPublishLoadingWheel"
