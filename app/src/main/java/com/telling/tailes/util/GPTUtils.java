@@ -169,7 +169,7 @@ public class GPTUtils {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(StringUtils.httpPostMethod);
             conn.setRequestProperty(StringUtils.httpContentType, StringUtils.httpContentTypeJSON);
-            conn.setRequestProperty(StringUtils.httpAuthorization, serverToken);
+            conn.setRequestProperty(StringUtils.httpAuthorization, StringUtils.httpAuthorizationBearer + StringUtils.space + serverToken);
             conn.setDoOutput(true);
 
             JSONObject body = new JSONObject();
@@ -206,7 +206,7 @@ public class GPTUtils {
             try {
                 choices = responseObject.getJSONArray(StringUtils.gptPropertyChoices);
             } catch (JSONException e) {
-                e.printStackTrace();
+                return e.toString();
             }
 
             if (choices.length() <= 0) {
@@ -222,12 +222,11 @@ public class GPTUtils {
                 return story;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return StringUtils.emptyString;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return StringUtils.emptyString;
         }
-
-        return StringUtils.emptyString;
     }
-
 }
