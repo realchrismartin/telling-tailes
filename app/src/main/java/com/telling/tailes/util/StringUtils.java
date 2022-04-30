@@ -54,11 +54,22 @@ public class StringUtils {
     public static final String sharedPreferenceKeyMessagingToken = "messagingToken";
     public static final String defaultPassword = "thisisnotsecure";
 
-
     public static final String authUtilsErrorMessageUserNull = "";
     public static final String authUtilsErrorMessageTokenUpdateFailure = "";
 
     public static final String passwordHashAlgorithm = "SHA-512";
+
+    public static final String drawableBell = "bell";
+    public static final String drawableBookmarkOutline = "bookmark_outline";
+    public static final String drawableBookmarkSolid = "bookmark_solid";
+    public static final String drawableBookWithMark = "bookwithmark";
+    public static final String drawableFavoriteOutline = "favorite_outline";
+    public static final String drawableFavoriteSolid = "favorite_solid";
+    public static final String drawableKey = "key";
+    public static final String drawableLaurels = "laurels";
+    public static final String drawableLogout = "logout";
+    public static final String drawablePeople = "people";
+    public static final String drawableText = "text";
 
     public static final String storyDBKey = "stories";
 
