@@ -1,5 +1,8 @@
 package com.telling.tailes.util;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -35,6 +38,8 @@ public class StringUtils {
     public static final String messagingServiceTag = "MessagingService";
     public static final String authUtilsTag = "AuthUtils";
     public static final String fbUtilsTag = "FBUtils";
+    public static final String gptUtilsTag = "GPTUtils";
+
     public static final String fbUtilsErrorRollbackFollowers = "Rolling back followers due to failed followee update";
 
     public static final String loadingString = "loading";
@@ -43,8 +48,6 @@ public class StringUtils {
     public static final String emptyString = "";
     public static final String space = " ";
     public static final String quote = "\"";
-    public static final String comma = ",";
-    public static final String newline = "\n";
 
     public static final String intentExtraStoryId = "storyId";
     public static final String intentExtraFollowerUsername = "followerUsername";
@@ -95,16 +98,31 @@ public class StringUtils {
     public static final String httpContentType = "Content-Type";
     public static final String httpAuthorization = "Authorization";
     public static final String httpContentTypeJSON = "application/json";
+    public static final String httpAuthorizationBearer = "Bearer";
+
+    public static final String gptPropertyPrompt = "prompt";
+    public static final String gptPropertyMaxTokens = "max_tokens";
+    public static final String gptPropertyTopP = "top_p";
+    public static final String gptPropertyTopLogProbs = "top_logprobs";
+    public static final String gptPropertyLogProbs = "logprobs";
+    public static final String gptPropertyTemperature = "temperature";
+    public static final String gptPropertyChoices = "choices";
+    public static final String gptPropertyText = "text";
+    public static final String gptProbabilityLevel1 = "1";
+    public static final String gptProbabilityLevel2 = "2";
 
     public static final String filterSortPropertyId = "id";
     public static final String filterSortPropertyLoveCount = "loveCount";
     public static final String filterSortPropertyTimestamp = "timestamp";
     public static final String filterSortPropertyTitle = "title";
-
+    public static final String gptUtilsErrorNoChoices = "Response contained no options";
 
     public static final String fbUtilsErrorNotification = "Failed to send notification";
     public static final String notificationTypeFollow = "follow";
     public static final String userModelBookmarkProperty = "bookmarks";
+
+    public static final String gptCompletionStart = "<|endoftext|>";
+    public static final String gptCompletionEnd = "\n--\nLabel:";
 
     public static final String storyDBKey = "stories";
     public static final String usersDBKey = "users";
@@ -134,5 +152,26 @@ public class StringUtils {
     //Note that this is not really unique, which doesn't matter in this use case
     public static Integer toIntegerId(String input) {
         return Arrays.hashCode(input.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /*
+        Helper method to read a string from an InputStream
+     */
+    public static String readString(InputStream inputStream) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String res = StringUtils.emptyString;
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String len;
+            while ((len = bufferedReader.readLine()) != null) {
+                stringBuilder.append(len);
+            }
+            bufferedReader.close();
+            res = stringBuilder.toString().replace(",", ",\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return res;
     }
 }
