@@ -78,6 +78,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/aboutTextBody"/>
 
+                <Button
+                    android:id="@+id/moreInformationButton"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="monospace"
+                    android:text="@string/learn_more_about_gpt_3"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.505"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/createButton" />
+
                 <TextView
                     android:id="@+id/aboutSpacer"
                     style="@style/StoryText"

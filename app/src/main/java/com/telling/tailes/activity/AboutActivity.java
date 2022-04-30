@@ -1,6 +1,7 @@
 package com.telling.tailes.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,7 @@ public class AboutActivity extends AppCompatActivity {
     private TextView aboutTextPrompt;
     private TextView aboutTextBody;
     private Button createButton;
+    private Button moreInformationButton;
 
 
     protected void onCreate (Bundle onSavedInstanceState) {
@@ -28,6 +30,7 @@ public class AboutActivity extends AppCompatActivity {
         aboutTextPrompt = findViewById(R.id.aboutTextPrompt);
         aboutTextBody = findViewById(R.id.aboutTextBody);
         createButton = findViewById(R.id.createButton);
+        moreInformationButton = findViewById(R.id.moreInformationButton);
 
         //Set font size to preference setting
         try {
@@ -46,6 +49,15 @@ public class AboutActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        moreInformationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://openai.com/api/"));
+                startActivity(intent);
+            }
+        });
     }
+
 
 }
