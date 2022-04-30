@@ -42,18 +42,21 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="47dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/createButton"
+            style="@style/FloatingAction"
+            android:layout_width="48dp"
+            android:layout_height="26dp"
+            android:contentDescription="Create New Tail"
+            android:drawableStart="@drawable/ic_baseline_profile_24"
+            android:text=""
+            android:textColor="#283593"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_baseline_post_add_24"
+            tools:layout_editor_absoluteY="445dp" />
 
-    <Button
-        android:id="@+id/tutorialButton"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="50dp"
-        android:layout_height="44dp"
-        android:drawableStart="@drawable/ic_baseline_profile_24"
-        android:text=""
-        android:textColor="#283593"
-        app:layout_anchor="@+id/constraintLayout"
-        app:layout_anchorGravity="center" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

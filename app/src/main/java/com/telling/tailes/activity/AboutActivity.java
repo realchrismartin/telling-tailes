@@ -15,15 +15,15 @@ public class AboutActivity extends AppCompatActivity {
 
     private TextView aboutTextTitle;
     private TextView aboutTextBody;
-    private Button tutorialButton;
+    private Button createButton;
 
 
     protected void onCreate (Bundle onSavedInstanceState) {
         super.onCreate(onSavedInstanceState);
         setContentView(R.layout.activity_about);
-        tutorialButton = findViewById(R.id.tutorialButton);
+        createButton = findViewById(R.id.createButton);
 
-        tutorialButton.setOnClickListener(new View.OnClickListener() {
+        createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateStoryActivity.class);
