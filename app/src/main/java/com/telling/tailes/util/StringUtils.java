@@ -20,11 +20,13 @@ public class StringUtils {
     public static final String backgroundResultPropertyStoryBookmark = "bookmark";
     public static final String backgroundResultPropertyStoryTokenRefresh = "tokenRefresh";
 
+    //Must match xml resource names
     public static final String filterTypeBookmarks = "Bookmarks";
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
     public static final String filterTypeDrafts = "Drafts";
     public static final String filterTypeMyTailes = "My T(ai)les";
     public static final String filterTypeByAuthor = "By Author";
+    public static final String filterTypePopular = "Popular";
 
     public static final String messagingServiceErrorStoryId = "FCM storyId member is null";
     public static final String messagingServiceErrorType = "FCM type member is null";
@@ -94,6 +96,10 @@ public class StringUtils {
     public static final String httpAuthorization = "Authorization";
     public static final String httpContentTypeJSON = "application/json";
 
+    public static final String filterSortPropertyId = "id";
+    public static final String filterSortPropertyLoveCount = "loveCount";
+    public static final String filterSortPropertyTimestamp = "timestamp";
+    public static final String filterSortPropertyTitle = "title";
 
 
     public static final String fbUtilsErrorNotification = "Failed to send notification";
