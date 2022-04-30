@@ -122,4 +122,5 @@
     <string name="intent_extra_author_id">authorId</string>
     <string name="string_string">string</string>
     <string name="apostrophe_s">\'s</string>
+    <string name="loading_string">loading</string>
 </resources>

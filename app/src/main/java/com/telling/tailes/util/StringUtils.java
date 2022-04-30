@@ -22,6 +22,9 @@ public class StringUtils {
     public static final String filterTypeBookmarks = "Bookmarks";
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
 
+    public static final String loadingString = "loading";
+    public static final String noAuthorsString = "noauthors";
+    public static final String errorString = "error";
 
 
     public static final String storyDBKey = "stories";
