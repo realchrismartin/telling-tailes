@@ -123,4 +123,11 @@
     <string name="string_string">string</string>
     <string name="apostrophe_s">\'s</string>
     <string name="loading_string">loading</string>
+    <string name="none_string">None</string>
+    <string name="feed_filter_my_tailes">My T(ai)les</string>
+    <string name="preference_change_password">change_password</string>
+    <string name="shared_preference_password">password</string>
+    <string name="background_task_result_password">password</string>
+    <string name="error_new_password_null">Context was null, or new password is null</string>
+    <string name="error_user_null">User was null</string>
 </resources>

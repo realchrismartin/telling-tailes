@@ -7,6 +7,8 @@ public class StringUtils {
 
     public static final String backgroundResultPropertyCreate = "create";
     public static final String backgroundResultPropertyLogin = "login";
+    public static final String backgroundResultPropertyLogout = "logout";
+    public static final String backgroundResultPropertyPasswordChange = "password_change";
     public static final String backgroundResultPropertyResult = "Result";
     public static final String backgroundResultPropertyStory = "story";
     public static final String backgroundResultPropertyUnfollow ="unfollowAuthor";
@@ -21,6 +23,10 @@ public class StringUtils {
 
     public static final String filterTypeBookmarks = "Bookmarks";
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
+    public static final String filterTypeDrafts = "Drafts";
+    public static final String filterTypeMyTailes = "My T(ai)les";
+
+
 
     public static final String loadingString = "loading";
     public static final String noAuthorsString = "noauthors";
