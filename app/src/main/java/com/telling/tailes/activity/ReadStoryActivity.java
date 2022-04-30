@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 
 public class ReadStoryActivity extends AppCompatActivity {
 
-    private static final int storyTextDefaultSize = 25; //Default text size if not overridden by prefs
+    private static final int storyTextDefaultSize = 24; //Default text size if not overridden by prefs
 
     private TextView titleTextView;
     private TextView storyTextView;
