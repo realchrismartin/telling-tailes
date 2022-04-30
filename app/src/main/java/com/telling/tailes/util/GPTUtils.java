@@ -243,7 +243,6 @@ public class GPTUtils {
                 stringBuilder.append(len);
             }
             bufferedReader.close();
-            //TODO: check this formatting to make sure it's right
             res = stringBuilder.toString().replace(",", ",\n");
         } catch (Exception e) {
             e.printStackTrace();

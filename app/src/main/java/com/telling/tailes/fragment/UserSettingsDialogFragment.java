@@ -58,7 +58,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
     private final Setter[] SETTERS = new Setter [] {
             this::handleGeneric,
             this::handlePasswordChange,
-            this::handleTextSizeChange
+            this::handleGeneric
     };
 
     //Methods used to validate setting values
@@ -248,10 +248,6 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
     //Handle generic preference change, most likely by doing nothing
     private void handleGeneric(SharedPreferences sharedPreferences, String s) { }
-
-    private void handleTextSizeChange(SharedPreferences sharedPreferences, String s) {
-       //TODO
-    }
 
     //Handle user submitting a password change via setting
     private void handlePasswordChange(SharedPreferences sharedPreferences, String s) {

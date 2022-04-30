@@ -40,8 +40,6 @@ public class CreateAccountActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_account);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
-
-        //TODO
         selectedProfileIcon = 0;
 
         Button p = findViewById(R.id.createAccountIconButton);

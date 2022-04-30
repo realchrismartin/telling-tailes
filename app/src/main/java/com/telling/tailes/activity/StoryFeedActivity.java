@@ -96,7 +96,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         refreshIterations = 0;
         maxStoryCards = 10;
-        maxRefreshIterations = 5; //TODO: adjust this
+        maxRefreshIterations = 5;
 
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 

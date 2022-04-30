@@ -68,10 +68,10 @@ public enum FilterType {
                return story.getId();
            }
            case "loveCount": {
-              return story.getLoveCount(); //TODO
+              return story.getLoveCount();
            }
            case "timestamp": {
-               return story.getTimestamp(); //TODO
+               return story.getTimestamp();
            }
            case "title": {
                return story.getTitle();
