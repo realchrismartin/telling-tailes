@@ -16,6 +16,7 @@ public class AboutActivity extends AppCompatActivity {
 
     private static final int storyTextDefaultSize = 24; //Default text size if not overridden by prefs
 
+    private TextView aboutTextPrompt;
     private TextView aboutTextBody;
     private Button createButton;
 
@@ -24,14 +25,17 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(onSavedInstanceState);
         setContentView(R.layout.activity_about);
 
+        aboutTextPrompt = findViewById(R.id.aboutTextPrompt);
         aboutTextBody = findViewById(R.id.aboutTextBody);
         createButton = findViewById(R.id.createButton);
 
         //Set font size to preference setting
         try {
+            aboutTextPrompt.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
             aboutTextBody.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
         } catch(Exception ex) {
             ex.printStackTrace();
+            aboutTextPrompt.setTextSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(getString(R.string.setting_text_size_title),storyTextDefaultSize));
             aboutTextBody.setTextSize(storyTextDefaultSize);
         }
 
