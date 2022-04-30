@@ -27,8 +27,8 @@ public class AuthUtils {
         If a user is not logged in, return a blank string
      */
     public static String getLoggedInUserID(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        return sharedPref.getString("username",""); //TODO: unhardcode
+        SharedPreferences sharedPref = context.getSharedPreferences(StringUtils.sharedPreferenceFileUser,Context.MODE_PRIVATE);
+        return sharedPref.getString(StringUtils.sharedPreferenceKeyUsername,StringUtils.emptyString);
     }
 
     /*
@@ -36,15 +36,15 @@ public class AuthUtils {
         Used to determine if we need to retrieve / update token or not when a user visits the feed on a device
      */
     public static String getMessagingToken(Context context) {
-        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
-        return sharedPref.getString("messagingToken",""); //TODO: unhardcode
+        SharedPreferences sharedPref = context.getSharedPreferences(StringUtils.sharedPreferenceFileUser, Context.MODE_PRIVATE);
+        return sharedPref.getString(StringUtils.sharedPreferenceKeyMessagingToken,StringUtils.emptyString);
     }
 
     /*
         Return true if a user is logged in, false otherwise
      */
     public static boolean userIsLoggedIn(Context context) {
-        return !getLoggedInUserID(context).equals("");
+        return !getLoggedInUserID(context).equals(StringUtils.emptyString);
     }
 
     //Attempts to log in as the specified user
@@ -71,7 +71,7 @@ public class AuthUtils {
                             return;
                         }
 
-                        //Update user in local shared preferences to be "logged in"
+                        //Update user in local shared preferences to be logged in
                         updateUsernameSharedPreference(context,username);
 
                         //Update user's token on login
@@ -80,11 +80,11 @@ public class AuthUtils {
                             public void accept(User user) {
 
                                 if(user == null) {
-                                    callback.accept("User was null after token update during login");
+                                    callback.accept(StringUtils.authUtilsErrorMessageUserNull);
                                     return;
                                 }
 
-                                callback.accept("");
+                                callback.accept(StringUtils.emptyString);
                             }
                         });
 
@@ -105,7 +105,7 @@ public class AuthUtils {
             public void accept(User user) {
 
                 if(user == null) {
-                    Log.e("AuthUtils.updateUserToken","User was null, couldn't update token");
+                    Log.e(StringUtils.authUtilsTag,StringUtils.authUtilsErrorMessageUserNull);
                     return;
                 }
 
@@ -132,7 +132,7 @@ public class AuthUtils {
                                 @Override
                                 public void accept(Boolean result) {
                                     if(!result)  {
-                                        Log.e("AuthUtils.updateUserToken","Failed to update user token for current user");
+                                        Log.e(StringUtils.authUtilsTag, StringUtils.authUtilsErrorMessageTokenUpdateFailure);
                                         callback.accept(null);
                                         return;
                                     }
@@ -149,7 +149,7 @@ public class AuthUtils {
                     return;
                 }
 
-                if(user.getMessagingToken().equals("") && optionalExistingToken.equals("")) {
+                if(user.getMessagingToken().equals(StringUtils.emptyString) && optionalExistingToken.equals(StringUtils.emptyString)) {
                     //Recurse and call this method to get an actual token, then return
                     updateUserToken(context, null, new Consumer<User>() {
                         @Override
@@ -177,7 +177,7 @@ public class AuthUtils {
                     @Override
                     public void accept(Boolean result) {
                         if(!result)  {
-                            Log.e("AuthUtils.updateUserToken","Failed to update user token for current user");
+                            Log.e(StringUtils.authUtilsTag,StringUtils.authUtilsErrorMessageTokenUpdateFailure);
                             callback.accept(null);
                             return;
                         }
@@ -194,20 +194,20 @@ public class AuthUtils {
 
         //Log out locally
 
-        updateUserToken(context, "", new Consumer<User>() {
+        updateUserToken(context, StringUtils.emptyString, new Consumer<User>() {
             @Override
             public void accept(User user) {
 
-                updateUsernameSharedPreference(context,"");
-                updateTokenSharedPreference(context,"");
+                updateUsernameSharedPreference(context,StringUtils.emptyString);
+                updateTokenSharedPreference(context,StringUtils.emptyString);
 
                 if(user == null) {
-                    callback.accept("Failed to update user token in logOutUser");
+                    callback.accept(StringUtils.authUtilsErrorMessageTokenUpdateFailure);
                     return;
                 }
 
 
-                callback.accept("");
+                callback.accept(StringUtils.emptyString);
             }
         });
     }
@@ -254,7 +254,7 @@ public class AuthUtils {
                             return;
                         }
 
-                        callback.accept(""); //Successful creation
+                        callback.accept(StringUtils.emptyString); //Successful creation
                     }
                 });
             }
@@ -262,16 +262,16 @@ public class AuthUtils {
     }
 
     private static void updateUsernameSharedPreference(Context context, String username) {
-        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = context.getSharedPreferences(StringUtils.sharedPreferenceFileUser, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("username", username); //TODO: unhardcode
+        editor.putString(StringUtils.sharedPreferenceKeyUsername, username);
         editor.apply();
     }
 
     private static void updateTokenSharedPreference(Context context, String messagingToken) {
-        SharedPreferences sharedPref = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = context.getSharedPreferences(StringUtils.sharedPreferenceFileUser, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("messagingToken", messagingToken); //TODO: unhardcode
+        editor.putString(StringUtils.sharedPreferenceKeyMessagingToken, messagingToken);
         editor.apply();
     }
 
@@ -288,18 +288,18 @@ public class AuthUtils {
 
     //Given a string password and a specific salt, return a hashed version of the password using that salt
     public static String hashPassword(String password, String salt) {
-        String result = "insecurepassword";
+        String result = StringUtils.defaultPassword;
 
         if(salt == null) {
             return hashPassword(password).first;
         }
 
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            MessageDigest md = MessageDigest.getInstance(StringUtils.passwordHashAlgorithm);
             md.update(salt.getBytes(StandardCharsets.UTF_8));
             result = new String(md.digest(password.getBytes(StandardCharsets.UTF_8)),StandardCharsets.UTF_8);
         } catch(NoSuchAlgorithmException ex) {
-            Log.e("AuthUtils","Failed to hash password: " + ex.getMessage());
+            ex.printStackTrace();
         }
 
         return result;

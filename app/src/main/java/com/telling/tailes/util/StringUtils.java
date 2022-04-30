@@ -32,6 +32,7 @@ public class StringUtils {
     public static final String messagingServiceErrorFollowerUsername ="FCM followerUsername is null";
 
     public static final String messagingServiceTag = "MessagingService";
+    public static final String authUtilsTag = "AuthUtils";
 
     public static final String loadingString = "loading";
     public static final String noAuthorsString = "noauthors";
@@ -47,6 +48,17 @@ public class StringUtils {
     public static final String notificationGroupId = "com.telling.tailes.NOTIFICATION";
 
     public static final String fcmTokenError = "User returned from updateUserToken was null, token may not have been updated";
+
+    public static final String sharedPreferenceFileUser = "user_preferences";
+    public static final String sharedPreferenceKeyUsername = "username";
+    public static final String sharedPreferenceKeyMessagingToken = "messagingToken";
+    public static final String defaultPassword = "thisisnotsecure";
+
+
+    public static final String authUtilsErrorMessageUserNull = "";
+    public static final String authUtilsErrorMessageTokenUpdateFailure = "";
+
+    public static final String passwordHashAlgorithm = "SHA-512";
 
     public static final String storyDBKey = "stories";
 
