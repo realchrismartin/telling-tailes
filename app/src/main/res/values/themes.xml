@@ -21,6 +21,7 @@
         <item name="colorSurface">@color/off_white</item>
         <item name="android:statusBarColor">@color/pitch</item>
         <item name="android:fontFamily">sans-serif-smallcaps</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/pitch</item>
         <item name="android:textColorPrimary">@color/pitch</item>
         <item name="android:textColorSecondary">@color/pitch</item>
