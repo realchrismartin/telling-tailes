@@ -9,6 +9,7 @@
     <color name="pitch">#FF263238</color>
     <color name="slate">#FF37474f</color>
     <color name="light_slate">#FF62727b</color>
+    <color name="pale_grey">#FFe0e0e0</color>
 
     <!--Defaults-->
     <color name="purple_200">#FFBB86FC</color>

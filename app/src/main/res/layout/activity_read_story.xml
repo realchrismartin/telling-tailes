@@ -67,8 +67,8 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recyclePromptFAB"
             style="@style/FloatingAction"
-            android:backgroundTint="#e0e0e0"
             app:backgroundTint="#e0e0e0"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

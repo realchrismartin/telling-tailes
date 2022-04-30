@@ -47,8 +47,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToCreateStoryButton"
             style="@style/FloatingAction"
-            android:backgroundTint="#e0e0e0"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pale_grey"
             android:contentDescription="Create New Tail"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
