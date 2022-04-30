@@ -31,7 +31,7 @@
             android:key="@string/setting_logout_title"
             android:title="@string/setting_logout_title"
             android:summary="@string/setting_logout_description"
-            android:icon="@drawable/logout_pitch"
+            android:icon="@drawable/logout_color"
             />
 
 </PreferenceScreen>
