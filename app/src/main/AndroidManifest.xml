@@ -50,6 +50,9 @@
         <activity
             android:name=".activity.LoginActivity"
             android:exported="false" />
+        <activity
+            android:name=".activity.AboutActivity"
+            android:exported="false" />
         <service
             android:name=".service.MessagingService"
             android:enabled="true"

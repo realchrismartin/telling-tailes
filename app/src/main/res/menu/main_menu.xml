@@ -27,7 +27,13 @@
         android:id="@+id/view_saved_authors"
         app:showAsAction="never"/>
 
+    <item android:title="About"
+        android:id="@+id/about_gpt_3"
+        app:showAsAction="never" />
+
     <item android:title="Settings"
         android:id="@+id/view_settings"
         app:showAsAction="never"/>
+
+
 </menu>

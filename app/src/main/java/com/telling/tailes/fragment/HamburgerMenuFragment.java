@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.telling.tailes.R;
+import com.telling.tailes.activity.AboutActivity;
 import com.telling.tailes.activity.CreateStoryActivity;
 import com.telling.tailes.activity.FollowedAuthorsActivity;
 import com.telling.tailes.activity.StoryFeedActivity;
@@ -48,8 +49,6 @@ public class HamburgerMenuFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         viewBinding.mainToolbar.inflateMenu(R.menu.main_menu);
-        viewBinding.mainToolbar.setTitle(R.string.login_app_title);
-        viewBinding.mainToolbar.setTitleTextAppearance(getContext(), R.style.ActionBarTitle);
         Drawable drawable = ContextCompat.getDrawable(getContext(),
                 R.drawable.ic_hamburger_menu);
         viewBinding.mainToolbar.setOverflowIcon(drawable);
@@ -96,6 +95,11 @@ public class HamburgerMenuFragment extends Fragment {
             case R.id.view_settings:
                 Log.d("menu onClick", "USER SETTINGS");
                 intent = new Intent(getContext(), UserSettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.about_gpt_3:
+                Log.d("menu onClick", "ABOUT");
+                intent = new Intent(getContext(), AboutActivity.class);
                 startActivity(intent);
                 return true;
             default:

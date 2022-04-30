@@ -91,11 +91,11 @@
             app:tint="#9b0000"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
-
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishRecycleFAB"
             style="@style/FloatingAction"
             app:backgroundTint="#e0e0e0"
+            android:elevation="0dp"
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
@@ -103,8 +103,8 @@
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
-            app:srcCompat="@drawable/reset_white"
-            app:tint="#75a478" />
+            app:tint="#75a478"
+            app:srcCompat="@drawable/reset_white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishExtendFAB"
