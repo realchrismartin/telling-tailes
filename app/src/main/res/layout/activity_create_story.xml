@@ -51,7 +51,7 @@
             app:layout_constraintTop_toTopOf="@+id/promptView"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/mic_white"
-            app:tint="#263238"/>
+            app:tint="#49599a"/>
 
         <SeekBar
             android:id="@+id/lengthSlider"
