@@ -8,11 +8,11 @@
     <string name="gpt_api_completion_uri">https://api.openai.com/v1/engines/text-davinci-002/completions</string>
     <string name="gpt_api_filter_uri">https://api.openai.com/v1/engines/content-filter-alpha/completions</string>
     <string name="gpt_api_token">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</string>
-    <string name="length_selector_min_text">Hemingway</string>
-    <string name="length_selector_max_text">Dostoyevsky</string>
+    <string name="length_selector_min_text">Verse</string>
+    <string name="length_selector_max_text">Novel</string>
     <string name="temperature_selector_max_text">Tight</string>
     <string name="temperature_selector_min_text">Loose</string>
-    <string name="presence_selector_max_text">Careful</string>
+    <string name="presence_selector_max_text">Fussy</string>
     <string name="presence_selector_min_text">Sloppy</string>
     <string name="frequency_selector_max_text">Tame</string>
     <string name="frequency_selector_min_text">Wild</string>

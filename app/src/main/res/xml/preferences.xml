@@ -5,7 +5,7 @@
             android:key="@string/setting_hide_title"
             android:title="@string/setting_hide_title"
             android:summary="@string/setting_hide_description"
-            android:icon="@drawable/bell_outline_pitch"
+            android:icon="@drawable/bell_outline_color"
             android:defaultValue="true"
             />
 
@@ -16,7 +16,7 @@
             android:min="10"
             android:max="50"
             android:defaultValue="25"
-            android:icon="@drawable/text_pitch"
+            android:icon="@drawable/text_color"
             />
 
         <EditTextPreference
@@ -24,14 +24,14 @@
             android:title="@string/setting_password_title"
             android:summary="@string/setting_password_description"
             android:inputType="textPassword"
-            android:icon="@drawable/key_pitch"
+            android:icon="@drawable/key_color"
             />
 
         <Preference
             android:key="@string/setting_logout_title"
             android:title="@string/setting_logout_title"
             android:summary="@string/setting_logout_description"
-            android:icon="@drawable/logout_pitch"
+            android:icon="@drawable/logout_color"
             />
 
 </PreferenceScreen>

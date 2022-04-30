@@ -42,13 +42,16 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recordButton"
             style="@style/FloatingAction"
+            app:backgroundTint="@color/pitch"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="@+id/promptView"
             app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="@+id/promptView"
             app:layout_constraintTop_toTopOf="@+id/promptView"
             app:layout_constraintVertical_bias="0.93"
-            app:srcCompat="@drawable/mic_white" />
+            app:srcCompat="@drawable/mic_white"
+            app:tint="#49599a"/>
 
         <SeekBar
             android:id="@+id/lengthSlider"

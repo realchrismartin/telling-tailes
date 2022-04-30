@@ -67,6 +67,8 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recyclePromptFAB"
             style="@style/FloatingAction"
+            app:backgroundTint="@color/pitch"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +76,8 @@
             app:layout_constraintHorizontal_bias="0.93"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/reset_white"
-            android:contentDescription="Recycle Prompt" />
+            android:contentDescription="Recycle Prompt"
+            app:tint="#836fa9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

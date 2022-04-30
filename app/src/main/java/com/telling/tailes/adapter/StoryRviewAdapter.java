@@ -152,18 +152,18 @@ public class StoryRviewAdapter extends RecyclerView.Adapter {
 
     private void updateBookmarkIconState(StoryRviewCard currentItem, String currentUser, StoryRviewStoryHolder holder) {
         if (currentItem.getBookmarkers().contains(currentUser)) {
-            holder.bookmarkButton.setImageResource(R.drawable.bookmark_solid_pitch);
+            holder.bookmarkButton.setImageResource(R.drawable.bookmark_solid_color);
         } else {
-            holder.bookmarkButton.setImageResource(R.drawable.bookmark_outline_pitch);
+            holder.bookmarkButton.setImageResource(R.drawable.bookmark_outline_color);
         }
     }
 
     @SuppressLint("SetTextI18n")
     private void updateLoveIconState(StoryRviewCard currentItem, String currentUser, StoryRviewStoryHolder holder) {
         if (currentItem.getStory().getLovers().contains(AuthUtils.getLoggedInUserID(context))) {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_solid_pitch, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_solid_color, 0);
         } else {
-            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_outline_pitch, 0);
+            holder.loveButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.favorite_outline_color, 0);
         }
     }
 }

@@ -41,7 +41,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableEnd="@drawable/favorite_outline_pitch"
+            android:drawableEnd="@drawable/favorite_outline_color"
             android:text=""
             android:textColor="@color/pitch"
             app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +52,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/bookmark_outline_pitch"
+            android:src="@drawable/bookmark_outline_color"
             app:layout_constraintEnd_toStartOf="@+id/storyCardLoveButton"
             app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton" />
 
