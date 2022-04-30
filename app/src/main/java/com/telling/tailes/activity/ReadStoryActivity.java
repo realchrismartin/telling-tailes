@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -21,7 +20,6 @@ import com.telling.tailes.R;
 import com.telling.tailes.fragment.AuthorProfileDialogFragment;
 import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
-import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 
@@ -217,17 +215,17 @@ public class ReadStoryActivity extends AppCompatActivity {
 
    private void updateLoveButtonState() {
         if (story.getLovers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_solid_pitch, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_solid_color, 0, 0, 0);
         } else {
-            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_outline_pitch, 0, 0, 0);
+            loveButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.favorite_outline_color, 0, 0, 0);
         }
     }
 
     private void updateBookmarkButtonState() {
         if (story.getBookmarkers().contains(AuthUtils.getLoggedInUserID(getApplicationContext()))) {
-            bookmarkButton.setImageResource(R.drawable.bookmark_solid_pitch);
+            bookmarkButton.setImageResource(R.drawable.bookmark_solid_color);
         } else {
-            bookmarkButton.setImageResource(R.drawable.bookmark_outline_pitch);
+            bookmarkButton.setImageResource(R.drawable.bookmark_outline_color);
         }
     }
 

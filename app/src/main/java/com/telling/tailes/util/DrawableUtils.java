@@ -64,4 +64,8 @@ public class DrawableUtils {
                 return R.drawable.profile_0_large;
         }
     }
+
+    public static int getAppIconResourceId(String icon, boolean color) {
+        if (!color)
+    }
 }
