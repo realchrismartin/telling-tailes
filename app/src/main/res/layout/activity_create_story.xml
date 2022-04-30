@@ -42,7 +42,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recordButton"
             style="@style/FloatingAction"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pitch"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="@+id/promptView"

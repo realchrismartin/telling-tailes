@@ -63,7 +63,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:clickable">true</item>
         <item name="android:elevation">0dp</item>
-        <item name="android:backgroundTint">@color/pale_grey</item>
+        <item name="android:backgroundTint">#e0e0e0</item>
     </style>
 
     <style name="Spinner" parent="@style/Widget.AppCompat.Spinner">
@@ -151,20 +151,20 @@
     </style>
 
     <style name="SeekBar" parent="Widget.AppCompat.SeekBar">
-        <item name="android:layout_width">180dp</item>
+        <item name="android:layout_width">170dp</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="SeekBarLabelLeft" parent="Widget.AppCompat.SeekBar">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginEnd">0dp</item>
     </style>
 
     <style name="SeekBarLabelRight" parent="Widget.AppCompat.SeekBar">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginStart">0dp</item>
     </style>
 
 </resources>

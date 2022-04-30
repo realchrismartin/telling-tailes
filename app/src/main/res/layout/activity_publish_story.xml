@@ -79,7 +79,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishDeleteFAB"
             style="@style/FloatingAction"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pitch"
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
@@ -88,13 +88,13 @@
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
             app:srcCompat="@drawable/delete_outline_white"
-            app:tint="#9b0000"
+            app:tint="#c85a54"
             tools:ignore="DuplicateClickableBoundsCheck" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishRecycleFAB"
             style="@style/FloatingAction"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pitch"
             android:elevation="0dp"
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
@@ -103,13 +103,13 @@
             app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
-            app:tint="#75a478"
+            app:tint="#836fa9"
             app:srcCompat="@drawable/reset_white" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishExtendFAB"
             style="@style/FloatingAction"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pitch"
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
@@ -118,12 +118,12 @@
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
             app:srcCompat="@drawable/extend_white"
-            app:tint="#4ba3c7" />
+            app:tint="#4d82cb" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/famFAB"
             style="@style/FloatingAction"
-            app:backgroundTint="#e0e0e0"
+            app:backgroundTint="@color/pitch"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
             app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"

@@ -47,7 +47,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToCreateStoryButton"
             style="@style/FloatingAction"
-            app:backgroundTint="@color/pale_grey"
+            app:backgroundTint="@color/pitch"
             android:contentDescription="Create New Tail"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -57,7 +57,7 @@
             app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/add_new_story_white"
-            app:tint="#4ba3c7" />
+            app:tint="#4d82cb" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
