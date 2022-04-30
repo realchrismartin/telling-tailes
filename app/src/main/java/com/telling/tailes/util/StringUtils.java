@@ -20,7 +20,6 @@ public class StringUtils {
     public static final String backgroundResultPropertyStoryBookmark = "bookmark";
     public static final String backgroundResultPropertyStoryTokenRefresh = "tokenRefresh";
 
-
     public static final String filterTypeBookmarks = "Bookmarks";
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
     public static final String filterTypeDrafts = "Drafts";
@@ -33,11 +32,17 @@ public class StringUtils {
 
     public static final String messagingServiceTag = "MessagingService";
     public static final String authUtilsTag = "AuthUtils";
+    public static final String fbUtilsTag = "FBUtils";
+    public static final String fbUtilsErrorRollbackFollowers = "Rolling back followers due to failed followee update";
 
     public static final String loadingString = "loading";
     public static final String noAuthorsString = "noauthors";
     public static final String errorString = "error";
     public static final String emptyString = "";
+    public static final String space = " ";
+    public static final String quote = "\"";
+    public static final String comma = ",";
+    public static final String newline = "\n";
 
     public static final String intentExtraStoryId = "storyId";
     public static final String intentExtraFollowerUsername = "followerUsername";
@@ -71,7 +76,32 @@ public class StringUtils {
     public static final String drawablePeople = "people";
     public static final String drawableText = "text";
 
+    public static final String notificationPropertyTitle = "title";
+    public static final String notificationPropertyBody = "body";
+    public static final String notificationPropertyBadge = "badge";
+    public static final String notificationPropertyContent = "content";
+    public static final String notificationPropertyType = "type";
+    public static final String notificationPropertyFollowerUsername = "followerUsername";
+    public static final String notificationPropertyTo = "to";
+    public static final String notificationPropertyPriority = "priority";
+    public static final String notificationPropertyNotification = "notification";
+    public static final String notificationPropertyData = "data";
+    public static final String notificationPropertyPriorityValueHigh = "high";
+    public static final String notificationPropertyBadgeValue1 = "1";
+
+    public static final String httpPostMethod = "POST";
+    public static final String httpContentType = "Content-Type";
+    public static final String httpAuthorization = "Authorization";
+    public static final String httpContentTypeJSON = "application/json";
+
+
+
+    public static final String fbUtilsErrorNotification = "Failed to send notification";
+    public static final String notificationTypeFollow = "follow";
+    public static final String userModelBookmarkProperty = "bookmarks";
+
     public static final String storyDBKey = "stories";
+    public static final String usersDBKey = "users";
 
     //Given a string, get the number of "words" in the string
     public static int getWordCount(String input) {
