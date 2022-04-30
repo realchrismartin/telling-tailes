@@ -48,7 +48,9 @@
             android:id="@+id/goToCreateStoryButton"
             style="@style/FloatingAction"
             android:backgroundTint="#e0e0e0"
+            app:backgroundTint="#e0e0e0"
             android:contentDescription="Create New Tail"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.87"
@@ -56,7 +58,7 @@
             app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/add_new_story_white"
-            app:tint="#4ba3c7"/>
+            app:tint="#4ba3c7" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
