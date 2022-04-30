@@ -39,7 +39,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                 }
                 TextView usernameView = findViewById(R.id.settings_user_name_view);
                 usernameView.setText(AuthUtils.getLoggedInUserID(getApplicationContext()));
-                int icon = msg.getData().getInt("icon");
+                int icon = msg.getData().getInt(getString(R.string.background_task_result_data_profile_icon));
                 ImageView profileIconView = findViewById(R.id.settings_user_profile_image);
                 profileIconView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(icon, false)));
 
@@ -58,7 +58,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                     public void accept(User user) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putInt("icon",user.getProfileIcon());
+                        resultData.putInt(getString(R.string.background_task_result_data_profile_icon),user.getProfileIcon());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);

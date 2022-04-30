@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         //Set up notification channel
-        NotificationChannel channel = new NotificationChannel("CHANNEL_ID","CHANNEL_NAME", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id),getString(R.string.channel_name), NotificationManager.IMPORTANCE_DEFAULT);
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
 
@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEntryView = findViewById(R.id.enterPasswordView);
 
         //Create toast
-        loginToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+        loginToast = Toast.makeText(getApplicationContext(),getString(R.string.empty_string),Toast.LENGTH_SHORT);
 
         //Load data from saved state if applicable
         loadInstanceState(savedInstanceState);
@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                String errors = msg.getData().getString("errors");
+                String errors = msg.getData().getString(getString(R.string.background_task_result_error));
 
                 if(errors.length() > 0) {
                     loginToast.setText(errors);
@@ -100,11 +100,11 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEntryView.getText().toString();
 
         if(username.length() > 0) {
-            state.putString("username",username);
+            state.putString(getString(R.string.saved_instance_username),username);
         }
 
         if(password.length() > 0) {
-            state.putString("password",password);
+            state.putString(getString(R.string.saved_instance_password),password);
         }
 
         super.onSaveInstanceState(state);
@@ -119,12 +119,12 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        if(state.containsKey("username")) {
-            usernameEntryView.setText(state.getString("username"));
+        if(state.containsKey(getString(R.string.saved_instance_username))) {
+            usernameEntryView.setText(state.getString(getString(R.string.saved_instance_username)));
         }
 
-        if(state.containsKey("password")) {
-            passwordEntryView.setText(state.getString("password"));
+        if(state.containsKey(getString(R.string.saved_instance_password))) {
+            passwordEntryView.setText(state.getString(getString(R.string.saved_instance_password)));
         }
     }
 
@@ -144,10 +144,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 Message resultMessage = new Message();
                 Bundle resultData = new Bundle();
-                resultData.putString("type","errors");
+                resultData.putString(getString(R.string.background_task_result_type),getString(R.string.background_task_result_error));
 
                 if(username.length() <= 0 || password.length() <= 0) {
-                    resultData.putString("errors",getString(R.string.login_error_notification));
+                    resultData.putString(getString(R.string.background_task_result_error),getString(R.string.login_error_notification));
                     resultMessage.setData(resultData);
                     backgroundTaskResultHandler.sendMessage(resultMessage);
                     return;
@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                 AuthUtils.logInUser(getApplicationContext(),username,password,new Consumer<String>() {
                     @Override
                     public void accept(String errorResult) {
-                        resultData.putString("errors", errorResult);
+                        resultData.putString(getString(R.string.background_task_result_error), errorResult);
                         resultMessage.setData(resultData);
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }

@@ -53,7 +53,7 @@ public class AboutActivity extends AppCompatActivity {
         moreInformationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://openai.com/api/"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.open_ai_url)));
                 startActivity(intent);
             }
         });

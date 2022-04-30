@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.telling.tailes.R;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -52,9 +53,10 @@ public class CreateAccountActivity extends AppCompatActivity {
                 }
 
                 String errors = "";
-                switch (msg.getData().getString("type")) {
-                    case("create"):
-                        errors = msg.getData().getString("createError");
+
+                switch (msg.getData().getString(getString(R.string.background_task_result_type))) {
+                    case (StringUtils.backgroundResultPropertyCreate):
+                        errors = msg.getData().getString(getString(R.string.background_task_result_create_error));
                         if (errors.length() > 0) {
                             createToast.setText(errors);
                             createToast.show();
@@ -62,8 +64,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                         }
                         login();
                         break;
-                    case("login"):
-                        errors = msg.getData().getString("loginError");
+                    case(StringUtils.backgroundResultPropertyLogin):
+                        errors = msg.getData().getString(getString(R.string.background_task_result_login_error));
                         if (errors.length() > 0) {
                             createToast.setText(errors);
                             createToast.show();
@@ -97,7 +99,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         passwordEntryView = findViewById(R.id.createPasswordView);
         passwordConfirmationEntryView = findViewById(R.id.createPasswordConfirmView);
 
-        createToast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+        createToast = Toast.makeText(getApplicationContext(), R.string.empty_string,Toast.LENGTH_SHORT);
 
         //Load instance state data if applicable
         loadInstanceState(savedInstanceState);
@@ -123,9 +125,9 @@ public class CreateAccountActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        state.putString("username",usernameEntryView.getText().toString());
-        state.putString("password",passwordEntryView.getText().toString());
-        state.putString("passwordConfirmation",passwordConfirmationEntryView.getText().toString());
+        state.putString(getString(R.string.saved_instance_username),usernameEntryView.getText().toString());
+        state.putString(getString(R.string.saved_instance_password),passwordEntryView.getText().toString());
+        state.putString(getString(R.string.saved_instance_password_confirmation),passwordConfirmationEntryView.getText().toString());
         super.onSaveInstanceState(state);
     }
 
@@ -137,9 +139,9 @@ public class CreateAccountActivity extends AppCompatActivity {
             return;
         }
 
-        usernameEntryView.setText(state.getString("username"));
-        passwordEntryView.setText(state.getString("password"));
-        passwordConfirmationEntryView.setText(state.getString("passwordConfirmation"));
+        usernameEntryView.setText(state.getString(getString(R.string.saved_instance_username)));
+        passwordEntryView.setText(state.getString(getString(R.string.saved_instance_password)));
+        passwordConfirmationEntryView.setText(state.getString(getString(R.string.saved_instance_password_confirmation)));
     }
 
     /*
@@ -155,8 +157,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                     @Override
                     public void accept(String errorResult) {
                         Bundle resultData = new Bundle();
-                        resultData.putString("type","create");
-                        resultData.putString("createError", errorResult);
+                        resultData.putString(getString(R.string.background_task_result_type),StringUtils.backgroundResultPropertyCreate);
+                        resultData.putString(getString(R.string.background_task_result_create_error), errorResult);
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
                         backgroundTaskResultHandler.sendMessage(resultMessage);
@@ -174,8 +176,8 @@ public class CreateAccountActivity extends AppCompatActivity {
                     @Override
                     public void accept(String loginErrorResult) {
                         Bundle resultData = new Bundle();
-                        resultData.putString("type","login");
-                        resultData.putString("loginError", loginErrorResult);
+                        resultData.putString(getString(R.string.background_task_result_type),StringUtils.backgroundResultPropertyLogin);
+                        resultData.putString(getString(R.string.background_task_result_login_error), loginErrorResult);
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
                         backgroundTaskResultHandler.sendMessage(resultMessage);
