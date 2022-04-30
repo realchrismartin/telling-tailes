@@ -134,20 +134,30 @@ public class LoginActivity extends AppCompatActivity {
         Note: allows you to log in even if you're already logged in (i.e. change accounts)
      */
     public void login() {
+
+        String username = usernameEntryView.getText().toString();
+        String password = passwordEntryView.getText().toString();
+
         backgroundTaskExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                AuthUtils.logInUser(getApplicationContext(), usernameEntryView.getText().toString(), passwordEntryView.getText().toString(), new Consumer<String>() {
+
+                Message resultMessage = new Message();
+                Bundle resultData = new Bundle();
+                resultData.putString("type","errors");
+
+                if(username.length() <= 0 || password.length() <= 0) {
+                    resultData.putString("errors",getString(R.string.login_error_notification));
+                    resultMessage.setData(resultData);
+                    backgroundTaskResultHandler.sendMessage(resultMessage);
+                    return;
+                }
+
+                AuthUtils.logInUser(getApplicationContext(),username,password,new Consumer<String>() {
                     @Override
                     public void accept(String errorResult) {
-                        //Set up a bundle
-                        Bundle resultData = new Bundle();
-                        resultData.putString("type","errors");
                         resultData.putString("errors", errorResult);
-
-                        Message resultMessage = new Message();
                         resultMessage.setData(resultData);
-
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }
                 });
