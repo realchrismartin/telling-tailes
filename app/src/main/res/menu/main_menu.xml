@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@style/Theme">
 
     <item android:title="Feed"
         android:id="@+id/view_feed"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item android:title="New T(ai)le"
         android:id="@+id/create_new_story"

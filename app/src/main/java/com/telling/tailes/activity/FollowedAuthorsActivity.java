@@ -196,10 +196,6 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
         authorPullRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(FollowedAuthorsActivity.this,
-                        "Pulled to refresh!",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 refreshAuthors();
             }
         });

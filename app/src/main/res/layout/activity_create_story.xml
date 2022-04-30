@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme"
@@ -8,7 +9,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.CreateStoryActivity">
 
-    <androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_container_view"
         android:name="com.telling.tailes.fragment.HamburgerMenuFragment"
         android:layout_width="match_parent"
@@ -27,11 +28,13 @@
             android:id="@+id/promptView"
             style="@style/LargeTextInput"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="0dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"
             android:hint="@string/create_story_prompt_hint"
+            app:layout_constraintBottom_toTopOf="@+id/lengthSlider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,24 +44,17 @@
             style="@style/FloatingAction"
             app:layout_constraintBottom_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="@+id/promptView"
-            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintHorizontal_bias="0.95"
             app:layout_constraintStart_toStartOf="@+id/promptView"
             app:layout_constraintTop_toTopOf="@+id/promptView"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/mic_white" />
 
-        <!--android:backgroundTint="#00ffffff"
-        android:clickable="true"
-        android:foregroundTint="@color/pitch"
-        android:tint="@color/pitch"
-        android:drawableTint="@color/pitch"
-        app:backgroundTint="@color/pitch"-->
-
         <SeekBar
             android:id="@+id/lengthSlider"
             style="@style/SeekBar"
-            android:layout_marginTop="30dp"
-            app:layout_constraintTop_toBottomOf="@+id/promptView"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -81,8 +77,8 @@
         <SeekBar
             android:id="@+id/presenceSlider"
             style="@style/SeekBar"
-            android:layout_marginTop="30dp"
-            app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -105,11 +101,11 @@
         <Button
             android:id="@+id/createStoryButton"
             style="@style/PrimaryButton"
+            android:layout_marginBottom="20dp"
             android:text="@string/create_story_button_text"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/presenceSlider"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ProgressBar
             android:id="@+id/storyCreateLoadingWheel"
@@ -120,8 +116,6 @@
             app:layout_constraintEnd_toEndOf="@+id/promptView"
             app:layout_constraintStart_toStartOf="@+id/promptView"
             app:layout_constraintTop_toTopOf="@+id/promptView" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

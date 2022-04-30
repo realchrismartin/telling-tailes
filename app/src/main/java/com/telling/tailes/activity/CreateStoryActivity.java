@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.telling.tailes.R;
 import com.telling.tailes.util.GPTUtils;

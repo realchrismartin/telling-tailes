@@ -9,6 +9,13 @@
         <item name="android:typeface">sans</item>
     </style>
 
+    <style name="ActionBarTitle" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">sans-serif-smallcaps</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
     <style name="SmallTextInput" parent="@android:style/Widget.EditText">
         <item name="android:fontFamily">serif-monospace</item>
         <item name="android:layout_width">250dp</item>
@@ -33,8 +40,9 @@
         <item name="android:layout_width">250dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:fontFamily">monospace</item>
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
     </style>
@@ -62,13 +70,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginStart">10dp</item>
         <item name="android:dropDownWidth">match_parent</item>
     </style>
 
     <style name="FilterSpinnerItem" parent="@android:style/ThemeOverlay.Material.Light">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:fontFamily">sans-serif-smallcaps</item>
         <item name="android:textStyle">italic</item>
         <item name="android:textColor">@color/pitch</item>
@@ -157,10 +166,5 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">5dp</item>
     </style>
-
-
-    <!--<item name=""></item>
-    <item name=""></item>-->
-
 
 </resources>

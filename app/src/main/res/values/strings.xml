@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TellingTailes</string>
-    <string name="login_app_title">Telling Tailes</string>
+    <string name="login_app_title">Telling T(ai)les</string>
     <string name="open" />
     <string name="close" />
     <string name="fcm_server_key">key=AAAAlPniYbs:APA91bGHtElSy0xiM_zOHTbq1GUggAVhRVhuQ5e2t-K-ww_W0cCsrJbuWj6wDq0_NYgHkFDhR1j1pM8cdK5kTaXJSO93ZDvGceLt-luvH6V9tCxIk5VDKlJKviEnc5Kz-vghIy8C4Jxr</string>
