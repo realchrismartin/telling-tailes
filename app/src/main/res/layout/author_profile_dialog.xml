@@ -18,9 +18,7 @@
         android:id="@+id/author_profile_user_profile_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:src="@drawable/profile_icon_pitch"
-        android:textColor="#283593"
         app:layout_constraintBottom_toBottomOf="@+id/author_profile_user_name_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
@@ -31,9 +29,7 @@
         android:id="@+id/author_ratio_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:src="@drawable/laurels_pitch"
-        android:textColor="#283593"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +57,6 @@
         android:id="@+id/author_profile_story_count_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
         android:src="@drawable/bookwithmark_pitch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
@@ -91,9 +86,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/favorite_solid_pitch"
-        android:enabled="false"
-        android:text=""
-        android:textColor="#283593"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,9 +114,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/people_pitch"
-        android:enabled="false"
-        android:text=""
-        android:textColor="#283593"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
@@ -158,22 +147,17 @@
 
     <Button
         android:id="@+id/authorProfileStoriesButton"
-        style="@style/SecondaryButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="sans-serif-light"
+        android:textAllCaps="true"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:text="Author's Tailes"
         app:layout_constraintEnd_toEndOf="@+id/authorProfileFollowButton"
         app:layout_constraintStart_toStartOf="@+id/authorProfileFollowButton"
         app:layout_constraintTop_toBottomOf="@+id/authorProfileFollowButton" />
-
-<!--    <ListView
-        android:id="@+id/author_profile_options_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:divider="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authorProfileStoriesButton" />-->
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
