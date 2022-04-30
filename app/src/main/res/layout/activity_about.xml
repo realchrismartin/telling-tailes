@@ -21,16 +21,26 @@
         tools:context=".activity.StoryFeedActivity">
 
         <TextView
-            android:id="@+id/aboutText"
+            android:id="@+id/aboutTextBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/about_text"
+            android:text="@string/about_text_body"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.40" />
+            app:layout_constraintVertical_bias="0.23" />
 
+        <TextView
+            android:id="@+id/aboutTextTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_text_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="47dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -44,5 +54,6 @@
         android:textColor="#283593"
         app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="center" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

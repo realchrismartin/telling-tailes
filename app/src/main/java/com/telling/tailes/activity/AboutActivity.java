@@ -1,6 +1,8 @@
 package com.telling.tailes.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -11,7 +13,8 @@ import com.telling.tailes.R;
 
 public class AboutActivity extends AppCompatActivity {
 
-    private TextView aboutText;
+    private TextView aboutTextTitle;
+    private TextView aboutTextBody;
     private Button tutorialButton;
 
 
@@ -20,7 +23,13 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
         tutorialButton = findViewById(R.id.tutorialButton);
 
-
+        tutorialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CreateStoryActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

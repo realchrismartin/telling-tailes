@@ -64,5 +64,6 @@
     <string name="setting_logout_description"> </string>
     <string name="setting_text_size_title">Font</string>
     <string name="setting_text_size_description">Set text size</string>
-    <string name="about_text">Add explainer about GPT-3 here; a what; a why</string>
+    <string name="about_text_title">Friends, Romans, countrymen, lend me your ears....</string>
+    <string name="about_text_body">It used to be that...\n\n\nClick the button below to write your first story!Add explainer about GPT-3 here; a what; a why</string>
 </resources>
