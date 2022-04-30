@@ -101,7 +101,7 @@
     <string name="intent_extra_string_id">storyId</string>
     <string name="intent_extra_story">story</string>
     <string name="intent_extra_prompt">prompt</string>
-    <string name="intent_extra_story_id">storyID</string>
+    <string name="intent_extra_story_id">storyId</string>
     <string name="intent_extra_feed_filter">feedFilter</string>
     <string name="title_too_short_1">\"Enter a title that is at least \"</string>
     <string name="title_too_short_2">\" characters (currently using \"</string>

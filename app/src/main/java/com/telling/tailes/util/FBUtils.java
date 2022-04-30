@@ -678,7 +678,7 @@ public class FBUtils {
             jNotification.put("badge", "1");
             data.put("content", content);
             data.put("type", type);
-            data.put("storyID", storyId);
+            data.put(context.getString(R.string.intent_extra_story_id), storyId);
             data.put("followerUsername", followerUsername);
             jsonObject.put("to", recipientFCMToken);
             jsonObject.put("priority", "high");

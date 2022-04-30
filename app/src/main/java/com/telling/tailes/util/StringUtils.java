@@ -25,16 +25,30 @@ public class StringUtils {
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
     public static final String filterTypeDrafts = "Drafts";
     public static final String filterTypeMyTailes = "My T(ai)les";
+    public static final String filterTypeByAuthor = "By Author";
 
+    public static final String messagingServiceErrorStoryId = "FCM storyId member is null";
+    public static final String messagingServiceErrorType = "FCM type member is null";
+    public static final String messagingServiceErrorFollowerUsername ="FCM followerUsername is null";
 
+    public static final String messagingServiceTag = "MessagingService";
 
     public static final String loadingString = "loading";
     public static final String noAuthorsString = "noauthors";
     public static final String errorString = "error";
+    public static final String emptyString = "";
 
+    public static final String intentExtraStoryId = "storyId";
+    public static final String intentExtraFollowerUsername = "followerUsername";
+    public static final String intentExtraFeedFilter = "feedFilter";
+    public static final String intentExtraAuthorId = "authorId";
+
+    public static final String notificationChannelId = "TELLING_TAILES_CHANNEL_ID";
+    public static final String notificationGroupId = "com.telling.tailes.NOTIFICATION";
+
+    public static final String fcmTokenError = "User returned from updateUserToken was null, token may not have been updated";
 
     public static final String storyDBKey = "stories";
-
 
     //Given a string, get the number of "words" in the string
     public static int getWordCount(String input) {
