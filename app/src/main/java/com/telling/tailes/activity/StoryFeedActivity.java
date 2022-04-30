@@ -1,6 +1,7 @@
 package com.telling.tailes.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -55,6 +56,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private Query query;
 
     private ArrayList<StoryRviewCard> storyCardList = new ArrayList<>();
+    private int loadingCardIndex = -1;
     private SwipeRefreshLayout feedSwipeRefresh;
     private RecyclerView storyRview;
     private StoryRviewAdapter storyRviewAdapter;
@@ -78,6 +80,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     private int maxRefreshIterations;
     private int maxStoryCards;
 
+    private long filterLastChangedTimestamp;
+
     boolean loadedFirstStories;
 
     @Override
@@ -85,12 +89,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_story_feed);
 
+        filterLastChangedTimestamp = new Date().toInstant().toEpochMilli();
+
         loadedFirstStories = false;
         lastLoadedStorySortValue = null;
 
         refreshIterations = 0;
         maxStoryCards = 10;
-        maxRefreshIterations = 5; //TODO: adjust this
+        maxRefreshIterations = 5;
 
         storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
 
@@ -98,12 +104,16 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
 
-        doLoginCheck();
-
         createStorySwipeToRefresh();
         createStoryRecyclerView();
         createFilterSpinner();
+
         createListeners();
+
+        //Check if user is logged in
+        //Leave the feed if not
+        //Update the user's messaging token if the local one differs from the database
+        doLoginCheckCreate();
 
         loadFirstStories();
     }
@@ -111,7 +121,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     @Override
     protected void onResume() {
         super.onResume();
-        doLoginCheck();
+        doLoginCheckResume();
     }
 
     //Set up listeners
@@ -128,7 +138,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                 switch(msg.getData().getString("type")) {
                     case("storyData"): {
-
                         if(msg.getData().getInt("result") != 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
@@ -136,6 +145,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         }
 
                         if(msg.getData().getString("last_type") == null) {
+                            return;
+                        }
+
+                        //Ignore any result if it was sent by the feed PRIOR to a filter refresh
+                        if(msg.getData().getLong("timestamp") < filterLastChangedTimestamp) {
                             return;
                         }
 
@@ -147,6 +161,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         }
 
                         int storyCount=msg.getData().getInt("story_count");
+
+                        removeLoadingCard();
 
                         for(int i=0;i<storyCount;i++) {
 
@@ -169,6 +185,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             }
 
                             loadedFirstStories = true;
+
                         }
 
                         //Recurse if the story card list isn't loaded yet
@@ -182,6 +199,13 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         feedSwipeRefresh.setRefreshing(false);
                         break;
                     }
+                    case("tokenRefresh"): {
+                        if(msg.getData().getInt("result") != 0) {
+                            toast.setText(R.string.generic_error_notification);
+                            toast.show();
+                        }
+                        break;
+                    }
                     case("bookmarks"): {
                         currentFilter = FilterType.get("Bookmarks");
                         currentFilter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
@@ -189,7 +213,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         break;
                     }
                     case("followedAuthors"): {
-                        currentFilter = FilterType.get("Followed Authors");
+                        currentFilter = FilterType.get("By Followed Authors");
                         currentFilter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
                         refreshStories();
                         break;
@@ -275,12 +299,40 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     }
 
     //Kick the user out of the Feed if they aren't logged in for some reason
-    private void doLoginCheck() {
+    private boolean doLoginCheckResume() {
         if (!AuthUtils.userIsLoggedIn(getApplicationContext())) {
             goToLogin();
+            return false;
         }
+
+        return true;
     }
 
+    //Kick the user out of the Feed if they aren't logged in for some reason
+    private void doLoginCheckCreate() {
+
+        if(!doLoginCheckResume()) {
+            return;
+        }
+
+        backgroundTaskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                //Update the locally stored token, or get a new one, if needed
+                AuthUtils.updateUserToken(getApplicationContext(), AuthUtils.getMessagingToken(getApplicationContext()), new Consumer<User>() {
+                    @Override
+                    public void accept(User user) {
+                        Message resultMessage = new Message();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type","tokenRefresh");
+                        bundle.putInt("result", user == null ? 1 : 0);
+                        resultMessage.setData(bundle);
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    }
+                });
+            }
+        });
+    }
 
     //Set up the swipe refresh functionality
     private void createStorySwipeToRefresh() {
@@ -288,10 +340,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         feedSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Toast.makeText(StoryFeedActivity.this,
-                        "Pulled to refresh!",
-                        Toast.LENGTH_SHORT)
-                        .show();
                 refreshStories();
             }
         });
@@ -304,7 +352,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.setHasFixedSize(true);
 
         storyRviewAdapter = new StoryRviewAdapter(storyCardList, getApplicationContext(), this);
-
 
         StoryRviewCardClickListener storyClickListener = new StoryRviewCardClickListener() {
             @Override
@@ -334,10 +381,20 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             if (extras.containsKey("feedFilter")) {
                 String intentFilter = extras.getString("feedFilter");
                 int pos = 0;
-                for (FilterSpinnerItem item : filterSpinnerItems) {
-                    if (item.getFilterTitle().equals(intentFilter)) {
-                        pos = filterSpinnerItems.indexOf(item);
-                        break;
+                if (intentFilter.equals("By Author")) {
+                    if (extras.containsKey("authorId")) {
+                        String authorId = extras.getString("authorId");
+
+                        filterSpinnerItems.add(new FilterSpinnerItem(authorId + getString(R.string.author_profile_read_option)));
+                        spinnerAdapter.notifyDataSetChanged();
+                        pos = filterSpinnerItems.size() - 1;
+                    }
+                } else {
+                    for (FilterSpinnerItem item : filterSpinnerItems) {
+                        if (item.getFilterTitle().equals(intentFilter)) {
+                            pos = filterSpinnerItems.indexOf(item);
+                            break;
+                        }
                     }
                 }
                 filterSpinner.setSelection(pos);
@@ -349,6 +406,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             }
         }
 
+        currentFilter = filter;
 
         loadStoryData();
 
@@ -360,11 +418,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
             return;
         }
 
-        Toast.makeText(StoryFeedActivity.this,
-                "Loading more stories",
-                Toast.LENGTH_SHORT)
-                .show();
-
         loadStoryData();
     }
 
@@ -373,7 +426,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Call the main thread when done
     private void loadStoryData() {
 
+        addLoadingCard();
+
         applyFilter(currentFilter);
+
+        long timestamp = filterLastChangedTimestamp;
 
         backgroundTaskExecutor.execute(new Runnable() {
            @Override
@@ -390,7 +447,6 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                            Story story = dataSnapshot.getValue(Story.class);
-
                            if (story == null) {
                                return;
                            }
@@ -413,6 +469,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                        data.putInt("story_count",storyCount);
                        data.putString("type","storyData");
                        data.putInt("result",0);
+                       data.putLong("timestamp",timestamp);
                        message.setData(data);
 
                        backgroundTaskResultHandler.sendMessage(message);
@@ -440,7 +497,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         scrollListener.resetState();
         refreshIterations = 0;
         lastLoadedStorySortValue = null;
-
+        loadingCardIndex = -1;
         loadStoryData();
     }
 
@@ -477,15 +534,28 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Listener method for filter spinner item selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+        //Set the timestamp for the filter having been changed
+        filterLastChangedTimestamp = new Date().toInstant().toEpochMilli();
+
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
+
+        if (selection.contains("\'s")) {
+            selection = "By Author";
+        } else {
+            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains("\'s")) {
+                filterSpinnerItems.remove(filterSpinnerItems.size() - 1);
+                spinnerAdapter.notifyDataSetChanged();
+            }
+        }
 
         switch(selection) {
             case("Bookmarks"): {
                 loadBookmarks();
                 break;
             }
-            case("Followed Authors"): {
+            case("By Followed Authors"): {
                 loadFollowedAuthors();
                 break;
             }
@@ -607,5 +677,24 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 });
             }
         });
+    }
+
+
+    public void addLoadingCard() {
+        if (loadingCardIndex < 0) {
+            loadingCardIndex = storyCardList.size();
+            storyCardList.add(new StoryRviewCard());
+            storyRviewAdapter.notifyItemInserted(loadingCardIndex);
+        }
+    }
+
+    public void removeLoadingCard() {
+        if (loadingCardIndex >= 0) {
+            if (storyCardList.size() - 1 == loadingCardIndex) {
+                storyCardList.remove(storyCardList.size() - 1);
+                storyRviewAdapter.notifyItemRemoved(loadingCardIndex);
+                loadingCardIndex = -1;
+            }
+        }
     }
 }

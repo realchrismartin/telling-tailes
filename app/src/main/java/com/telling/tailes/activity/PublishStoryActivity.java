@@ -9,13 +9,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.telling.tailes.R;
@@ -23,6 +27,7 @@ import com.telling.tailes.model.Story;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.FloatingActionMenuUtil;
 import com.telling.tailes.util.GPTUtils;
 
 import java.util.ArrayList;
@@ -33,7 +38,7 @@ import java.util.function.Consumer;
 
 public class PublishStoryActivity extends AppCompatActivity {
 
-    private static final String storyDBKey = "stories"; //TODO
+    private static final String storyDBKey = "stories";
     private static final int storyTextSize = 20;
     private static final int titleCharacterLength = 5;
     private String draftSaveNotification;
@@ -52,10 +57,21 @@ public class PublishStoryActivity extends AppCompatActivity {
     private String storyText;
     private String lastStoryChunk;
 
+    private boolean isFamOpen;
+    private FloatingActionButton deleteFAB;
+    private FloatingActionButton recycleFAB;
+    private FloatingActionButton extendFAB;
+    private FloatingActionButton famMenu;
+    private ArrayList<FloatingActionButton> famList;
+
+    private Button publishButton;
+
     private Executor backgroundTaskExecutor;
     private Handler backgroundTaskResultHandler;
 
     private boolean published = false;
+
+    private boolean unsavedChanges = false;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -68,8 +84,9 @@ public class PublishStoryActivity extends AppCompatActivity {
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
 
-        titleView = findViewById(R.id.titleTextView);
+        titleView = findViewById(R.id.titleEditText);
         loadingWheel = findViewById(R.id.storyPublishLoadingWheel);
+        loadingWheel.setVisibility(View.INVISIBLE);
 
         //Set up DB ref
         ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
@@ -143,8 +160,50 @@ public class PublishStoryActivity extends AppCompatActivity {
         storyTextView.setText(storyText);
         lastStoryChunk = storyText;
 
+        publishButton = findViewById(R.id.publishButton);
+        deleteFAB = findViewById(R.id.publishDeleteFAB);
+        recycleFAB = findViewById(R.id.publishRecycleFAB);
+        extendFAB = findViewById(R.id.publishExtendFAB);
+
+        famList = new ArrayList<>();
+        famList.add(extendFAB);
+        famList.add(recycleFAB);
+        famList.add(deleteFAB);
+        isFamOpen = false;
+
+        famMenu = findViewById(R.id.famFAB);
+        famMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isFamOpen = FloatingActionMenuUtil.toggleFAM(isFamOpen, famList);
+                if (isFamOpen) {
+                    famMenu.setImageResource(R.drawable.expand_down_white);
+                    return;
+                }
+                famMenu.setImageResource(R.drawable.expand_up_white);
+            }
+        });
+
+        storyTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                storyText = storyTextView.getText().toString();
+                unsavedChanges = true;
+            }
+        });
+
         //Define click handler for publishing a story
-        findViewById(R.id.publishButton).setOnClickListener(new View.OnClickListener() {
+        publishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -156,7 +215,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyDeleteButton).setOnClickListener(new View.OnClickListener() {
+        deleteFAB.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view)  {
                handleClickDeleteDraft();
@@ -164,7 +223,7 @@ public class PublishStoryActivity extends AppCompatActivity {
            }
         });
 
-        findViewById(R.id.storyRecycleButton).setOnClickListener(new View.OnClickListener() {
+        recycleFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleClickDeleteDraft();
@@ -172,7 +231,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.storyAddButton).setOnClickListener(new View.OnClickListener() {
+        extendFAB.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view)   {
              handleAppendText();
@@ -191,6 +250,15 @@ public class PublishStoryActivity extends AppCompatActivity {
 
     private void showLoadingWheel() {
         loadingWheel.setVisibility(View.VISIBLE);
+    }
+
+    //Handle saving draft on destroy if there's unsaved data
+    @Override
+    protected void onDestroy() {
+       super.onDestroy();
+       if(unsavedChanges) {
+           handleClickPublish(true);
+       }
     }
 
     //Handle saving data on device rotation
@@ -277,24 +345,24 @@ public class PublishStoryActivity extends AppCompatActivity {
         showLoadingWheel();
 
         backgroundTaskExecutor.execute(
-                new Runnable() {
-                    @Override
-                    public void run() {
+            new Runnable() {
+                @Override
+                public void run() {
 
-                        Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
+                    Task<Void> storyDeleteTask = ref.child(storyId).removeValue();
 
-                        storyDeleteTask.addOnFailureListener(task -> {
-                            Bundle resultData = new Bundle();
-                            resultData.putString("error", "");
-                            resultData.putString("type","publish");
+                    storyDeleteTask.addOnFailureListener(task -> {
+                        Bundle resultData = new Bundle();
+                        resultData.putString("error", "");
+                        resultData.putString("type","publish");
 
-                            Message resultMessage = new Message();
-                            resultMessage.setData(resultData);
+                        Message resultMessage = new Message();
+                        resultMessage.setData(resultData);
 
-                            backgroundTaskResultHandler.sendMessage(resultMessage);
-                        });
-                    }
+                        backgroundTaskResultHandler.sendMessage(resultMessage);
+                    });
                 }
+            }
         );
     }
 
@@ -308,6 +376,8 @@ public class PublishStoryActivity extends AppCompatActivity {
         {
             return;
         }
+
+        unsavedChanges = false;
 
         String title = titleView.getText().toString();
         String userId = AuthUtils.getLoggedInUserID(getApplicationContext());
@@ -379,9 +449,9 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   String body = user.getUsername() + getString(R.string.message_published_story_body);
+                                   String body = user.getUsername() + " " + getString(R.string.message_published_story_body) + ": " + story.getTitle();
 
-                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", new Consumer<Boolean>() {
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", "publish", storyId, new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
                                            Bundle resultData = new Bundle();
@@ -416,9 +486,8 @@ public class PublishStoryActivity extends AppCompatActivity {
     {
         showLoadingWheel();
 
-        //Freeze text
-        //Update story text as well
-        storyText = storyTextView.getText().toString();
+        unsavedChanges = false;
+
         String inputText = promptText + storyText;
 
         backgroundTaskExecutor.execute(new Runnable() {
@@ -426,8 +495,7 @@ public class PublishStoryActivity extends AppCompatActivity {
             public void run() {
 
                 //Ask GPT to complete the prompt... again
-                //TODO: change to unhardcode
-                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25,1.0,0.0,0.0);
+                String story = GPTUtils.getStory(getApplicationContext(), inputText, 25); //Note: hardcoded additional length due to minimum length being too short
                 int resultCode = story.length() <= 0 ? 1 : 0;
 
                 //Set up a bundle

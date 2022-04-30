@@ -10,38 +10,40 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_bard_inverted"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity
-            android:name=".activity.FollowedAuthorsActivity"
-            android:exported="false" />
         <activity
             android:name=".activity.StoryFeedActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.FollowedAuthorsActivity"
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".fragment.HamburgerMenuFragment"
             android:exported="false" />
         <activity
             android:name=".activity.UserSettingsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.ReadStoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.PublishStoryActivity"
             android:exported="false" />
         <activity
             android:name=".activity.CreateStoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
             android:name=".activity.CreateAccountActivity"
             android:exported="false" />

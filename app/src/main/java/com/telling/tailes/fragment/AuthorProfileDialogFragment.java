@@ -9,12 +9,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckedTextView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,7 +83,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         profileUserNameView.setText(authorId);
 
         profileButtonView = content.findViewById(R.id.author_profile_user_profile_image);
-        profileButtonView.setImageDrawable(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon)));
+        profileButtonView.setImageDrawable(ContextCompat.getDrawable(getContext(), DrawableUtils.getProfileIconResourceId(profileIcon, false)));
 
         authorProfileStoriesButton = content.findViewById(R.id.authorProfileStoriesButton);
         authorProfileStoriesButton.setText(authorId + getString(R.string.author_profile_read_option) );
@@ -224,7 +220,6 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         }
 
     }
-
 
     /*
         Fragment onClick handler for following or unfollowing an author

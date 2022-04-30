@@ -25,6 +25,7 @@ import com.telling.tailes.activity.LoginActivity;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
     private final Setter[] SETTERS = new Setter [] {
             this::handleGeneric,
             this::handlePasswordChange,
-            this::handleTextSizeChange
+            this::handleGeneric
     };
 
     //Methods used to validate setting values
@@ -164,13 +165,10 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
             return;
         }
 
-        passwordPreference.setSummaryProvider(new Preference.SummaryProvider() {
-            @Override
-            public CharSequence provideSummary(Preference preference) {
+        passwordPreference.setSummaryProvider(preference -> {
 
-                String password = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("change_password", "");
-                return asterisks(password.length());
-            }
+            String password = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("change_password", "");
+            return StringUtils.getAsterisks(password);
         });
 
         passwordPreference.setOnBindEditTextListener(
@@ -178,12 +176,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                 @Override
                 public void onBindEditText(@NonNull EditText editText) {
                     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    passwordPreference.setSummaryProvider(new Preference.SummaryProvider() {
-                        @Override
-                        public CharSequence provideSummary(Preference preference) {
-                            return asterisks(editText.getText().toString().length());
-                        }
-                    });
+                    passwordPreference.setSummaryProvider(preference -> StringUtils.getAsterisks(editText.getText().toString()));
                 }
             });
     }
@@ -256,10 +249,6 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
     //Handle generic preference change, most likely by doing nothing
     private void handleGeneric(SharedPreferences sharedPreferences, String s) { }
 
-    private void handleTextSizeChange(SharedPreferences sharedPreferences, String s) {
-       //TODO
-    }
-
     //Handle user submitting a password change via setting
     private void handlePasswordChange(SharedPreferences sharedPreferences, String s) {
 
@@ -270,7 +259,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
         }
 
         String newPassword = sharedPreferences.getString(s,"password");
-        String value = asterisks(s.length());
+        String value = StringUtils.getAsterisks(s);
         preference.setDefaultValue(value);
         preference.setSummary(value);
 
@@ -343,16 +332,5 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                 });
             }
         });
-    }
-
-    //Utility function to replace passwords with asterisks
-    private String asterisks(int num) {
-        StringBuilder result = new StringBuilder();
-
-        for(int i=0;i<num;i++) {
-            result.append("*");
-        }
-
-        return result.toString();
     }
 }

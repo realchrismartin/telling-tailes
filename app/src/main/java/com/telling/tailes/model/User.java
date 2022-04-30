@@ -1,13 +1,9 @@
 package com.telling.tailes.model;
 
-import com.telling.tailes.util.AuthUtils;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class User {
 
-    private String id;
     private String username;
     private String hashedPassword;
     private String salt;
@@ -24,7 +20,7 @@ public class User {
 
     public User(){}
 
-    public User (String username, ArrayList<String> bookmarks) { //TODO: add followedAuthors array list? this is another ticket
+    public User (String username, ArrayList<String> bookmarks) {
         this.username = username;
         this.bookmarks = bookmarks;
     }

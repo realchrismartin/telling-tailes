@@ -1,12 +1,11 @@
 package com.telling.tailes.model;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Story implements Serializable {
 
-    private final double constant = 10000000000000D; //TODO
+    private final double constant = 10000000000000D;
     private String id;
     private String authorID;
     private String title;
@@ -67,7 +66,7 @@ public class Story implements Serializable {
     }
 
     private void initLovers() {
-        if (lovers == null) { //TODO: is there a better way to check if this exists?
+        if (lovers == null) {
             lovers = new ArrayList<String>();
         }
     }

@@ -22,7 +22,6 @@ import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.activity.UserSettingsActivity;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
 
-
 public class HamburgerMenuFragment extends Fragment {
     private Intent intent;
     private FragmentToolbarBinding viewBinding;
@@ -108,7 +107,5 @@ public class HamburgerMenuFragment extends Fragment {
                 return false;
         }
     }
-
-
 }
 

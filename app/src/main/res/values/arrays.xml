@@ -3,10 +3,9 @@
         <item>All T(ai)les</item>
         <item>Popular</item>
         <item>My T(ai)les</item>
-        <item>Followed Authors</item>
+        <item>By Followed Authors</item>
         <item>Drafts</item>
         <item>Bookmarks</item>
-        <item>By Author</item>
     </string-array>
     <string-array name="author_profile_options">
         <item>Follow</item>

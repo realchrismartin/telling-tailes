@@ -3,13 +3,13 @@
     <style name="Theme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/off_white</item>
-        <item name="colorPrimaryDark">@color/medium_grey</item>
-        <item name="colorAccent">@color/slate</item>
-        <item name="colorPrimaryVariant">@color/medium_grey</item>
+        <item name="colorPrimaryDark">@color/pitch</item>
+        <item name="colorAccent">@color/pitch</item>
+        <item name="colorPrimaryVariant">@color/pitch</item>
         <item name="colorOnPrimary">@color/pitch</item>
 
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/slate</item>
+        <item name="colorSecondary">@color/pitch</item>
         <item name="colorSecondaryVariant">@color/light_slate</item>
         <item name="colorOnSecondary">@color/off_white</item>
 
@@ -18,8 +18,8 @@
 
         <!-- Customize your theme here. -->
         <item name="colorSurface">@color/off_white</item>
-        <item name="android:textColorPrimary">@color/slate</item>
-        <item name="android:textColorSecondary">@color/light_slate</item>
+        <item name="android:textColorPrimary">@color/pitch</item>
+        <item name="android:textColorSecondary">@color/pitch</item>
     </style>
 
     <style name="Theme.NoActionBar">

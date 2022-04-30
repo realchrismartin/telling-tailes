@@ -3,6 +3,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.UserSettingsActivity">
@@ -17,93 +18,109 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
+        android:elevation="0dp"
         app:layout_anchor="@+id/fragment_container_view"
         app:layout_anchorGravity="center"
         tools:context=".model.PublishStoryActivity">
 
         <EditText
-            android:id="@+id/publishStoryTextView"
-            android:layout_width="266dp"
-            android:layout_height="382dp"
-            android:ems="10"
-            android:gravity="start|top"
-            android:inputType="textMultiLine"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
-
-        <Button
-            android:id="@+id/storyRecycleButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:layout_marginEnd="4dp"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toTopOf="@+id/publishButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.54" />
-
-        <Button
-            android:id="@+id/storyAddButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:drawableLeft="@drawable/ic_baseline_favorite_story_24"
-            android:text=""
-            android:textColor="#000000"
-            app:layout_constraintBottom_toTopOf="@+id/storyRecycleButton"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <Button
-            android:id="@+id/storyDeleteButton"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="50dp"
-            android:layout_height="44dp"
-            android:drawableLeft="@drawable/ic_baseline_recycle_24"
-            android:text=""
-            android:textColor="#283593"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.572" />
-
-        <EditText
-            android:id="@+id/titleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            android:id="@+id/titleEditText"
+            style="@style/LargeTextInput"
             android:hint="@string/publish_story_title_hint"
-            android:inputType="textPersonName"
+            android:inputType="textCapSentences"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/publishPromptTextView"
-            android:layout_width="331dp"
-            android:layout_height="wrap_content"
+            style="@style/PromptText"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/titleEditText" />
+
+        <EditText
+            android:id="@+id/publishStoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:ems="10"
+            android:fontFamily="serif-monospace"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            app:layout_constraintBottom_toTopOf="@+id/publishButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
 
         <Button
             android:id="@+id/publishButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/publish_story_button_text"
+            style="@style/PrimaryButton"
+            android:layout_marginBottom="20dp"
+            android:text="Publish"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:layout_editor_absoluteX="155dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishDeleteFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/delete_outline_white" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishRecycleFAB"
+            style="@style/FloatingAction"
+            android:elevation="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/reset_white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/publishExtendFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/extend_white" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/famFAB"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/publishStoryTextView"
+            app:layout_constraintEnd_toEndOf="@+id/publishStoryTextView"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintStart_toStartOf="@+id/publishStoryTextView"
+            app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
+            app:layout_constraintVertical_bias="0.95"
+            app:srcCompat="@drawable/expand_up_white" />
 
         <ProgressBar
             android:id="@+id/storyPublishLoadingWheel"
             style="?android:attr/progressBarStyle"
-            android:layout_width="48dp"
-            android:layout_height="38dp"
-            app:layout_constraintEnd_toStartOf="@+id/titleTextView"
-            app:layout_constraintHorizontal_bias="0.471"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

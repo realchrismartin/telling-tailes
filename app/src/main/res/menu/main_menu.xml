@@ -2,8 +2,8 @@
 
 
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
     <item android:title="Feed"
         android:id="@+id/view_feed"
         app:showAsAction="never" />
@@ -24,7 +24,7 @@
         android:id="@+id/view_my_bookmarks"
         app:showAsAction="never"/>
 
-    <item android:title="Saved Authors"
+    <item android:title="Followed Authors"
         android:id="@+id/view_saved_authors"
         app:showAsAction="never"/>
 

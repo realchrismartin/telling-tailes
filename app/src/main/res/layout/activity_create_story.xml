@@ -3,6 +3,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.CreateStoryActivity">
@@ -19,179 +20,108 @@
         android:background="#00FFFFFF"
         app:layout_anchor="@+id/fragment_container_view"
         app:layout_anchorGravity="center"
+        android:layout_marginTop="?attr/actionBarSize"
         tools:context=".activity.CreateStoryActivity">
+
+        <EditText
+            android:id="@+id/promptView"
+            style="@style/LargeTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="450dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:hint="@string/create_story_prompt_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/recordButton"
+            style="@style/FloatingAction"
+            app:layout_constraintBottom_toBottomOf="@+id/promptView"
+            app:layout_constraintEnd_toEndOf="@+id/promptView"
+            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintStart_toStartOf="@+id/promptView"
+            app:layout_constraintTop_toTopOf="@+id/promptView"
+            app:layout_constraintVertical_bias="0.93"
+            app:srcCompat="@drawable/mic_white" />
+
+        <!--android:backgroundTint="#00ffffff"
+        android:clickable="true"
+        android:foregroundTint="@color/pitch"
+        android:tint="@color/pitch"
+        android:drawableTint="@color/pitch"
+        app:backgroundTint="@color/pitch"-->
 
         <SeekBar
             android:id="@+id/lengthSlider"
-            android:layout_width="179dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
+            style="@style/SeekBar"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/promptView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/lengthSelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/length_selector_max_text"
-            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
-            app:layout_constraintStart_toEndOf="@+id/lengthSlider" />
-
-        <TextView
             android:id="@+id/lengthSelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
+            style="@style/SeekBarLabelLeft"
             android:text="@string/length_selector_min_text"
-            app:layout_constraintBottom_toTopOf="@+id/temperatureSlider"
+            app:layout_constraintTop_toTopOf="@+id/lengthSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/lengthSlider"
             app:layout_constraintEnd_toStartOf="@+id/lengthSlider" />
 
         <TextView
-            android:id="@+id/temperatureSelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/temperature_selector_min_text"
-            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
-            app:layout_constraintEnd_toStartOf="@+id/temperatureSlider" />
+            android:id="@+id/lengthSelectorMax"
+            style="@style/SeekBarLabelRight"
+            android:text="@string/length_selector_max_text"
+            app:layout_constraintTop_toTopOf="@+id/lengthSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/lengthSlider"
+            app:layout_constraintStart_toEndOf="@+id/lengthSlider" />
 
-        <TextView
-            android:id="@+id/temperatureSelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/temperature_selector_max_text"
-            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
-            app:layout_constraintStart_toEndOf="@+id/temperatureSlider" />
+        <SeekBar
+            android:id="@+id/presenceSlider"
+            style="@style/SeekBar"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/presenceSelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
+            style="@style/SeekBarLabelLeft"
             android:text="@string/presence_selector_min_text"
-            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
+            app:layout_constraintTop_toTopOf="@+id/presenceSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/presenceSlider"
             app:layout_constraintEnd_toStartOf="@+id/presenceSlider" />
 
         <TextView
             android:id="@+id/presenceSelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="32dp"
+            style="@style/SeekBarLabelRight"
             android:text="@string/presence_selector_max_text"
-            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
+            app:layout_constraintTop_toTopOf="@+id/presenceSlider"
+            app:layout_constraintBottom_toBottomOf="@+id/presenceSlider"
             app:layout_constraintStart_toEndOf="@+id/presenceSlider" />
-
-        <TextView
-            android:id="@+id/frequencySelectorMin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/frequency_selector_min_text"
-            app:layout_constraintBottom_toTopOf="@+id/promptView"
-            app:layout_constraintEnd_toStartOf="@+id/frequencySlider" />
-
-        <TextView
-            android:id="@+id/frequencySelectorMax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="32dp"
-            android:text="@string/frequency_selector_max_text"
-            app:layout_constraintBottom_toTopOf="@+id/promptView"
-            app:layout_constraintStart_toEndOf="@+id/frequencySlider" />
 
         <Button
             android:id="@+id/createStoryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            style="@style/PrimaryButton"
             android:text="@string/create_story_button_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/promptView" />
-
-        <TextView
-            android:id="@+id/storyView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/createStoryButton" />
-
-        <EditText
-            android:id="@+id/promptView"
-            android:layout_width="195dp"
-            android:layout_height="139dp"
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="@string/create_story_prompt_hint"
-            android:inputType="textMultiLine"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/presenceSlider"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <ProgressBar
             android:id="@+id/storyCreateLoadingWheel"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/createStoryButton"
-            app:layout_constraintHorizontal_bias="0.708"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/createStoryButton"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintBottom_toBottomOf="@+id/promptView"
+            app:layout_constraintEnd_toEndOf="@+id/promptView"
+            app:layout_constraintStart_toStartOf="@+id/promptView"
+            app:layout_constraintTop_toTopOf="@+id/promptView" />
 
-        <ImageButton
-            android:id="@+id/recordButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/createStoryButton"
-            app:layout_constraintEnd_toStartOf="@+id/promptView"
-            app:layout_constraintTop_toBottomOf="@+id/lengthSlider"
-            app:layout_constraintVertical_bias="0.72"
-            app:srcCompat="@drawable/ic_baseline_mic_border_24" />
 
-        <SeekBar
-            android:id="@+id/frequencySlider"
-            android:layout_width="179dp"
-            android:layout_height="19dp"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/promptView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <SeekBar
-            android:id="@+id/temperatureSlider"
-            android:layout_width="179dp"
-            android:layout_height="19dp"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/presenceSlider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <SeekBar
-            android:id="@+id/presenceSlider"
-            android:layout_width="179dp"
-            android:layout_height="19dp"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/frequencySlider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

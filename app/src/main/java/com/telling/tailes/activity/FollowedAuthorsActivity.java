@@ -84,11 +84,13 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         if (followedAuthorIds.size() == 0) {
                             authorCardList.add(new AuthorRviewCard(2));
                             authorRviewAdapter.notifyDataSetChanged();
+                            authorPullRefresh.setEnabled(false);
                             break;
                         }
                         for (String authorId : followedAuthorIds) {
                             authorCardList.add(new AuthorRviewCard(authorId));
                             authorRviewAdapter.notifyDataSetChanged();
+                            authorPullRefresh.setEnabled(true);
                         }
                         authorPullRefresh.setRefreshing(false);
                         break;
@@ -253,10 +255,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }
                 });
-
             }
         });
-
     }
-
 }

@@ -12,7 +12,6 @@ import com.telling.tailes.R;
 import com.telling.tailes.activity.OnUnfollowClickCallbackListener;
 import com.telling.tailes.card.AuthorRviewCard;
 import com.telling.tailes.card.AuthorRviewCardClickListener;
-import com.telling.tailes.card.StoryRviewCard;
 
 import java.util.ArrayList;
 
@@ -46,7 +45,6 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter{
             default:
                 return -1;
         }
-
     }
 
     @NonNull
@@ -90,7 +88,7 @@ public class AuthorRviewAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public int getItemCount() { return authorCardList != null ? authorCardList.size() : 0; }
-
-
+    public int getItemCount() {
+        return authorCardList != null ? authorCardList.size() : 0;
+    }
 }

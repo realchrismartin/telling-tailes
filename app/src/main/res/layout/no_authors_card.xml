@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme"
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:layout_margin="3dp"
-    app:cardElevation="10dp"
     app:cardCornerRadius="5dp"
-    app:cardBackgroundColor="#FFF"
+    app:cardBackgroundColor="@color/off_white"
+    app:cardElevation="0dp"
     android:id="@+id/no_author_card">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:background="@color/off_white">
 
         <TextView
             android:id="@+id/noAuthorCardText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Follow someone!"
+            android:text="You aren't following any authors. Find a story you like and click the author's name to follow them."
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

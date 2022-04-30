@@ -26,7 +26,7 @@ public class GPTUtils {
         Given a prompt and length, generate a story
         If the story is not appropriate, keep generating stories until we find an appropriate one
      */
-    public static String getStory(Context context, String prompt, int length, double temperature, double presence, double frequency) {
+    public static String getStory(Context context, String prompt, int length) {
 
         boolean appropriate = false;
         int maxIterations = 5;
@@ -36,7 +36,7 @@ public class GPTUtils {
         for (int i = 0; i < maxIterations; i++) {
 
             //Complete the prompt and create a story
-            possibleStory = getPromptCompletion(context, prompt, length,temperature,presence,frequency);
+            possibleStory = getPromptCompletion(context, prompt, length);
 
             if (possibleStory.length() <= 0) {
                 break;
@@ -152,7 +152,7 @@ public class GPTUtils {
         return false;
     }
 
-    private static String getPromptCompletion(Context context, String prompt, int length, double temperature, double presence, double frequency) {
+    private static String getPromptCompletion(Context context, String prompt, int length) {
         try {
 
             if(length < 5) {
@@ -161,30 +161,6 @@ public class GPTUtils {
 
             if(length > 2048) {
                 length = 2048;
-            }
-
-            if(presence < -2.0) {
-               presence = -2.0;
-            }
-
-            if (presence > 2.0) {
-                presence = 2.0;
-            }
-
-            if(frequency < -2.0) {
-                frequency = -2.0;
-            }
-
-            if(frequency > 2.0) {
-                frequency = 2.0;
-            }
-
-            if(temperature < 0.0) {;
-                temperature = 0.0;
-            }
-
-            if(temperature > 1.0) {
-                temperature = 1.0;
             }
 
             String serverToken = context.getString(R.string.gpt_api_token);
@@ -201,9 +177,6 @@ public class GPTUtils {
             try {
                 body.put("prompt", prompt);
                 body.put("max_tokens", length);
-                body.put("presence_penalty",presence);
-                body.put("frequency_penalty",frequency);
-                body.put("temperature",temperature);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return "";
@@ -243,7 +216,6 @@ public class GPTUtils {
 
             try {
 
-                //TODO: perhaps don't return the first choice only?
                 JSONObject choice = choices.getJSONObject(0);
                 String story = choice.getString("text");
 
@@ -271,7 +243,6 @@ public class GPTUtils {
                 stringBuilder.append(len);
             }
             bufferedReader.close();
-            //TODO: check this formatting to make sure it's right
             res = stringBuilder.toString().replace(",", ",\n");
         } catch (Exception e) {
             e.printStackTrace();

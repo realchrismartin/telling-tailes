@@ -54,7 +54,7 @@
             app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
             app:layout_constraintHorizontal_bias="0.87"
             app:layout_constraintVertical_bias="0.93"
-            app:srcCompat="@drawable/ic_baseline_post_add_24"
+            app:srcCompat="@drawable/add_new_story_white"
             android:contentDescription="Create New Tail" />
 
 

@@ -12,6 +12,7 @@ import com.telling.tailes.R;
 import com.telling.tailes.card.AuthorRviewCardClickListener;
 
 public class AuthorRviewHolder extends RecyclerView.ViewHolder {
+
     public TextView authorName;
     public Button unfollowButton;
 
@@ -33,7 +34,5 @@ public class AuthorRviewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-
-
     }
 }
