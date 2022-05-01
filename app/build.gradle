@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\whysg\\WRC_Keystore\\WRCKeystore.jks')
+            storePassword 'will0811'
+            keyAlias 'cs5520key'
+            keyPassword 'will0811'
+        }
+    }
     compileSdk 32
 
     defaultConfig {
@@ -22,6 +30,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {

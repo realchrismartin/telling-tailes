@@ -27,9 +27,6 @@
             android:exported="false"
             android:parentActivityName=".activity.StoryFeedActivity" />
         <activity
-            android:name=".fragment.HamburgerMenuFragment"
-            android:exported="false" />
-        <activity
             android:name=".activity.UserSettingsActivity"
             android:exported="false"
             android:parentActivityName=".activity.StoryFeedActivity" />
