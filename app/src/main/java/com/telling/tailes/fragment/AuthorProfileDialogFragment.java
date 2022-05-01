@@ -166,7 +166,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeByFollowedAuthors);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeByAuthor);
                 intent.putExtra(StringUtils.intentExtraAuthorId,authorId);
                 startActivity(intent);
             }
