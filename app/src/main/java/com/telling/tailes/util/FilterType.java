@@ -18,7 +18,7 @@ public enum FilterType {
     POPULAR,
     NONE;
 
-    private String authorUsernameFilter = ""; //Only set if filter is for specific author
+    private String authorUsernameFilter = StringUtils.emptyString; //Only set if filter is for specific author
     private ArrayList<String> bookmarksFilter = new ArrayList<>(); // Only set if filter is for bookmarks
     private ArrayList<String> followsFilter = new ArrayList<>(); // Only set if filter is for bookmarks
 
@@ -26,22 +26,22 @@ public enum FilterType {
     public static FilterType get(String str) {
         FilterType ft;
         switch (str) {
-            case ("My T(ai)les"): {
+            case (StringUtils.filterTypeMyTailes): {
                 return MY;
             }
-            case ("Bookmarks"): {
+            case (StringUtils.filterTypeBookmarks): {
                 return BOOKMARKS;
             }
-            case ("Drafts"): {
+            case (StringUtils.filterTypeDrafts): {
                 return DRAFTS;
             }
-            case ("By Author") : {
+            case (StringUtils.filterTypeByAuthor): {
                 return AUTHOR;
             }
-            case ("Popular") : {
+            case (StringUtils.filterTypePopular): {
                 return POPULAR;
             }
-            case ("By Followed Authors"): {
+            case (StringUtils.filterTypeByFollowedAuthors): {
                 return FOLLOWING;
             }
             default:
@@ -51,35 +51,35 @@ public enum FilterType {
 
     //Return the property this filter sorts FB data results by
     private static String getSortProperty(FilterType type) {
-        switch(type) {
+        switch (type) {
             case POPULAR: {
-                return "loveCount";
+                return StringUtils.filterSortPropertyLoveCount;
             }
             default: {
-                return "timestamp";
+                return StringUtils.filterSortPropertyTimestamp;
             }
         }
     }
 
     //Given a Story, return the property this filter would sort that story by
     public Object getSortPropertyValue(Story story) {
-       switch(getSortProperty(this)) {
-           case "id": {
-               return story.getId();
-           }
-           case "loveCount": {
-              return story.getLoveCount();
-           }
-           case "timestamp": {
-               return story.getTimestamp();
-           }
-           case "title": {
-               return story.getTitle();
-           }
-           default : {
-               return "";
-           }
-       }
+        switch (getSortProperty(this)) {
+            case StringUtils.filterSortPropertyId: {
+                return story.getId();
+            }
+            case StringUtils.filterSortPropertyLoveCount: {
+                return story.getLoveCount();
+            }
+            case StringUtils.filterSortPropertyTimestamp: {
+                return story.getTimestamp();
+            }
+            case StringUtils.filterSortPropertyTitle: {
+                return story.getTitle();
+            }
+            default: {
+                return StringUtils.emptyString;
+            }
+        }
     }
 
     //Get a Query for this FilterType from the provided ref that is appropriate for this filter
@@ -89,10 +89,10 @@ public enum FilterType {
         if (lastLoadedStorySortValue == null) {
             return ref.orderByChild(key).limitToFirst(10);
         }
-        if (key.equals("timestamp") || key.equals("loveCount")) {
+        if (key.equals(StringUtils.filterSortPropertyTimestamp) || key.equals(StringUtils.filterSortPropertyLoveCount)) {
             return ref.orderByChild(key).limitToFirst(10).startAfter((double) lastLoadedStorySortValue);
         }
-        return ref.orderByChild(key).limitToFirst(10).startAfter((String)lastLoadedStorySortValue);
+        return ref.orderByChild(key).limitToFirst(10).startAfter((String) lastLoadedStorySortValue);
     }
 
     //Return true if this filter includes the provided story, false otherwise
@@ -108,7 +108,7 @@ public enum FilterType {
                 return bookmarksFilter.contains(story.getId()) && !story.getIsDraft();
             }
             case AUTHOR: {
-               return (authorUsernameFilter.equals("") || story.getAuthorID().equals(authorUsernameFilter)) && !story.getIsDraft();
+                return (authorUsernameFilter.equals(StringUtils.emptyString) || story.getAuthorID().equals(authorUsernameFilter)) && !story.getIsDraft();
             }
             case FOLLOWING: {
                 return followsFilter.contains(story.getAuthorID()) && !story.getIsDraft();
@@ -134,7 +134,11 @@ public enum FilterType {
         this.followsFilter = follows;
     }
 
-    public void addFollowFilter(String username) {this.followsFilter.add(username); }
+    public void addFollowFilter(String username) {
+        this.followsFilter.add(username);
+    }
 
-    public void removeFollowFilter(String username) { this.followsFilter.remove(username); }
+    public void removeFollowFilter(String username) {
+        this.followsFilter.remove(username);
+    }
 }

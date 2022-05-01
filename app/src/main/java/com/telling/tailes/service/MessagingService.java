@@ -25,9 +25,6 @@ import java.util.function.Consumer;
 
 public class MessagingService extends FirebaseMessagingService {
 
-    private static final String CHANNEL_ID = "CHANNEL_ID";
-    private static final String NOTIFICATION_GROUP_ID = "com.telling.tailes.NOTIFICATION";
-
     @Override
     public void onNewToken(String newToken) {
 
@@ -36,7 +33,7 @@ public class MessagingService extends FirebaseMessagingService {
             @Override
             public void accept(User user) {
                 if(user == null) {
-                    Log.e("MessagingService.onNewToken","User returned from updateUserToken was null, token may not have been updated");
+                    Log.e(StringUtils.messagingServiceTag,StringUtils.fcmTokenError);
                 }
             }
         });
@@ -58,18 +55,18 @@ public class MessagingService extends FirebaseMessagingService {
             if(notification != null) {
                 String type = remoteMessage.getData().get("type");
                 if (type == null) {
-                    type = "";
-                    Log.e("Message Received", "FCM type member is null");
+                    type = StringUtils.emptyString;
+                    Log.e(StringUtils.messagingServiceTag, StringUtils.messagingServiceErrorType);
                 }
-                String storyId = remoteMessage.getData().get("storyID");
+                String storyId = remoteMessage.getData().get(StringUtils.intentExtraStoryId);
                 if (storyId == null) {
-                    storyId = "";
-                    Log.e("Message Received", "FCM storyId member is null");
+                    storyId = StringUtils.emptyString;
+                    Log.e(StringUtils.messagingServiceTag, StringUtils.messagingServiceErrorStoryId);
                 }
-                String followerUsername = remoteMessage.getData().get("followerUsername");
+                String followerUsername = remoteMessage.getData().get(StringUtils.intentExtraFollowerUsername);
                 if (followerUsername == null) {
-                    followerUsername = "";
-                    Log.e("Message Received", "FCM followerUsername is null");
+                    followerUsername = StringUtils.emptyString;
+                    Log.e(StringUtils.messagingServiceTag, StringUtils.messagingServiceErrorFollowerUsername);
                 }
 
                 showNotification(notification, type, storyId, followerUsername);
@@ -88,11 +85,9 @@ public class MessagingService extends FirebaseMessagingService {
         switch (type) {
             case("love"):
             case ("publish"): {
-                Log.d("message handler", "PUBLISH");
                 // Create an Intent for the activity you want to start
                 intent = new Intent(this, ReadStoryActivity.class);
-                // add story here
-                intent.putExtra("storyID", storyId);
+                intent.putExtra(StringUtils.intentExtraStoryId, storyId);
 
                 // Create the TaskStackBuilder and add the intent, which inflates the back stack
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -105,11 +100,10 @@ public class MessagingService extends FirebaseMessagingService {
                 break;
             }
             case ("follow") : {
-                Log.d("message handler", "follow");
                 intent = new Intent(getApplicationContext(), StoryFeedActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("feedFilter", "By Author");
-                intent.putExtra("authorId", followerUsername);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeByAuthor);
+                intent.putExtra(StringUtils.intentExtraAuthorId, followerUsername);
 
                 notificationId = StringUtils.toIntegerId(followerUsername);
                 pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_ONE_SHOT);
@@ -118,7 +112,6 @@ public class MessagingService extends FirebaseMessagingService {
 
 
             default:
-                Log.d("message handler", "default");
                 intent = new Intent(getApplicationContext(), StoryFeedActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 notificationId = StringUtils.toIntegerId(storyId);
@@ -128,23 +121,23 @@ public class MessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
 
         //Actual notification
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        Notification notification = new NotificationCompat.Builder(this, StringUtils.notificationChannelId)
                 .setContentTitle(remoteMessageNotification.getTitle())
                 .setContentText(remoteMessageNotification.getBody())
                 .setColor(Color.argb(100, 100,100, 100))
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.bookwithmark_color)
                 .setContentIntent(pendingIntent)
-                .setGroup(NOTIFICATION_GROUP_ID)
+                .setGroup(StringUtils.notificationGroupId)
                 .build();
 
         //Summary notification for compatibility with older versions of Android
-        Notification summaryNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
+        Notification summaryNotification = new NotificationCompat.Builder(this, StringUtils.notificationChannelId)
                 .setContentTitle(remoteMessageNotification.getTitle())
                 .setContentText("New Messages")
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.bookwithmark_color)
-                .setGroup(NOTIFICATION_GROUP_ID)
+                .setGroup(StringUtils.notificationGroupId)
                 .setGroupSummary(true)
                 .build();
 

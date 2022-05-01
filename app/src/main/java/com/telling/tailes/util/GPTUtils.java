@@ -9,10 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -30,8 +27,8 @@ public class GPTUtils {
 
         boolean appropriate = false;
         int maxIterations = 5;
-        String story = "";
-        String possibleStory = "";
+        String story = StringUtils.emptyString;
+        String possibleStory = StringUtils.emptyString;
 
         for (int i = 0; i < maxIterations; i++) {
 
@@ -60,27 +57,27 @@ public class GPTUtils {
     private static boolean isStoryAppropriate(Context context, String story) {
 
         try {
-            String serverToken = context.getString(R.string.gpt_api_token);
+            String serverToken = StringUtils.gptToken;
 
             //Wrap prompt
-            story = "<|endoftext|>" + story + "\n--\nLabel:";
+            story = StringUtils.gptCompletionStart + story + StringUtils.gptCompletionEnd;
 
-            URL url = new URL(context.getString(R.string.gpt_api_filter_uri));
+            URL url = new URL(StringUtils.gptFilterURI);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + serverToken);
+            conn.setRequestMethod(StringUtils.httpPostMethod);
+            conn.setRequestProperty(StringUtils.httpContentType, StringUtils.httpContentTypeJSON);
+            conn.setRequestProperty(StringUtils.httpAuthorization, StringUtils.httpAuthorizationBearer + StringUtils.space + serverToken);
             conn.setDoOutput(true);
 
             JSONObject body = new JSONObject();
 
             try {
-                body.put("prompt", story);
-                body.put("max_tokens", 1);
-                body.put("top_p", 0);
-                body.put("logprobs", 10);
-                body.put("temperature", 0.0);
+                body.put(StringUtils.gptPropertyPrompt, story);
+                body.put(StringUtils.gptPropertyMaxTokens, 1);
+                body.put(StringUtils.gptPropertyTopP, 0);
+                body.put(StringUtils.gptPropertyLogProbs, 10);
+                body.put(StringUtils.gptPropertyTemperature, 0.0);
             } catch (JSONException e) {
                 e.printStackTrace();
                 return false;
@@ -95,7 +92,7 @@ public class GPTUtils {
                 return false;
             }
 
-            String result = readString(conn.getInputStream());
+            String result = StringUtils.readString(conn.getInputStream());
             JSONObject responseObject;
 
             try {
@@ -108,13 +105,13 @@ public class GPTUtils {
             JSONArray choices = new JSONArray();
 
             try {
-                choices = responseObject.getJSONArray("choices");
+                choices = responseObject.getJSONArray(StringUtils.gptPropertyChoices);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             if (choices.length() <= 0) {
-                Log.e("GPTUtils", "Response had no choices");
+                Log.e(StringUtils.gptUtilsTag, StringUtils.gptUtilsErrorNoChoices);
                 return false;
             }
 
@@ -122,14 +119,14 @@ public class GPTUtils {
                 double toxicityThreshold = -0.355;
 
                 JSONObject filterObject = choices.getJSONObject(0);
-                int offensivenessLevel = Integer.parseInt((String) (filterObject.get("text")));
+                int offensivenessLevel = Integer.parseInt((String) (filterObject.get(StringUtils.gptPropertyText)));
 
-                JSONObject logProbs = filterObject.getJSONObject("logprobs");
-                JSONArray topLogProbs = logProbs.getJSONArray("top_logprobs");
+                JSONObject logProbs = filterObject.getJSONObject(StringUtils.gptPropertyLogProbs);
+                JSONArray topLogProbs = logProbs.getJSONArray(StringUtils.gptPropertyTopLogProbs);
                 JSONObject allLogProbs = topLogProbs.getJSONObject(0);
 
-                Double prob1 = (Double)allLogProbs.get("1");
-                Double prob2 = (Double)allLogProbs.get("2");
+                Double prob1 = (Double)allLogProbs.get(StringUtils.gptProbabilityLevel1);
+                Double prob2 = (Double)allLogProbs.get(StringUtils.gptProbabilityLevel2);
 
                 switch (offensivenessLevel) {
                     case 0:
@@ -163,23 +160,23 @@ public class GPTUtils {
                 length = 2048;
             }
 
-            String serverToken = context.getString(R.string.gpt_api_token);
-            URL url = new URL(context.getString(R.string.gpt_api_completion_uri));
+            String serverToken = StringUtils.gptToken;
+            URL url = new URL(StringUtils.gptCompletionURI);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + serverToken);
+            conn.setRequestMethod(StringUtils.httpPostMethod);
+            conn.setRequestProperty(StringUtils.httpContentType, StringUtils.httpContentTypeJSON);
+            conn.setRequestProperty(StringUtils.httpAuthorization, StringUtils.httpAuthorizationBearer + StringUtils.space + serverToken);
             conn.setDoOutput(true);
 
             JSONObject body = new JSONObject();
 
             try {
-                body.put("prompt", prompt);
-                body.put("max_tokens", length);
+                body.put(StringUtils.gptPropertyPrompt, prompt);
+                body.put(StringUtils.gptPropertyMaxTokens, length);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return "";
+                return StringUtils.emptyString;
             }
 
             try {
@@ -188,66 +185,45 @@ public class GPTUtils {
                 outputStream.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                return "";
+                return StringUtils.emptyString;
             }
 
-            String result = readString(conn.getInputStream());
+            String result = StringUtils.readString(conn.getInputStream());
             JSONObject responseObject;
 
             try {
                 responseObject = new JSONObject(result);
             } catch (JSONException e) {
                 e.printStackTrace();
-                return "";
+                return StringUtils.emptyString;
             }
 
             JSONArray choices = new JSONArray();
 
             try {
-                choices = responseObject.getJSONArray("choices");
+                choices = responseObject.getJSONArray(StringUtils.gptPropertyChoices);
             } catch (JSONException e) {
-                e.printStackTrace();
+                return e.toString();
             }
 
             if (choices.length() <= 0) {
-                Log.e("GPTUtils", "Response had no choices");
-                return "";
+                Log.e(StringUtils.gptUtilsTag, StringUtils.gptUtilsErrorNoChoices);
+                return StringUtils.emptyString;
             }
 
             try {
 
                 JSONObject choice = choices.getJSONObject(0);
-                String story = choice.getString("text");
+                String story = choice.getString(StringUtils.gptPropertyText);
 
                 return story;
             } catch (JSONException e) {
                 e.printStackTrace();
+                return StringUtils.emptyString;
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return StringUtils.emptyString;
         }
-
-        return "";
-    }
-
-    /*
-        Helper method to read a string from an InputStream
-     */
-    private static String readString(InputStream inputStream) {
-        StringBuilder stringBuilder = new StringBuilder();
-        String res = "";
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String len;
-            while ((len = bufferedReader.readLine()) != null) {
-                stringBuilder.append(len);
-            }
-            bufferedReader.close();
-            res = stringBuilder.toString().replace(",", ",\n");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return res;
     }
 }

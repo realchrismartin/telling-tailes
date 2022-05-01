@@ -21,6 +21,7 @@ import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -48,7 +49,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followed_authors);
 
-        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(), StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(3);
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
@@ -58,14 +59,14 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     return;
                 }
 
-                switch (msg.getData().getString("type")) {
-                    case("unfollowAuthor"): {
-                        if (msg.getData()== null || msg.getData().getInt("error") > 0) {
+                switch (msg.getData().getString(StringUtils.backgroundTaskResultType)) {
+                    case(StringUtils.backgroundResultPropertyUnfollow): {
+                        if (msg.getData()== null || msg.getData().getInt(StringUtils.backgroundTaskResultError) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
                         }
-                        String removedId = msg.getData().getString("username");
+                        String removedId = msg.getData().getString(StringUtils.backgroundTaskResultUsername);
                         for (AuthorRviewCard authorCard : authorCardList) {
                             if (authorCard.getAuthor() == removedId) {
                                 authorCardList.remove(authorCard);
@@ -79,8 +80,8 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         }
                         break;
                     }
-                    case ("followedAuthors"): {
-                        followedAuthorIds = msg.getData().getStringArrayList("follows");
+                    case (StringUtils.backgroundResultPropertyFollowed): {
+                        followedAuthorIds = msg.getData().getStringArrayList(StringUtils.backgroundTaskResultFollows);
                         if (followedAuthorIds.size() == 0) {
                             authorCardList.add(new AuthorRviewCard(2));
                             authorRviewAdapter.notifyDataSetChanged();
@@ -96,14 +97,14 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         break;
                     }
 
-                    case ("authorProfile"): {
+                    case (StringUtils.backgroundResultPropertyAuthorProfile): {
 
                         if (authorProfileDialogFragment != null) {
                             authorProfileDialogFragment.dismiss();
                         }
 
                         //Show a generic error instead of loading author profile if data wasn't retrieved properly
-                        if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                        if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
@@ -112,12 +113,12 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         //If all is well, show the author profile fragment with the retrieved data
                         authorProfileDialogFragment = new AuthorProfileDialogFragment();
                         authorProfileDialogFragment.setArguments(msg.getData());
-                        authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
+                        authorProfileDialogFragment.show(getSupportFragmentManager(), StringUtils.authorProfileDialogFragment);
                         break;
                     }
 
                     default: {
-                        if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                        if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
@@ -141,7 +142,6 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
         AuthorRviewCardClickListener authorClickListener = new AuthorRviewCardClickListener() {
             @Override
             public void onAuthorClick(int position) {
-                Log.d("Author list", "handle card click");
                 String username = authorCardList.get(position).getAuthor();
                 handleAuthorClick(username);
             }
@@ -167,8 +167,8 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     public void accept(User user) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "followedAuthors");
-                        resultData.putStringArrayList("follows", user.getFollows());
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyFollowed);
+                        resultData.putStringArrayList(StringUtils.backgroundTaskResultFollows, user.getFollows());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -211,16 +211,16 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
 
                         //Set up a bundle of author profile result data
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "authorProfile");
-                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyAuthorProfile);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
 
                         if (authorProfile != null) {
-                            resultData.putString("authorId", authorProfile.getAuthorId());
-                            resultData.putInt("storyCount", authorProfile.getStoryCount());
-                            resultData.putInt("loveCount", authorProfile.getLoveCount());
-                            resultData.putInt("followCount", authorProfile.getFollowCount());
-                            resultData.putBoolean("following", authorProfile.following());
-                            resultData.putInt("profileIcon", authorProfile.getProfileIcon());
+                            resultData.putString(StringUtils.backgroundTaskResultDataAuthorId, authorProfile.getAuthorId());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
+                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon, authorProfile.getProfileIcon());
                         }
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -241,10 +241,10 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     @Override
                     public void accept(User user) {
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "unfollowAuthor");
-                        resultData.putInt("error", user != null ? 0:1);
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyUnfollow);
+                        resultData.putInt(StringUtils.backgroundTaskResultError, user != null ? 0:1);
                         if (user != null) {
-                            resultData.putString("username", username);
+                            resultData.putString(StringUtils.backgroundTaskResultUsername, username);
                         }
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);

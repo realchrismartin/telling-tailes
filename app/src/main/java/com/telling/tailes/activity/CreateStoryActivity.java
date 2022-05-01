@@ -44,10 +44,6 @@ public class CreateStoryActivity extends AppCompatActivity {
     //Request IDs
     private static final int REQUEST_AUDIO = 0;
 
-    //Bundle data keys
-    private static final String resultKey = "Result";
-    private static final String storyKey = "Story";
-
     //Notification string resources
     private String genericErrorNotification;
     private String lengthTooLongNotification;
@@ -78,7 +74,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         createInProgressNotification = getString(R.string.create_in_progress_notification);
 
         //Set up toast
-        toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(),  StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         //Set up views
         lengthSeekBar = findViewById(R.id.lengthSlider);
@@ -88,8 +84,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         //If intent includes a prompt, prepopulate the prompt
         //Note that this will be overridden by saved intent data, if present in the bundle
-        if(getIntent().hasExtra("prompt")) {
-            promptView.setText(getIntent().getStringExtra("prompt"));
+        if(getIntent().hasExtra(StringUtils.intentExtraPrompt)) {
+            promptView.setText(getIntent().getStringExtra(StringUtils.intentExtraPrompt));
         }
 
         //Load saved bundle data if applicable
@@ -107,9 +103,9 @@ public class CreateStoryActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 hideLoadingWheel();
-                if(validateCreatedStory(msg.getData().getInt(resultKey)))
+                if(validateCreatedStory(msg.getData().getInt(StringUtils.backgroundResultPropertyResult)))
                 {
-                    goToPublish(promptView.getText().toString(),msg.getData().getString(storyKey));
+                    goToPublish(promptView.getText().toString(),msg.getData().getString(StringUtils.backgroundResultPropertyStory));
                 }
             }
         };
@@ -146,7 +142,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                             return;
                         }
 
-                        Log.e("Listening for voice input", "Voice input has result but no data - this is an anomalous result");
+                        Log.e(StringUtils.voiceInputErrorTag, StringUtils.voiceInputErrorMsg);
                     }});
 
         //Define click handler for recording prompt from voice
@@ -191,8 +187,8 @@ public class CreateStoryActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        state.putString("prompt",promptView.getText().toString());
-        state.putInt("length",lengthSeekBar.getProgress());
+        state.putString(StringUtils.savedInstancePrompt, promptView.getText().toString());
+        state.putInt(StringUtils.savedInstanceProgress, lengthSeekBar.getProgress());
         super.onSaveInstanceState(state);
     }
 
@@ -204,8 +200,8 @@ public class CreateStoryActivity extends AppCompatActivity {
             return;
         }
 
-        lengthSeekBar.setProgress(state.getInt("progress"));
-        promptView.setText(state.getString("prompt"));
+        lengthSeekBar.setProgress(state.getInt(StringUtils.savedInstanceProgress));
+        promptView.setText(state.getString(StringUtils.savedInstancePrompt));
     }
 
     private void hideLoadingWheel() {
@@ -220,8 +216,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private void goToPublish(String prompt, String story) {
         Intent intent = new Intent(this,PublishStoryActivity.class);
-        intent.putExtra("prompt",prompt);
-        intent.putExtra("story",story);
+        intent.putExtra(StringUtils.intentExtraPrompt, prompt);
+        intent.putExtra(StringUtils.intentExtraStory,story);
         startActivity(intent);
     }
 
@@ -231,7 +227,7 @@ public class CreateStoryActivity extends AppCompatActivity {
      */
     private boolean validateCreateStory() {
         boolean valid = true;
-        String error = "";
+        String error =  StringUtils.emptyString;
 
         String prompt = promptView.getText().toString().trim();
         int length = lengthSeekBar.getProgress();
@@ -239,24 +235,24 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         if(wordCount < promptMinWords)
         {
-            error = getString(R.string.prompt_too_short_1) + " " + promptMinWords + " " + getString(R.string.prompt_too_short_2) + " " + wordCount + " " + getString(R.string.prompt_too_short_3);
+            error = getString(R.string.prompt_too_short_1) + StringUtils.space + promptMinWords + StringUtils.space + getString(R.string.prompt_too_short_2) + StringUtils.space + wordCount + StringUtils.space + getString(R.string.prompt_too_short_3);
         }
 
         if(length < lengthMin)
         {
-            if(error.length() > 0) { error += "\n"; }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += lengthTooShortNotification;
         }
 
         if(length > lengthMax)
         {
-            if(error.length() > 0) { error += "\n"; }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += lengthTooLongNotification;
         }
 
         if(loading)
         {
-            if(error.length() > 0) { error += "\n"; }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += createInProgressNotification;
         }
 
@@ -277,7 +273,7 @@ public class CreateStoryActivity extends AppCompatActivity {
     {
        boolean valid = true;
 
-       String error = "";
+       String error = StringUtils.emptyString;
 
        if(resultCode != 0)
        {
@@ -310,8 +306,8 @@ public class CreateStoryActivity extends AppCompatActivity {
                 //Set up a bundle
                 //Result code != 0 means something in GPT failed
                 Bundle resultData = new Bundle();
-                resultData.putInt(resultKey, resultCode);
-                resultData.putString(storyKey, story);
+                resultData.putInt(StringUtils.backgroundResultPropertyResult, resultCode);
+                resultData.putString(StringUtils.backgroundResultPropertyStory, story);
 
                 Message resultMessage = new Message();
                 resultMessage.setData(resultData);

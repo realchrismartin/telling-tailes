@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
 import com.telling.tailes.R;
+import com.telling.tailes.util.StringUtils;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -53,7 +54,7 @@ public class AboutActivity extends AppCompatActivity {
         moreInformationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://openai.com/api/"));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(StringUtils.gptOpenAiURI));
                 startActivity(intent);
             }
         });

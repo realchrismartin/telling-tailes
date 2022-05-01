@@ -1,5 +1,8 @@
 package com.telling.tailes.card;
 
+import com.telling.tailes.R;
+import com.telling.tailes.util.StringUtils;
+
 public class AuthorRviewCard {
     public static final Integer CARD_TYPE_AUTHOR = 0;
     public static final Integer CARD_TYPE_LOADING = 1;
@@ -24,11 +27,11 @@ public class AuthorRviewCard {
             case(0):
                 return authorId;
             case(1):
-                return "loading";
+                return StringUtils.loadingString;
             case(2):
-                return "noauthors";
+                return StringUtils.noAuthorsString;
             default:
-                return "error";
+                return StringUtils.errorString;
         }
     }
 

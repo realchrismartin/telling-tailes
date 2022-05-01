@@ -21,6 +21,7 @@ import com.telling.tailes.activity.FollowedAuthorsActivity;
 import com.telling.tailes.activity.StoryFeedActivity;
 import com.telling.tailes.activity.UserSettingsActivity;
 import com.telling.tailes.databinding.FragmentToolbarBinding;
+import com.telling.tailes.util.StringUtils;
 
 public class HamburgerMenuFragment extends Fragment {
     private Intent intent;
@@ -59,51 +60,42 @@ public class HamburgerMenuFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.view_feed:
                 // Navigate to settings screen
-                Log.d("menu onClick", "VIEW FEED");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.create_new_story:
                 // Save profile changes
-                Log.d("menu onClick", "NEW STORY");
                 intent = new Intent(getContext(), CreateStoryActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.view_my_stories:
-                Log.d("menu onClick", "VIEW MY STORIES");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "My T(ai)les");
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeMyTailes);
                 startActivity(intent);
                 return true;
             case R.id.view_my_drafts:
-                Log.d("menu onClick", "VIEW MY DRAFTS");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "Drafts");
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeDrafts);
                 startActivity(intent);
                 return true;
             case R.id.view_my_bookmarks:
-                Log.d("menu onClick", "VIEW BOOKMARKS");
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "Bookmarks");
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeBookmarks);
                 startActivity(intent);
                 return true;
             case R.id.view_saved_authors:
-                Log.d("menu onClick", "VIEW FOLLOWED AUTHORS");
                 intent = new Intent(getContext(), FollowedAuthorsActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.view_settings:
-                Log.d("menu onClick", "USER SETTINGS");
                 intent = new Intent(getContext(), UserSettingsActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.about_gpt_3:
-                Log.d("menu onClick", "ABOUT");
                 intent = new Intent(getContext(), AboutActivity.class);
                 startActivity(intent);
                 return true;
             default:
-                Log.d("menu onClick", "default (ruh roh)");
                 return false;
         }
     }
