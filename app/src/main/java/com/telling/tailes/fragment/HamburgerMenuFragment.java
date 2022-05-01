@@ -70,17 +70,17 @@ public class HamburgerMenuFragment extends Fragment {
                 return true;
             case R.id.view_my_stories:
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra(getString(R.string.intent_extra_feed_filter), StringUtils.filterTypeMyTailes);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeMyTailes);
                 startActivity(intent);
                 return true;
             case R.id.view_my_drafts:
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra(getString(R.string.intent_extra_feed_filter), StringUtils.filterTypeDrafts);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeDrafts);
                 startActivity(intent);
                 return true;
             case R.id.view_my_bookmarks:
                 intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra(getString(R.string.intent_extra_feed_filter), StringUtils.filterTypeBookmarks);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeBookmarks);
                 startActivity(intent);
                 return true;
             case R.id.view_saved_authors:

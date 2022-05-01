@@ -49,7 +49,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followed_authors);
 
-        toast = Toast.makeText(getApplicationContext(), getString(R.string.empty_string), Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(), StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(3);
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
@@ -59,14 +59,14 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     return;
                 }
 
-                switch (msg.getData().getString(getString(R.string.background_task_result_type))) {
+                switch (msg.getData().getString(StringUtils.backgroundTaskResultType)) {
                     case(StringUtils.backgroundResultPropertyUnfollow): {
-                        if (msg.getData()== null || msg.getData().getInt(getString(R.string.background_task_result_error)) > 0) {
+                        if (msg.getData()== null || msg.getData().getInt(StringUtils.backgroundTaskResultError) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
                         }
-                        String removedId = msg.getData().getString(getString(R.string.background_task_result_username));
+                        String removedId = msg.getData().getString(StringUtils.backgroundTaskResultUsername);
                         for (AuthorRviewCard authorCard : authorCardList) {
                             if (authorCard.getAuthor() == removedId) {
                                 authorCardList.remove(authorCard);
@@ -81,7 +81,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         break;
                     }
                     case (StringUtils.backgroundResultPropertyFollowed): {
-                        followedAuthorIds = msg.getData().getStringArrayList(getString(R.string.background_task_result_follows));
+                        followedAuthorIds = msg.getData().getStringArrayList(StringUtils.backgroundTaskResultFollows);
                         if (followedAuthorIds.size() == 0) {
                             authorCardList.add(new AuthorRviewCard(2));
                             authorRviewAdapter.notifyDataSetChanged();
@@ -104,7 +104,7 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         }
 
                         //Show a generic error instead of loading author profile if data wasn't retrieved properly
-                        if (msg.getData() == null || msg.getData().getInt(getString(R.string.background_task_result_result)) > 0) {
+                        if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
@@ -113,12 +113,12 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                         //If all is well, show the author profile fragment with the retrieved data
                         authorProfileDialogFragment = new AuthorProfileDialogFragment();
                         authorProfileDialogFragment.setArguments(msg.getData());
-                        authorProfileDialogFragment.show(getSupportFragmentManager(), getString(R.string.author_profile_dialog_fragment));
+                        authorProfileDialogFragment.show(getSupportFragmentManager(), StringUtils.authorProfileDialogFragment);
                         break;
                     }
 
                     default: {
-                        if (msg.getData() == null || msg.getData().getInt(getString(R.string.background_task_result_result)) > 0) {
+                        if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
@@ -167,8 +167,8 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     public void accept(User user) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putString(getString(R.string.background_task_result_type), StringUtils.backgroundResultPropertyFollowed);
-                        resultData.putStringArrayList(getString(R.string.background_task_result_follows), user.getFollows());
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyFollowed);
+                        resultData.putStringArrayList(StringUtils.backgroundTaskResultFollows, user.getFollows());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -211,16 +211,16 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
 
                         //Set up a bundle of author profile result data
                         Bundle resultData = new Bundle();
-                        resultData.putString(getString(R.string.background_task_result_type), StringUtils.backgroundResultPropertyAuthorProfile);
-                        resultData.putInt(getString(R.string.background_task_result_result), authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyAuthorProfile);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
 
                         if (authorProfile != null) {
-                            resultData.putString(getString(R.string.background_task_result_data_author_id), authorProfile.getAuthorId());
-                            resultData.putInt(getString(R.string.background_task_result_data_story_count), authorProfile.getStoryCount());
-                            resultData.putInt(getString(R.string.background_task_result_data_love_count), authorProfile.getLoveCount());
-                            resultData.putInt(getString(R.string.background_task_result_data_follow_count), authorProfile.getFollowCount());
-                            resultData.putBoolean(getString(R.string.background_task_result_data_following), authorProfile.following());
-                            resultData.putInt(getString(R.string.background_task_result_data_profile_icon), authorProfile.getProfileIcon());
+                            resultData.putString(StringUtils.backgroundTaskResultDataAuthorId, authorProfile.getAuthorId());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
+                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon, authorProfile.getProfileIcon());
                         }
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -241,10 +241,10 @@ public class FollowedAuthorsActivity extends AppCompatActivity implements OnUnfo
                     @Override
                     public void accept(User user) {
                         Bundle resultData = new Bundle();
-                        resultData.putString(getString(R.string.background_task_result_type), StringUtils.backgroundResultPropertyUnfollow);
-                        resultData.putInt(getString(R.string.background_task_result_error), user != null ? 0:1);
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyUnfollow);
+                        resultData.putInt(StringUtils.backgroundTaskResultError, user != null ? 0:1);
                         if (user != null) {
-                            resultData.putString(getString(R.string.background_task_result_username), username);
+                            resultData.putString(StringUtils.backgroundTaskResultUsername, username);
                         }
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);

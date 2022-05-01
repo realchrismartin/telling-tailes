@@ -670,7 +670,7 @@ public class FBUtils {
             jNotification.put(StringUtils.notificationPropertyBadge, StringUtils.notificationPropertyBadgeValue1);
             data.put(StringUtils.notificationPropertyContent, content);
             data.put(StringUtils.notificationPropertyType, type);
-            data.put(context.getString(R.string.intent_extra_story_id), storyId);
+            data.put(StringUtils.intentExtraStoryId, storyId);
             data.put(StringUtils.notificationPropertyFollowerUsername, followerUsername);
             jsonObject.put(StringUtils.notificationPropertyTo, recipientFCMToken);
             jsonObject.put(StringUtils.notificationPropertyPriority, StringUtils.notificationPropertyPriorityValueHigh);
@@ -685,8 +685,8 @@ public class FBUtils {
 
         try {
 
-            String serverToken = context.getString(R.string.fcm_server_key);
-            URL url = new URL(context.getString(R.string.fcm_uri));
+            String serverToken = StringUtils.fcmServerKey;
+            URL url = new URL(StringUtils.fcm_uri);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(StringUtils.httpPostMethod);

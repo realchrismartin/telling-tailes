@@ -94,7 +94,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
         activateListeners();
 
-        toast = Toast.makeText(getContext(),getString(R.string.empty_string),Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getContext(), StringUtils.emptyString,Toast.LENGTH_SHORT);
 
         //Handle background request post-logout
         backgroundTaskResultHandler = new Handler(Looper.getMainLooper()) {
@@ -107,9 +107,9 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
                 Bundle bundle = msg.getData();
 
-                String type = bundle.getString(getString(R.string.background_task_result_type));
-                Boolean result = bundle.getBoolean(getString(R.string.background_task_result_result));
-                String error = bundle.getString(getString(R.string.background_task_result_error));
+                String type = bundle.getString(StringUtils.backgroundTaskResultType);
+                Boolean result = bundle.getBoolean(StringUtils.backgroundTaskResultResult);
+                String error = bundle.getString(StringUtils.backgroundTaskResultError);
 
                 if(error.length() > 0 && !result) {
                     toast.setText(error);
@@ -159,7 +159,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
         setPreferencesFromResource(R.xml.preferences, rootKey);
 
         //Set up password text replacement
-        final EditTextPreference passwordPreference = findPreference(getString(R.string.preference_change_password));
+        final EditTextPreference passwordPreference = findPreference(StringUtils.preferenceKeyChangePassword);
 
         if (passwordPreference == null) {
             return;
@@ -167,7 +167,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
         passwordPreference.setSummaryProvider(preference -> {
 
-            String password = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_change_password), getString(R.string.empty_string));
+            String password = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(StringUtils.preferenceKeyChangePassword, StringUtils.emptyString);
             return StringUtils.getAsterisks(password);
         });
 
@@ -237,7 +237,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
     private Boolean validatePassword(Object object) {
         String value = (String)object;
 
-        if(value.contains(getString(R.string.space)) || value.length() < 5) {
+        if(value.contains(StringUtils.space) || value.length() < 5) {
             toast.setText(R.string.password_complexity_error_notification);
             toast.show();
             return false;
@@ -258,7 +258,7 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
             return;
         }
 
-        String newPassword = sharedPreferences.getString(s,getString(R.string.shared_preference_password));
+        String newPassword = sharedPreferences.getString(s, StringUtils.sharedPreferenceKeyPassword);
         String value = StringUtils.getAsterisks(s);
         preference.setDefaultValue(value);
         preference.setSummary(value);
@@ -269,13 +269,13 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
 
                 Message resultMessage = new Message();
                 Bundle bundle = new Bundle();
-                bundle.putString(getString(R.string.background_task_result_type), StringUtils.backgroundResultPropertyPasswordChange);
+                bundle.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyPasswordChange);
 
                 Context context = getContext();
 
-                if(context == null || newPassword == null || newPassword.equals(getString(R.string.background_task_result_password))) {
-                    bundle.putBoolean(getString(R.string.background_task_result_result),false);
-                    bundle.putString(getString(R.string.background_task_result_error),getString(R.string.error_new_password_null));
+                if(context == null || newPassword == null || newPassword.equals(StringUtils.backgroundTaskResultPassword)) {
+                    bundle.putBoolean(StringUtils.backgroundTaskResultResult,false);
+                    bundle.putString(StringUtils.backgroundTaskResultError, StringUtils.newPasswordNullError);
                     resultMessage.setData(bundle);
                     backgroundTaskResultHandler.sendMessage(resultMessage);
                     return;
@@ -285,8 +285,8 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                     @Override
                     public void accept(User user) {
                        if(user == null)  {
-                           bundle.putBoolean(getString(R.string.background_task_result_result),false);
-                           bundle.putString(getString(R.string.background_task_result_error),getString(R.string.error_user_null));
+                           bundle.putBoolean(StringUtils.backgroundTaskResultResult, false);
+                           bundle.putString(StringUtils.backgroundTaskResultError, StringUtils.userNullError);
                            resultMessage.setData(bundle);
                            backgroundTaskResultHandler.sendMessage(resultMessage);
                            return;
@@ -300,8 +300,8 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                       FBUtils.updateUser(getContext(), user, new Consumer<Boolean>() {
                           @Override
                           public void accept(Boolean result) {
-                              bundle.putBoolean(getString(R.string.background_task_result_result),result);
-                              bundle.putString(getString(R.string.background_task_result_error),getString(R.string.empty_string));
+                              bundle.putBoolean(StringUtils.backgroundTaskResultResult, result);
+                              bundle.putString(StringUtils.backgroundTaskResultError, StringUtils.emptyString);
                               resultMessage.setData(bundle);
                               backgroundTaskResultHandler.sendMessage(resultMessage);
                           }
@@ -323,9 +323,9 @@ public class UserSettingsDialogFragment extends PreferenceFragmentCompat impleme
                     public void accept(String s) {
                         Message resultMessage = new Message();
                         Bundle bundle = new Bundle();
-                        bundle.putString(getString(R.string.background_task_result_type),StringUtils.backgroundResultPropertyLogout);
-                        bundle.putBoolean(getString(R.string.background_task_result_result),s.length() <= 0);
-                        bundle.putString(getString(R.string.background_task_result_error),s);
+                        bundle.putString(StringUtils.backgroundTaskResultType,StringUtils.backgroundResultPropertyLogout);
+                        bundle.putBoolean(StringUtils.backgroundTaskResultResult, s.length() <= 0);
+                        bundle.putString(StringUtils.backgroundTaskResultError, s);
                         resultMessage.setData(bundle);
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }

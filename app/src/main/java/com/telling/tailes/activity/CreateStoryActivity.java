@@ -74,7 +74,7 @@ public class CreateStoryActivity extends AppCompatActivity {
         createInProgressNotification = getString(R.string.create_in_progress_notification);
 
         //Set up toast
-        toast = Toast.makeText(getApplicationContext(),getString(R.string.empty_string),Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(),  StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         //Set up views
         lengthSeekBar = findViewById(R.id.lengthSlider);
@@ -84,8 +84,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         //If intent includes a prompt, prepopulate the prompt
         //Note that this will be overridden by saved intent data, if present in the bundle
-        if(getIntent().hasExtra(getString(R.string.intent_extra_prompt))) {
-            promptView.setText(getIntent().getStringExtra(getString(R.string.intent_extra_prompt)));
+        if(getIntent().hasExtra(StringUtils.intentExtraPrompt)) {
+            promptView.setText(getIntent().getStringExtra(StringUtils.intentExtraPrompt));
         }
 
         //Load saved bundle data if applicable
@@ -142,7 +142,7 @@ public class CreateStoryActivity extends AppCompatActivity {
                             return;
                         }
 
-                        Log.e(getString(R.string.log_error_tag_voice_input), getString(R.string.log_error_msg_voice_input));
+                        Log.e(StringUtils.voiceInputErrorTag, StringUtils.voiceInputErrorMsg);
                     }});
 
         //Define click handler for recording prompt from voice
@@ -187,8 +187,8 @@ public class CreateStoryActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        state.putString(getString(R.string.saved_instance_prompt),promptView.getText().toString());
-        state.putInt(getString(R.string.saved_instance_progress),lengthSeekBar.getProgress());
+        state.putString(StringUtils.savedInstancePrompt, promptView.getText().toString());
+        state.putInt(StringUtils.savedInstanceProgress, lengthSeekBar.getProgress());
         super.onSaveInstanceState(state);
     }
 
@@ -200,8 +200,8 @@ public class CreateStoryActivity extends AppCompatActivity {
             return;
         }
 
-        lengthSeekBar.setProgress(state.getInt(getString(R.string.saved_instance_progress)));
-        promptView.setText(state.getString(getString(R.string.saved_instance_prompt)));
+        lengthSeekBar.setProgress(state.getInt(StringUtils.savedInstanceProgress));
+        promptView.setText(state.getString(StringUtils.savedInstancePrompt));
     }
 
     private void hideLoadingWheel() {
@@ -216,8 +216,8 @@ public class CreateStoryActivity extends AppCompatActivity {
 
     private void goToPublish(String prompt, String story) {
         Intent intent = new Intent(this,PublishStoryActivity.class);
-        intent.putExtra(getString(R.string.intent_extra_prompt),prompt);
-        intent.putExtra(getString(R.string.intent_extra_story),story);
+        intent.putExtra(StringUtils.intentExtraPrompt, prompt);
+        intent.putExtra(StringUtils.intentExtraStory,story);
         startActivity(intent);
     }
 
@@ -227,7 +227,7 @@ public class CreateStoryActivity extends AppCompatActivity {
      */
     private boolean validateCreateStory() {
         boolean valid = true;
-        String error = getString(R.string.empty_string);
+        String error =  StringUtils.emptyString;
 
         String prompt = promptView.getText().toString().trim();
         int length = lengthSeekBar.getProgress();
@@ -235,24 +235,24 @@ public class CreateStoryActivity extends AppCompatActivity {
 
         if(wordCount < promptMinWords)
         {
-            error = getString(R.string.prompt_too_short_1) + getString(R.string.space) + promptMinWords + getString(R.string.space) + getString(R.string.prompt_too_short_2) + getString(R.string.space) + wordCount + getString(R.string.space) + getString(R.string.prompt_too_short_3);
+            error = getString(R.string.prompt_too_short_1) + StringUtils.space + promptMinWords + StringUtils.space + getString(R.string.prompt_too_short_2) + StringUtils.space + wordCount + StringUtils.space + getString(R.string.prompt_too_short_3);
         }
 
         if(length < lengthMin)
         {
-            if(error.length() > 0) { error += getString(R.string.newline); }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += lengthTooShortNotification;
         }
 
         if(length > lengthMax)
         {
-            if(error.length() > 0) { error += getString(R.string.newline); }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += lengthTooLongNotification;
         }
 
         if(loading)
         {
-            if(error.length() > 0) { error += getString(R.string.newline); }
+            if(error.length() > 0) { error += StringUtils.newline; }
             error += createInProgressNotification;
         }
 
@@ -273,7 +273,7 @@ public class CreateStoryActivity extends AppCompatActivity {
     {
        boolean valid = true;
 
-       String error = getString(R.string.empty_string);
+       String error = StringUtils.emptyString;
 
        if(resultCode != 0)
        {

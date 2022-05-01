@@ -24,6 +24,7 @@ public class StringUtils {
     public static final String backgroundResultPropertyStoryTokenRefresh = "tokenRefresh";
 
     //Must match xml resource names
+    // These are external facing, but must be here due to switch/case limitations
     public static final String filterTypeBookmarks = "Bookmarks";
     public static final String filterTypeByFollowedAuthors = "By Followed Authors";
     public static final String filterTypeDrafts = "Drafts";
@@ -43,30 +44,42 @@ public class StringUtils {
     public static final String fbUtilsErrorRollbackFollowers = "Rolling back followers due to failed followee update";
 
     public static final String loadingString = "loading";
+    public static final String noneString = "none";
     public static final String noAuthorsString = "noauthors";
     public static final String errorString = "error";
     public static final String emptyString = "";
     public static final String space = " ";
     public static final String quote = "\"";
+    public static final String newline = "\\n";
+    public static final String hyphen = "-";
+    public static final String colon = ":";
+    public static final String apostropheS = "'s";
 
     public static final String intentExtraStoryId = "storyId";
     public static final String intentExtraFollowerUsername = "followerUsername";
     public static final String intentExtraFeedFilter = "feedFilter";
     public static final String intentExtraAuthorId = "authorId";
+    public static final String intentExtraStory = "story";
+    public static final String intentExtraPrompt = "prompt";
 
     public static final String notificationChannelId = "TELLING_TAILES_CHANNEL_ID";
+    public static final String notificationChannelName = "TELLING_TAILES_CHANNEL_NAME";
     public static final String notificationGroupId = "com.telling.tailes.NOTIFICATION";
 
     public static final String fcmTokenError = "User returned from updateUserToken was null, token may not have been updated";
 
     public static final String sharedPreferenceFileUser = "user_preferences";
     public static final String sharedPreferenceKeyUsername = "username";
+    public static final String sharedPreferenceKeyPassword = "password";
+    public static final String preferenceKeyChangePassword = "change_password";
     public static final String sharedPreferenceKeyMessagingToken = "messagingToken";
     public static final String defaultPassword = "thisisnotsecure";
 
     public static final String authUtilsErrorMessageUserNull = "";
     public static final String authUtilsErrorMessageTokenUpdateFailure = "";
 
+    public static final String fcmServerKey = "key=AAAAlPniYbs:APA91bGHtElSy0xiM_zOHTbq1GUggAVhRVhuQ5e2t-K-ww_W0cCsrJbuWj6wDq0_NYgHkFDhR1j1pM8cdK5kTaXJSO93ZDvGceLt-luvH6V9tCxIk5VDKlJKviEnc5Kz-vghIy8C4Jxr";
+    public static final String fcm_uri = "https://fcm.googleapis.com/fcm/send";
     public static final String passwordHashAlgorithm = "SHA-512";
 
     public static final String drawableBell = "bell";
@@ -100,6 +113,9 @@ public class StringUtils {
     public static final String httpContentTypeJSON = "application/json";
     public static final String httpAuthorizationBearer = "Bearer";
 
+    public static final String gptCompletionURI = "https://api.openai.com/v1/engines/text-davinci-002/completions";
+    public static final String gptFilterURI = "https://api.openai.com/v1/engines/content-filter-alpha/completions";
+    public static final String gptToken = "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";
     public static final String gptPropertyPrompt = "prompt";
     public static final String gptPropertyMaxTokens = "max_tokens";
     public static final String gptPropertyTopP = "top_p";
@@ -110,6 +126,7 @@ public class StringUtils {
     public static final String gptPropertyText = "text";
     public static final String gptProbabilityLevel1 = "1";
     public static final String gptProbabilityLevel2 = "2";
+    public static final String gptOpenAiURI = "https://openai.com/api/";
 
     public static final String filterSortPropertyId = "id";
     public static final String filterSortPropertyLoveCount = "loveCount";
@@ -126,6 +143,51 @@ public class StringUtils {
 
     public static final String storyDBKey = "stories";
     public static final String usersDBKey = "users";
+
+    public static final String backgroundTaskResultType = "type";
+    public static final String backgroundTaskResultResult = "result";
+    public static final String backgroundTaskResultUsername = "username";
+    public static final String backgroundTaskResultPassword = "password";
+    public static final String backgroundTaskResultFollows = "follows";
+    public static final String backgroundTaskResultCreateError = "createError";
+    public static final String backgroundTaskResultLoginError = "loginError";
+    public static final String backgroundTaskResultError = "error";
+    public static final String backgroundTaskResultFollowed = "followed";
+
+    public static final String backgroundTaskResultDataAuthorId = "authorId";
+    public static final String backgroundTaskResultDataStoryCount = "storyCount";
+    public static final String backgroundTaskResultDataLoveCount = "loveCount";
+    public static final String backgroundTaskResultDataFollowCount = "followCount";
+    public static final String backgroundTaskResultDataFollowing = "following";
+    public static final String backgroundTaskResultDataProfileIcon = "profileIcon";
+    public static final String backgroundTaskResultDataStory = "story";
+    public static final String backgroundTaskResultDataStoryUnderscore = "story_";
+    public static final String backgroundTaskResultDataPublished = "published";
+    public static final String backgroundTaskResultDataLastType = "last_type";
+    public static final String backgroundTaskResultDataTimeStamp = "timestamp";
+    public static final String backgroundTaskResultDataLastStory = "last_story";
+    public static final String backgroundTaskResultDataBookmarks = "bookmarks";
+
+    public static final String authorProfileDialogFragment = "AuthorProfileDialogFragment";
+    public static final String authorProfileFollowDialogFragment = "AuthorProfileDialogFragmentFollow";
+
+    public static final String savedInstanceUsername = "username";
+    public static final String savedInstancePassword = "password";
+    public static final String savedInstancePasswordConfirmation = "passwordConfirmation";
+    public static final String savedInstancePrompt = "prompt";
+    public static final String savedInstanceProgress = "progress";
+    public static final String savedInstanceStory = "story";
+    public static final String savedInstanceTitle = "title";
+    public static final String savedInstanceStoryId = "StoryId";
+
+    public static final String voiceInputErrorTag = "Listening for voice input";
+    public static final String voiceInputErrorMsg = "Voice input has result but no data - this is an anomalous result";
+    public static final String newPasswordNullError = "Context was null, or new password is null";
+    public static final String userNullError = "User was null";
+
+    public static final String msgTrue = "true";
+    public static final String doubleString = "double";
+    public static final String stringString = "string";
 
     //Given a string, get the number of "words" in the string
     public static int getWordCount(String input) {

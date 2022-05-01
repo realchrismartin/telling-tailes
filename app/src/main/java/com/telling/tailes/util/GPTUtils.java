@@ -57,12 +57,12 @@ public class GPTUtils {
     private static boolean isStoryAppropriate(Context context, String story) {
 
         try {
-            String serverToken = context.getString(R.string.gpt_api_token);
+            String serverToken = StringUtils.gptToken;
 
             //Wrap prompt
             story = StringUtils.gptCompletionStart + story + StringUtils.gptCompletionEnd;
 
-            URL url = new URL(context.getString(R.string.gpt_api_filter_uri));
+            URL url = new URL(StringUtils.gptFilterURI);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(StringUtils.httpPostMethod);
@@ -160,8 +160,8 @@ public class GPTUtils {
                 length = 2048;
             }
 
-            String serverToken = context.getString(R.string.gpt_api_token);
-            URL url = new URL(context.getString(R.string.gpt_api_completion_uri));
+            String serverToken = StringUtils.gptToken;
+            URL url = new URL(StringUtils.gptCompletionURI);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(StringUtils.httpPostMethod);
