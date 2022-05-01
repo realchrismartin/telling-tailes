@@ -37,7 +37,9 @@
             app:layout_constraintBottom_toTopOf="@+id/lengthSlider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TextContrastCheck"
+            android:importantForAutofill="no" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recordButton"
@@ -51,7 +53,8 @@
             app:layout_constraintTop_toTopOf="@+id/promptView"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/mic_white"
-            app:tint="#49599a"/>
+            app:tint="#49599a"
+            android:contentDescription="@string/speech_to_text" />
 
         <SeekBar
             android:id="@+id/lengthSlider"

@@ -8,7 +8,6 @@
     tools:context=".activity.StoryFeedActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,9 +24,10 @@
             style="@style/Spinner"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/feedSwipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -47,8 +47,8 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/goToCreateStoryButton"
             style="@style/FloatingAction"
+            android:contentDescription="@string/create_new_tail"
             app:backgroundTint="@color/pitch"
-            android:contentDescription="Create New Tail"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,8 @@
             app:layout_constraintTop_toBottomOf="@+id/filterSpinner"
             app:layout_constraintVertical_bias="0.93"
             app:srcCompat="@drawable/add_new_story_white"
-            app:tint="#4d82cb" />
+            app:tint="#4d82cb"
+            tools:ignore="ImageContrastCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

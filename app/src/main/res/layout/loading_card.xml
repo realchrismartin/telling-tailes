@@ -19,7 +19,7 @@
             style="@style/MainTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Loading"
+            android:text="@string/loading"
             android:textColor="@color/pitch"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"

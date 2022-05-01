@@ -23,7 +23,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:fontFamily="sans-serif-medium"
-            android:text="You aren't following any authors. Find a story you like and click the author's name to follow them."
+            android:text="@string/no_followed_authors"
             android:textColor="@color/pitch"
             android:textSize="24sp"
             android:textStyle="italic"

@@ -1,5 +1,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/author_profile_layout"
     android:theme="@style/Theme"
     android:layout_width="match_parent"
@@ -9,7 +10,7 @@
     <TextView
         android:id="@+id/author_profile_user_name_view"
         style="@style/AuthorProfileTitle"
-        android:text="AuthorName"
+        android:text="@string/authorname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,23 +24,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/author_profile_user_name_view" />
+        app:layout_constraintTop_toTopOf="@+id/author_profile_user_name_view"
+        android:contentDescription="@string/user_profile_icon" />
 
     <ImageView
         android:id="@+id/author_ratio_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/laurels_color"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_rating_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/author_profile_rating_label"
-        app:layout_constraintBottom_toBottomOf="@+id/author_profile_rating_label" />
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/laurel_wreath_icon" />
 
     <TextView
         android:id="@+id/author_profile_rating_label"
         style="@style/AuthorProfileLabel"
-        android:text="Rating:"
+        android:text="@string/rating"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author_profile_user_name_view" />
@@ -47,7 +51,7 @@
     <TextView
         android:id="@+id/author_profile_rating_view"
         style="@style/AuthorProfileValue"
-        android:text="5.0"
+        android:text="@string/_5_0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,16 +62,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/bookwithmark_color"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_story_count_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/author_profile_story_count_label"
-        app:layout_constraintBottom_toBottomOf="@+id/author_profile_story_count_label" />
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/book_with_bookmark_icon" />
 
     <TextView
         android:id="@+id/author_profile_story_count_label"
         style="@style/AuthorProfileLabel"
-        android:text="Published:"
+        android:text="@string/published"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author_profile_rating_label" />
@@ -75,7 +81,7 @@
     <TextView
         android:id="@+id/author_profile_story_count_view"
         style="@style/AuthorProfileValue"
-        android:text="0"
+        android:text="@string/_0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
@@ -86,16 +92,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/favorite_solid_color"
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_love_count_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/author_profile_love_count_label"
-        app:layout_constraintBottom_toBottomOf="@+id/author_profile_love_count_label" />
+        tools:ignore="ImageContrastCheck"
+        android:contentDescription="@string/heart_icon" />
 
     <TextView
         android:id="@+id/author_profile_love_count_label"
         style="@style/AuthorProfileLabel"
-        android:text="All Loves:"
+        android:text="@string/all_loves"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author_profile_story_count_label" />
@@ -103,7 +111,7 @@
     <TextView
         android:id="@+id/author_profile_love_count_view"
         style="@style/AuthorProfileValue"
-        android:text="0"
+        android:text="@string/_0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,12 +126,13 @@
         app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/author_profile_follower_count_label"
-        app:layout_constraintBottom_toBottomOf="@+id/author_profile_follower_count_label" />
+        app:layout_constraintBottom_toBottomOf="@+id/author_profile_follower_count_label"
+        android:contentDescription="@string/person_being_followed_icon"/>
 
     <TextView
         android:id="@+id/author_profile_follower_count_label"
         style="@style/AuthorProfileLabel"
-        android:text="Followers:"
+        android:text="@string/followers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/author_profile_love_count_label" />
@@ -131,7 +140,7 @@
     <TextView
         android:id="@+id/author_profile_follower_count_view"
         style="@style/AuthorProfileValue"
-        android:text="0"
+        android:text="@string/_0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
@@ -140,7 +149,7 @@
     <Button
         android:id="@+id/authorProfileFollowButton"
         style="@style/PrimaryButton"
-        android:text="Follow"
+        android:text="@string/follow"
         app:layout_constraintEnd_toEndOf="@+id/author_profile_follower_count_view"
         app:layout_constraintStart_toStartOf="@+id/author_profile_follower_count_image"
         app:layout_constraintTop_toBottomOf="@+id/author_profile_follower_count_label" />
@@ -155,7 +164,7 @@
         android:textAllCaps="true"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="Author's Tailes"
+        android:text="@string/author_s_tailes"
         app:layout_constraintEnd_toEndOf="@+id/authorProfileFollowButton"
         app:layout_constraintStart_toStartOf="@+id/authorProfileFollowButton"
         app:layout_constraintTop_toBottomOf="@+id/authorProfileFollowButton" />
