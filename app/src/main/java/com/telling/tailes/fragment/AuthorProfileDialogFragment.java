@@ -24,6 +24,7 @@ import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -56,7 +57,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         init();
 
         //Set up toast
-        profileToast = Toast.makeText(getContext(),"",Toast.LENGTH_SHORT);
+        profileToast = Toast.makeText(getContext(), StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         //Set up executor
         backgroundTaskExecutor = Executors.newFixedThreadPool(2);
@@ -107,33 +108,33 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                     return;
                 }
 
-                int result = msg.getData().getInt("result");
+                int result = msg.getData().getInt(StringUtils.backgroundTaskResultResult);
 
                 if(result != 0) {
                     profileToast.setText(R.string.generic_error_notification);
                     return;
                 }
 
-                boolean following = msg.getData().getBoolean("following");
+                boolean following = msg.getData().getBoolean(StringUtils.backgroundTaskResultDataFollowing);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("username",authorId);
+                bundle.putString(StringUtils.backgroundTaskResultUsername, authorId);
 
                 if(following) {
                     authorProfileFollowButton.setText(unfollowOptionText);
                     profileToast.setText(getText(R.string.author_profile_follow_notification) + " " + authorId);
                     followCount += 1;
-                    bundle.putBoolean("followed",true);
+                    bundle.putBoolean(StringUtils.backgroundTaskResultFollowed, true);
                 } else {
                     authorProfileFollowButton.setText(followOptionText);
                     profileToast.setText(getText(R.string.author_profile_unfollow_notification) + " " + authorId);
                     followCount -= 1;
-                    bundle.putBoolean("followed",false);
+                    bundle.putBoolean(StringUtils.backgroundTaskResultFollowed, false);
                 }
 
 
                 //Inform the parent activity of the follow/unfollow activity
-                getParentFragmentManager().setFragmentResult("AuthorProfileDialogFragmentFollow",bundle);
+                getParentFragmentManager().setFragmentResult(StringUtils.authorProfileDialogFragment,bundle);
                 followCountView.setText(Integer.toString(followCount));
                 profileToast.show();
 
@@ -145,7 +146,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             public void onClick(View view) {
                 String currentUsername = AuthUtils.getLoggedInUserID(getContext());
 
-                if(currentUsername.equals("")){
+                if(currentUsername.equals( StringUtils.emptyString)){
                     return;
                 }
 
@@ -165,8 +166,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), StoryFeedActivity.class);
-                intent.putExtra("feedFilter", "By Author");
-                intent.putExtra("authorId",authorId);
+                intent.putExtra(StringUtils.intentExtraFeedFilter, StringUtils.filterTypeByAuthor);
+                intent.putExtra(StringUtils.intentExtraAuthorId,authorId);
                 startActivity(intent);
             }
         });
@@ -187,7 +188,7 @@ public class AuthorProfileDialogFragment extends DialogFragment {
         Bundle args = getArguments();
 
         if(args == null) {
-            authorId = "None";
+            authorId = StringUtils.noneString;
             storyCount = 0;
             loveCount = 0;
             followCount = 0;
@@ -196,27 +197,27 @@ public class AuthorProfileDialogFragment extends DialogFragment {
             return;
         }
 
-        if(args.containsKey("authorId")) {
-            authorId = args.getString("authorId");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataAuthorId)) {
+            authorId = args.getString(StringUtils.backgroundTaskResultDataAuthorId);
         }
 
-        if(args.containsKey("storyCount")) {
-            storyCount = args.getInt("storyCount");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataStoryCount)) {
+            storyCount = args.getInt(StringUtils.backgroundTaskResultDataStoryCount);
         }
 
-        if(args.containsKey("loveCount")) {
-            loveCount = args.getInt("loveCount");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataLoveCount)) {
+            loveCount = args.getInt(StringUtils.backgroundTaskResultDataLoveCount);
         }
 
-        if(args.containsKey("followCount")) {
-            followCount = args.getInt("followCount");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataFollowCount)) {
+            followCount = args.getInt(StringUtils.backgroundTaskResultDataFollowCount);
         }
 
-        if(args.containsKey("profileIcon")) {
-            profileIcon = args.getInt("profileIcon");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataProfileIcon)) {
+            profileIcon = args.getInt(StringUtils.backgroundTaskResultDataProfileIcon);
         }
-        if(args.containsKey("following")) {
-            following = args.getBoolean("following");
+        if(args.containsKey(StringUtils.backgroundTaskResultDataFollowing)) {
+            following = args.getBoolean(StringUtils.backgroundTaskResultDataFollowing);
         }
 
     }
@@ -234,8 +235,8 @@ public class AuthorProfileDialogFragment extends DialogFragment {
                     public void accept(User user) {
                         Message message = new Message();
                         Bundle data = new Bundle();
-                        data.putInt("result", user == null ? 1 : 0);
-                        data.putBoolean("following", user != null && user.getFollows() != null && user.getFollows().contains(authorId));
+                        data.putInt(StringUtils.backgroundTaskResultResult, user == null ? 1 : 0);
+                        data.putBoolean(StringUtils.backgroundTaskResultDataFollowing, user != null && user.getFollows() != null && user.getFollows().contains(authorId));
                         message.setData(data);
                         backgroundTaskResultHandler.sendMessage(message);
                     }

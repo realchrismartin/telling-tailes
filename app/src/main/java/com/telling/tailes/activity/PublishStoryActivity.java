@@ -29,6 +29,7 @@ import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FloatingActionMenuUtil;
 import com.telling.tailes.util.GPTUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,7 +39,6 @@ import java.util.function.Consumer;
 
 public class PublishStoryActivity extends AppCompatActivity {
 
-    private static final String storyDBKey = "stories";
     private static final int storyTextSize = 20;
     private static final int titleCharacterLength = 5;
     private String draftSaveNotification;
@@ -79,7 +79,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_story);
 
-        storyId = ""; //Set once a draft is saved
+        storyId = StringUtils.emptyString; //Set once a draft is saved
 
         draftSaveNotification = getString(R.string.publish_story_draft_saved_notification);
         genericErrorNotification = getString(R.string.generic_error_notification);
@@ -89,10 +89,10 @@ public class PublishStoryActivity extends AppCompatActivity {
         loadingWheel.setVisibility(View.INVISIBLE);
 
         //Set up DB ref
-        ref = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
+        ref = FirebaseDatabase.getInstance().getReference().child(StringUtils.storyDBKey);
 
         //Set up toast
-        toast = Toast.makeText(getApplicationContext(),"",Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(), StringUtils.emptyString,Toast.LENGTH_SHORT);
 
         //Set up prompt text view
         promptTextView = findViewById(R.id.publishPromptTextView);
@@ -115,7 +115,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                     return;
                 }
 
-                String errorMsg = msg.getData().getString("error");
+                String errorMsg = msg.getData().getString(StringUtils.backgroundTaskResultError);
 
                 hideLoadingWheel();
 
@@ -125,20 +125,23 @@ public class PublishStoryActivity extends AppCompatActivity {
                     return;
                 }
 
-                String type = msg.getData().getString("type") != null ? msg.getData().getString("type") : "publish";
+                String type = msg.getData().getString(StringUtils.backgroundTaskResultType) != null ?
+                        msg.getData().getString(StringUtils.backgroundTaskResultType)
+                        :
+                        StringUtils.backgroundResultPropertyPublish;
 
                 switch(type) {
-                    case("storyData") : {
-                        lastStoryChunk = msg.getData().getString("story");
+                    case(StringUtils.backgroundResultPropertyStoryData) : {
+                        lastStoryChunk = msg.getData().getString(StringUtils.backgroundTaskResultDataStory);
                         storyText += lastStoryChunk;
                         storyTextView.setText(storyText);
                         handleClickPublish(true);
                         break;
                     }
-                    case("publish") : {
-                        String publishMsg = msg.getData().getString("published");
+                    case(StringUtils.backgroundResultPropertyPublish) : {
+                        String publishMsg = msg.getData().getString(StringUtils.backgroundTaskResultDataPublished);
 
-                        if (publishMsg != null && publishMsg.equals("true")) {
+                        if (publishMsg != null && publishMsg.equals(StringUtils.msgTrue)) {
                             goToFeed();
                         }
                         break;
@@ -239,7 +242,7 @@ public class PublishStoryActivity extends AppCompatActivity {
         });
 
         //If hasn't been saved as a draft, publish draft of this
-        if(storyId.equals("") && storyText.length() > 0) {
+        if(storyId.equals(StringUtils.emptyString) && storyText.length() > 0) {
            handleClickPublish(true);
         }
     }
@@ -264,10 +267,10 @@ public class PublishStoryActivity extends AppCompatActivity {
     //Handle saving data on device rotation
     @Override
     protected void onSaveInstanceState(@NonNull Bundle state) {
-        state.putString("story",storyText);
-        state.putString("prompt",promptText);
-        state.putString("title",titleView.getText().toString());
-        state.putString("storyId",storyId);
+        state.putString(StringUtils.savedInstanceStory, storyText);
+        state.putString(StringUtils.savedInstancePrompt, promptText);
+        state.putString(StringUtils.savedInstanceTitle, titleView.getText().toString());
+        state.putString(StringUtils.savedInstanceStoryId, storyId);
         super.onSaveInstanceState(state);
     }
 
@@ -279,10 +282,10 @@ public class PublishStoryActivity extends AppCompatActivity {
             return;
         }
 
-        storyText = state.getString("story");
-        promptText = state.getString("prompt");
-        titleView.setText(state.getString("title"));
-        storyId = state.getString("storyId");
+        storyText = state.getString(StringUtils.savedInstanceStory);
+        promptText = state.getString(StringUtils.savedInstancePrompt);
+        titleView.setText(state.getString(StringUtils.savedInstanceTitle));
+        storyId = state.getString(StringUtils.savedInstanceStoryId);
 
     }
 
@@ -290,16 +293,16 @@ public class PublishStoryActivity extends AppCompatActivity {
     protected void loadIntentData(Intent intent) {
 
         //Only load data if extras are present
-        if(intent.hasExtra("storyId")) {
-            storyId = intent.getStringExtra("storyId");
+        if(intent.hasExtra(StringUtils.intentExtraStoryId)) {
+            storyId = intent.getStringExtra(StringUtils.intentExtraStoryId);
         }
 
-        if(intent.hasExtra("story")) {
-            storyText = intent.getStringExtra("story");
+        if(intent.hasExtra(StringUtils.intentExtraStory)) {
+            storyText = intent.getStringExtra(StringUtils.intentExtraStory);
         }
 
-        if(intent.hasExtra("prompt")) {
-            promptText = intent.getStringExtra("prompt");
+        if(intent.hasExtra(StringUtils.intentExtraPrompt)) {
+            promptText = intent.getStringExtra(StringUtils.intentExtraPrompt);
         }
     }
 
@@ -309,12 +312,12 @@ public class PublishStoryActivity extends AppCompatActivity {
     private boolean validatePublishStory() {
         boolean valid = true;
 
-        String error = "";
+        String error = StringUtils.emptyString;
 
         String title = titleView.getText().toString();
 
         if(title.length() < titleCharacterLength) {
-            error = "Enter a title that is at least " + titleCharacterLength + " characters (currently using " + title.length() + " character(s))";
+            error = getString(R.string.title_too_short_1) + titleCharacterLength + getString(R.string.title_too_short_2) + title.length() + getString(R.string.title_too_short_3);
         }
 
         if(error.length() > 0 ) {
@@ -330,7 +333,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     private void handleClickRecycle() {
         //Navigate to the Create Story activity with a recycled prompt
         Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
-        intent.putExtra("prompt",promptText);
+        intent.putExtra(StringUtils.intentExtraPrompt, promptText);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -338,7 +341,7 @@ public class PublishStoryActivity extends AppCompatActivity {
     //Handle user clicking delete draft
     private void handleClickDeleteDraft() {
 
-        if(storyId.equals("")) {
+        if(storyId.equals(StringUtils.emptyString)) {
             return;
         }
 
@@ -353,8 +356,8 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                     storyDeleteTask.addOnFailureListener(task -> {
                         Bundle resultData = new Bundle();
-                        resultData.putString("error", "");
-                        resultData.putString("type","publish");
+                        resultData.putString(StringUtils.backgroundTaskResultError, StringUtils.emptyString);
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyPublish);
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -384,8 +387,8 @@ public class PublishStoryActivity extends AppCompatActivity {
         ArrayList<String> lovers = new ArrayList<String>();
         ArrayList<String> bookmarkers = new ArrayList<String>();
 
-        if(storyId.equals("")) {
-            storyId = new Date().toString().replace(" ","") + "-" + userId;
+        if(storyId.equals(StringUtils.emptyString)) {
+            storyId = new Date().toString().replace(StringUtils.space, StringUtils.emptyString) + StringUtils.hyphen + userId;
         }
 
         //Ensure that title is always entered, even if it's a draft
@@ -407,7 +410,7 @@ public class PublishStoryActivity extends AppCompatActivity {
                    //Only increment story count if this isn't a draft
                    if(asDraft) {
                        Bundle resultData = new Bundle();
-                       resultData.putString("error", "");
+                       resultData.putString(StringUtils.backgroundTaskResultError, StringUtils.emptyString);
 
                        Message resultMessage = new Message();
                        resultMessage.setData(resultData);
@@ -424,7 +427,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                            if(user == null) {
                                Bundle resultData = new Bundle();
-                               resultData.putString("error", getString(R.string.user_get_error));
+                               resultData.putString(StringUtils.backgroundTaskResultError, getString(R.string.user_get_error));
 
                                Message resultMessage = new Message();
                                resultMessage.setData(resultData);
@@ -440,7 +443,7 @@ public class PublishStoryActivity extends AppCompatActivity {
 
                                    if(!result) {
                                        Bundle resultData = new Bundle();
-                                       resultData.putString("error", getString(R.string.user_update_error));
+                                       resultData.putString(StringUtils.backgroundTaskResultError, getString(R.string.user_update_error));
 
                                        Message resultMessage = new Message();
                                        resultMessage.setData(resultData);
@@ -449,14 +452,14 @@ public class PublishStoryActivity extends AppCompatActivity {
                                        return;
                                    }
 
-                                   String body = user.getUsername() + " " + getString(R.string.message_published_story_body) + ": " + story.getTitle();
+                                   String body = user.getUsername() + StringUtils.space + getString(R.string.message_published_story_body) + StringUtils.colon + StringUtils.space + story.getTitle();
 
-                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, "", "publish", storyId, new Consumer<Boolean>() {
+                                   FBUtils.sendNotificationToFollowers(getApplicationContext(), user.getUsername(), getString(R.string.message_published_story), body, StringUtils.emptyString, StringUtils.backgroundResultPropertyPublish, storyId, new Consumer<Boolean>() {
                                        @Override
                                        public void accept(Boolean messageResult) {
                                            Bundle resultData = new Bundle();
-                                           resultData.putString("error", messageResult ? "" : getString(R.string.generic_error_notification));
-                                           resultData.putString("published", "true");
+                                           resultData.putString(StringUtils.backgroundTaskResultError, messageResult ? StringUtils.emptyString : getString(R.string.generic_error_notification));
+                                           resultData.putString(StringUtils.backgroundTaskResultDataPublished, StringUtils.msgTrue);
 
                                            //Send meesage rom thresd
                                            Message resultMessage = new Message();
@@ -501,9 +504,9 @@ public class PublishStoryActivity extends AppCompatActivity {
                 //Set up a bundle
                 //Result code != 0 means something in GPT failed
                 Bundle resultData = new Bundle();
-                resultData.putInt("result", resultCode);
-                resultData.putString("story",story);
-                resultData.putString("type","storyData");
+                resultData.putInt(StringUtils.backgroundTaskResultResult, resultCode);
+                resultData.putString(StringUtils.backgroundTaskResultDataStory, story);
+                resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryData);
 
                 Message resultMessage = new Message();
                 resultMessage.setData(resultData);

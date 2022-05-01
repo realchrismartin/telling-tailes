@@ -34,11 +34,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class FBUtils {
-    private static final String storyDBKey = "stories"; //TODO
-    private static final String usersDBKey = "users"; //TODO
 
-    private static final DatabaseReference storiesRef = FirebaseDatabase.getInstance().getReference().child(storyDBKey);
-    private static final DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child(usersDBKey);
+    private static final DatabaseReference storiesRef = FirebaseDatabase.getInstance().getReference().child(StringUtils.storyDBKey);
+    private static final DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child(StringUtils.usersDBKey);
 
     //Update the specified user with the provided User data
     //Call the callback with true if all is well, otherwise call it with false
@@ -104,14 +102,14 @@ public class FBUtils {
                                        @Override
                                        public void accept(Story updatedStory) {
 
-                                           String body = currentUser + " " +  context.getString(R.string.message_loved_body) + " \"" + story.getTitle() + "\"";
+                                           String body = currentUser + StringUtils.space +  context.getString(R.string.message_loved_body) + StringUtils.space + StringUtils.quote + story.getTitle() + StringUtils.quote;
 
-                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, "", "love", story.getId(), "", new Consumer<Boolean>() {
+                                           sendNotification(context, story.getAuthorID(), context.getString(R.string.message_loved), body, StringUtils.emptyString, StringUtils.backgroundResultPropertyStoryLove, story.getId(), StringUtils.emptyString, new Consumer<Boolean>() {
                                                @Override
                                                public void accept(Boolean aBoolean) {
 
                                                    if(!aBoolean) {
-                                                       Log.e("UpdateLove","Failed to send notification");
+                                                       Log.e(StringUtils.fbUtilsTag,StringUtils.fbUtilsErrorNotification);
                                                    }
                                                }
                                            });
@@ -256,7 +254,6 @@ public class FBUtils {
                 Task<Void> userBookmarkTask = usersRef.updateChildren(fbUserUpdate);
 
                 userBookmarkTask.addOnCompleteListener(task -> {
-                    Log.d("updateUserBookmark", "added bookmark for user");
 
                     // Now that user has been updated properly, get story from database to update
                     getStory(context, story.getId(), new Consumer<Story>() {
@@ -281,10 +278,8 @@ public class FBUtils {
                             ArrayList<String> bookmarkers = resultStory.getBookmarkers();
 
                             if (bookmarkers.contains(currentUser)) {
-                                Log.d("updateBookmarks", "removing bookmark from FB...");
                                 resultStory.removeBookmark(currentUser);
                             } else {
-                                Log.d("updateBookmarks", "adding bookmark to FB...");
                                 resultStory.addBookmark(currentUser);
                             }
 
@@ -293,7 +288,6 @@ public class FBUtils {
                             Task<Void> storyBookmarkTask = storiesRef.updateChildren(fbUpdate);
 
                             storyBookmarkTask.addOnCompleteListener(task -> {
-                                Log.d("updateBookmark", "added bookmark to FB");
                                 callback.accept(resultStory);
                             });
 
@@ -365,7 +359,7 @@ public class FBUtils {
                                            updateUser(context, follower, new Consumer<Boolean>() {
                                                        @Override
                                                        public void accept(Boolean aBoolean) {
-                                                           Log.e("updateFollowers","Rollback occurred in follower update with result " + aBoolean);
+                                                           Log.e(StringUtils.fbUtilsTag,StringUtils.fbUtilsErrorRollbackFollowers + aBoolean);
                                                             callback.accept(null); //Regardless of result, this failed
                                                        }
                                                    });
@@ -379,15 +373,13 @@ public class FBUtils {
                                         }
 
                                         // send notification if following
-                                        String body = follower.getUsername() + " " + context.getString(R.string.message_followed_body);
-                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, "", "follow", "", follower.getUsername(), new Consumer<Boolean>() {
+                                        String body = follower.getUsername() + StringUtils.space + context.getString(R.string.message_followed_body);
+                                        sendNotification(context, followee.getUsername(), context.getString(R.string.message_followed), body, StringUtils.space,StringUtils.notificationTypeFollow, StringUtils.emptyString, follower.getUsername(), new Consumer<Boolean>() {
                                             @Override
                                             public void accept(Boolean aBoolean) {
-
                                                 if(aBoolean) {
-                                                    Log.e("updateFollow","Failed to send follow notification");
+                                                    Log.e(StringUtils.fbUtilsTag,StringUtils.fbUtilsErrorNotification);
                                                 }
-
                                             }
                                         });
 
@@ -504,7 +496,7 @@ public class FBUtils {
         token.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.e("FBUtils.createUser",e.toString());
+                e.printStackTrace();
                 callback.accept(false);
             }
         });
@@ -545,7 +537,7 @@ public class FBUtils {
     public static void getBookmarks(Context context, Consumer<ArrayList<String>> callback) {
         ArrayList<String> bookmarks = new ArrayList<>();
         String currentUser = AuthUtils.getLoggedInUserID(context);
-        Task<DataSnapshot> getBookmarksTask = usersRef.child(currentUser).child("bookmarks").get();
+        Task<DataSnapshot> getBookmarksTask = usersRef.child(currentUser).child(StringUtils.userModelBookmarkProperty).get();
 
         getBookmarksTask.addOnCompleteListener(task -> {
             DataSnapshot bookmarksResult = task.getResult();
@@ -594,11 +586,11 @@ public class FBUtils {
                 ArrayList<String> followers = user.getFollowers();
 
                 for(String followerUsername : followers) {
-                    sendNotification(context, followerUsername, title, body, content, type, storyId, "", new Consumer<Boolean>() {
+                    sendNotification(context, followerUsername, title, body, content, type, storyId, StringUtils.emptyString, new Consumer<Boolean>() {
                         @Override
                         public void accept(Boolean aBoolean) {
                             if(!aBoolean) {
-                                Log.e("sendNotificationToFollowers",context.getString(R.string.generic_error_notification));
+                                Log.e(StringUtils.fbUtilsTag,context.getString(R.string.generic_error_notification));
                             }
                         }
                     });
@@ -662,7 +654,7 @@ public class FBUtils {
 
         String recipientFCMToken = recipient.getMessagingToken();
 
-        if(recipientFCMToken == null || recipientFCMToken.equals("")) {
+        if(recipientFCMToken == null || recipientFCMToken.equals(StringUtils.emptyString)) {
             //Silently accept missing or blank tokens - no notifications should be sent here
             callback.accept(true);
             return;
@@ -673,17 +665,17 @@ public class FBUtils {
         JSONObject data = new JSONObject();
 
         try {
-            jNotification.put("title", title);
-            jNotification.put("body", body);
-            jNotification.put("badge", "1");
-            data.put("content", content);
-            data.put("type", type);
-            data.put("storyID", storyId);
-            data.put("followerUsername", followerUsername);
-            jsonObject.put("to", recipientFCMToken);
-            jsonObject.put("priority", "high");
-            jsonObject.put("notification", jNotification);
-            jsonObject.put("data", data);
+            jNotification.put(StringUtils.notificationPropertyTitle, title);
+            jNotification.put(StringUtils.notificationPropertyBody, body);
+            jNotification.put(StringUtils.notificationPropertyBadge, StringUtils.notificationPropertyBadgeValue1);
+            data.put(StringUtils.notificationPropertyContent, content);
+            data.put(StringUtils.notificationPropertyType, type);
+            data.put(StringUtils.intentExtraStoryId, storyId);
+            data.put(StringUtils.notificationPropertyFollowerUsername, followerUsername);
+            jsonObject.put(StringUtils.notificationPropertyTo, recipientFCMToken);
+            jsonObject.put(StringUtils.notificationPropertyPriority, StringUtils.notificationPropertyPriorityValueHigh);
+            jsonObject.put(StringUtils.notificationPropertyNotification, jNotification);
+            jsonObject.put(StringUtils.notificationPropertyData, data);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -693,13 +685,13 @@ public class FBUtils {
 
         try {
 
-            String serverToken = context.getString(R.string.fcm_server_key);
-            URL url = new URL(context.getString(R.string.fcm_uri));
+            String serverToken = StringUtils.fcmServerKey;
+            URL url = new URL(StringUtils.fcm_uri);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", serverToken);
+            conn.setRequestMethod(StringUtils.httpPostMethod);
+            conn.setRequestProperty(StringUtils.httpContentType, StringUtils.httpContentTypeJSON);
+            conn.setRequestProperty(StringUtils.httpAuthorization, serverToken);
             conn.setDoOutput(true);
 
             // Send FCM message content.
@@ -710,7 +702,6 @@ public class FBUtils {
             InputStream inputStream = conn.getInputStream();
 
             StringBuilder stringBuilder = new StringBuilder();
-            String res = "";
 
             try {
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -719,7 +710,7 @@ public class FBUtils {
                     stringBuilder.append(len);
                 }
                 bufferedReader.close();
-                res = stringBuilder.toString().replace(",", ",\n");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

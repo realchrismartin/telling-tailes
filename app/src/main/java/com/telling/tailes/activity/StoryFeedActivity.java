@@ -45,10 +45,10 @@ import com.telling.tailes.util.FBUtils;
 import com.telling.tailes.util.FilterType;
 import com.telling.tailes.util.EndlessScrollListener;
 import com.telling.tailes.R;
+import com.telling.tailes.util.StringUtils;
 
 public class StoryFeedActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnAuthorClickCallbackListener {
 
-    private static final String storyDBKey = "stories"; //TODO move to app-wide variable?
 
     private DatabaseReference storyRef;
 
@@ -98,11 +98,11 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         maxStoryCards = 10;
         maxRefreshIterations = 5;
 
-        storyRef = FirebaseDatabase.getInstance().getReference(storyDBKey);
+        storyRef = FirebaseDatabase.getInstance().getReference(StringUtils.storyDBKey);
 
         backgroundTaskExecutor = Executors.newFixedThreadPool(5);
 
-        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        toast = Toast.makeText(getApplicationContext(), StringUtils.emptyString, Toast.LENGTH_SHORT);
 
         createStorySwipeToRefresh();
         createStoryRecyclerView();
@@ -136,37 +136,37 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     return;
                 }
 
-                switch(msg.getData().getString("type")) {
-                    case("storyData"): {
-                        if(msg.getData().getInt("result") != 0) {
+                switch(msg.getData().getString(StringUtils.backgroundTaskResultType)) {
+                    case(StringUtils.backgroundResultPropertyStoryData): {
+                        if(msg.getData().getInt(StringUtils.backgroundTaskResultResult) != 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
                         }
 
-                        if(msg.getData().getString("last_type") == null) {
+                        if(msg.getData().getString(StringUtils.backgroundTaskResultDataLastType) == null) {
                             return;
                         }
 
                         //Ignore any result if it was sent by the feed PRIOR to a filter refresh
-                        if(msg.getData().getLong("timestamp") < filterLastChangedTimestamp) {
+                        if(msg.getData().getLong(StringUtils.backgroundTaskResultDataTimeStamp) < filterLastChangedTimestamp) {
                             return;
                         }
 
                         //Set data type of last loaded story sort value
-                        if(msg.getData().getString("last_type").equals("double")) {
-                            lastLoadedStorySortValue = msg.getData().getDouble("last_story");
+                        if(msg.getData().getString(StringUtils.backgroundTaskResultDataLastType).equals(StringUtils.doubleString)) {
+                            lastLoadedStorySortValue = msg.getData().getDouble(StringUtils.backgroundTaskResultDataLastStory);
                         } else {
-                            lastLoadedStorySortValue = msg.getData().getString("last_story");
+                            lastLoadedStorySortValue = msg.getData().getString(StringUtils.backgroundTaskResultDataLastStory);
                         }
 
-                        int storyCount=msg.getData().getInt("story_count");
+                        int storyCount=msg.getData().getInt(StringUtils.backgroundTaskResultDataStoryCount);
 
                         removeLoadingCard();
 
                         for(int i=0;i<storyCount;i++) {
 
-                            Story story = (Story)msg.getData().getSerializable("story_" + (i + 1));
+                            Story story = (Story)msg.getData().getSerializable(StringUtils.backgroundTaskResultDataStoryUnderscore + (i + 1));
                             boolean replaced = false;
                             int pos = 0;
 
@@ -199,33 +199,33 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         feedSwipeRefresh.setRefreshing(false);
                         break;
                     }
-                    case("tokenRefresh"): {
-                        if(msg.getData().getInt("result") != 0) {
+                    case(StringUtils.backgroundResultPropertyStoryTokenRefresh): {
+                        if(msg.getData().getInt(StringUtils.backgroundTaskResultResult) != 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                         }
                         break;
                     }
-                    case("bookmarks"): {
-                        currentFilter = FilterType.get("Bookmarks");
-                        currentFilter.setBookmarksFilter(msg.getData().getStringArrayList("bookmarks"));
+                    case(StringUtils.backgroundResultPropertyStoryBookmark): {
+                        currentFilter = FilterType.get(StringUtils.filterTypeBookmarks);
+                        currentFilter.setBookmarksFilter(msg.getData().getStringArrayList(StringUtils.backgroundTaskResultDataBookmarks));
                         refreshStories();
                         break;
                     }
-                    case("followedAuthors"): {
-                        currentFilter = FilterType.get("By Followed Authors");
-                        currentFilter.setFollowsFilter(msg.getData().getStringArrayList("follows"));
+                    case(StringUtils.backgroundResultPropertyFollowed): {
+                        currentFilter = FilterType.get(StringUtils.filterTypeByFollowedAuthors);
+                        currentFilter.setFollowsFilter(msg.getData().getStringArrayList(StringUtils.backgroundTaskResultFollows));
                         refreshStories();
                         break;
                     }
-                    case("authorProfile"): {
+                    case(StringUtils.backgroundResultPropertyAuthorProfile): {
 
                         if (authorProfileDialogFragment != null) {
                             authorProfileDialogFragment.dismiss();
                         }
 
                         //Show a generic error instead of loading author profile if data wasn't retrieved properly
-                        if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                        if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                             toast.setText(R.string.generic_error_notification);
                             toast.show();
                             return;
@@ -234,7 +234,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                         //If all is well, show the author profile fragment with the retrieved data
                         authorProfileDialogFragment = new AuthorProfileDialogFragment();
                         authorProfileDialogFragment.setArguments(msg.getData());
-                        authorProfileDialogFragment.show(getSupportFragmentManager(), "AuthorProfileDialogFragment");
+                        authorProfileDialogFragment.show(getSupportFragmentManager(), StringUtils.authorProfileDialogFragment);
                         break;
                     }
                 }
@@ -255,14 +255,14 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         storyRview.addOnScrollListener(scrollListener);
 
         //Set up a listener to receive follow/unfollow data from the profile dialog and act accordingly if the current filter is Following
-        getSupportFragmentManager().setFragmentResultListener("AuthorProfileDialogFragmentFollow", this, new FragmentResultListener() {
+        getSupportFragmentManager().setFragmentResultListener(StringUtils.authorProfileFollowDialogFragment, this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
 
                 if(currentFilter == FilterType.FOLLOWING) {
 
-                    boolean followed = bundle.getBoolean("followed");
-                    String username = bundle.getString("username");
+                    boolean followed = bundle.getBoolean(StringUtils.backgroundTaskResultFollowed);
+                    String username = bundle.getString(StringUtils.backgroundTaskResultUsername);
 
                     if(followed) {
                         currentFilter.addFollowFilter(username);
@@ -324,8 +324,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     public void accept(User user) {
                         Message resultMessage = new Message();
                         Bundle bundle = new Bundle();
-                        bundle.putString("type","tokenRefresh");
-                        bundle.putInt("result", user == null ? 1 : 0);
+                        bundle.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryTokenRefresh);
+                        bundle.putInt(StringUtils.backgroundTaskResultResult, user == null ? 1 : 0);
                         resultMessage.setData(bundle);
                         backgroundTaskResultHandler.sendMessage(resultMessage);
                     }
@@ -378,12 +378,12 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey("feedFilter")) {
-                String intentFilter = extras.getString("feedFilter");
+            if (extras.containsKey(StringUtils.intentExtraFeedFilter)) {
+                String intentFilter = extras.getString(StringUtils.intentExtraFeedFilter);
                 int pos = 0;
-                if (intentFilter.equals("By Author")) {
-                    if (extras.containsKey("authorId")) {
-                        String authorId = extras.getString("authorId");
+                if (intentFilter.equals(StringUtils.filterTypeByAuthor)) {
+                    if (extras.containsKey(StringUtils.intentExtraAuthorId)) {
+                        String authorId = extras.getString(StringUtils.intentExtraAuthorId);
 
                         filterSpinnerItems.add(new FilterSpinnerItem(authorId + getString(R.string.author_profile_read_option)));
                         spinnerAdapter.notifyDataSetChanged();
@@ -400,8 +400,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                 filterSpinner.setSelection(pos);
                 filter = FilterType.get(intentFilter);
             }
-            if (extras.containsKey("authorId")) {
-                String authorId = extras.getString("authorId");
+            if (extras.containsKey(StringUtils.intentExtraAuthorId)) {
+                String authorId = extras.getString(StringUtils.intentExtraAuthorId);
                 filter.setAuthorFilter(authorId);
             }
         }
@@ -452,24 +452,24 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                            }
 
                            if(currentFilter.getSortPropertyValue(story) instanceof Double) {
-                               data.putDouble("last_story",(Double)currentFilter.getSortPropertyValue(story));
-                               data.putString("last_type","double");
+                               data.putDouble(StringUtils.backgroundTaskResultDataLastStory, (Double)currentFilter.getSortPropertyValue(story));
+                               data.putString(StringUtils.backgroundTaskResultDataLastType, StringUtils.doubleString);
                            } else {
-                               data.putString("last_story",(String)currentFilter.getSortPropertyValue(story));
-                               data.putString("last_type","string");
+                               data.putString(StringUtils.backgroundTaskResultDataLastStory, (String)currentFilter.getSortPropertyValue(story));
+                               data.putString(StringUtils.backgroundTaskResultDataLastType, StringUtils.stringString);
                            }
 
 
                            if (currentFilter.includes(getApplicationContext(), story)) {
                                storyCount++;
-                               data.putSerializable("story_" + storyCount,story);
+                               data.putSerializable(StringUtils.backgroundTaskResultDataStoryUnderscore + storyCount,story);
                            }
                        }
 
-                       data.putInt("story_count",storyCount);
-                       data.putString("type","storyData");
-                       data.putInt("result",0);
-                       data.putLong("timestamp",timestamp);
+                       data.putInt(StringUtils.backgroundTaskResultDataStoryCount, storyCount);
+                       data.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryData);
+                       data.putInt(StringUtils.backgroundTaskResultResult, 0);
+                       data.putLong(StringUtils.backgroundTaskResultDataTimeStamp, timestamp);
                        message.setData(data);
 
                        backgroundTaskResultHandler.sendMessage(message);
@@ -480,8 +480,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                    public void onCancelled(@NonNull DatabaseError databaseError) {
                        Message message = new Message();
                        Bundle data = new Bundle();
-                       data.putString("type","storyData");
-                       data.putInt("result",1);
+                       data.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryData);
+                       data.putInt(StringUtils.backgroundTaskResultResult,1);
                        message.setData(data);
                        backgroundTaskResultHandler.sendMessage(message);
                    }
@@ -517,16 +517,16 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
     //Publish a (draft) story, if applicable - called by the holder on the recycler view
     private void goToPublishStory(Story story) {
         Intent intent = new Intent(this,PublishStoryActivity.class);
-        intent.putExtra("prompt",story.getPromptText());
-        intent.putExtra("story",story.getStoryText());
-        intent.putExtra("storyId",story.getId());
+        intent.putExtra(StringUtils.intentExtraPrompt, story.getPromptText());
+        intent.putExtra(StringUtils.intentExtraStory, story.getStoryText());
+        intent.putExtra(StringUtils.intentExtraStoryId, story.getId());
         startActivity(intent);
     }
 
     //Navigate to the Read Story activity
     private void goToReadStory(Story story) {
         Intent intent = new Intent(this, ReadStoryActivity.class);
-        intent.putExtra("story", story);
+        intent.putExtra(StringUtils.intentExtraStory, story);
         startActivity(intent);
     }
 
@@ -541,31 +541,31 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
         FilterSpinnerItem item = (FilterSpinnerItem) adapterView.getItemAtPosition(i);
         String selection = item.getFilterTitle();
 
-        if (selection.contains("\'s")) {
-            selection = "By Author";
+        if (selection.contains(StringUtils.apostropheS)) {
+            selection = StringUtils.filterTypeByAuthor;
         } else {
-            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains("\'s")) {
+            if (filterSpinnerItems.get(filterSpinnerItems.size() - 1).getFilterTitle().contains(StringUtils.apostropheS)) {
                 filterSpinnerItems.remove(filterSpinnerItems.size() - 1);
                 spinnerAdapter.notifyDataSetChanged();
             }
         }
 
         switch(selection) {
-            case("Bookmarks"): {
+            case(StringUtils.filterTypeBookmarks): {
                 loadBookmarks();
                 break;
             }
-            case("By Followed Authors"): {
+            case(StringUtils.filterTypeByFollowedAuthors): {
                 loadFollowedAuthors();
                 break;
             }
             default: {
                 Bundle extras = getIntent().getExtras();
-                String authorId = "";
+                String authorId = StringUtils.emptyString;
 
                 if (extras != null) {
-                    if (extras.containsKey("authorId")) {
-                        authorId = extras.getString("authorId");
+                    if (extras.containsKey(StringUtils.intentExtraAuthorId)) {
+                        authorId = extras.getString(StringUtils.intentExtraAuthorId);
                     }
                 }
 
@@ -602,8 +602,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putString("type","bookmarks");
-                        resultData.putStringArrayList("bookmarks", bookmarks);
+                        resultData.putString(StringUtils.backgroundTaskResultType,StringUtils.backgroundResultPropertyStoryBookmark);
+                        resultData.putStringArrayList(StringUtils.backgroundTaskResultDataBookmarks, bookmarks);
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -629,8 +629,8 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                     public void accept(User user) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "followedAuthors");
-                        resultData.putStringArrayList("follows",user.getFollows());
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyFollowed);
+                        resultData.putStringArrayList(StringUtils.backgroundTaskResultFollows, user.getFollows());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -657,16 +657,16 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
 
                         //Set up a bundle of author profile result data
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "authorProfile");
-                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyAuthorProfile);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
 
                         if (authorProfile != null) {
-                            resultData.putString("authorId", authorProfile.getAuthorId());
-                            resultData.putInt("storyCount", authorProfile.getStoryCount());
-                            resultData.putInt("loveCount", authorProfile.getLoveCount());
-                            resultData.putInt("followCount", authorProfile.getFollowCount());
-                            resultData.putBoolean("following", authorProfile.following());
-                            resultData.putInt("profileIcon", authorProfile.getProfileIcon());
+                            resultData.putString(StringUtils.backgroundTaskResultDataAuthorId, authorProfile.getAuthorId());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
+                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon, authorProfile.getProfileIcon());
                         }
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);

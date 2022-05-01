@@ -1,6 +1,7 @@
 package com.telling.tailes.card;
 
 import com.telling.tailes.model.Story;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.ArrayList;
 
@@ -24,9 +25,9 @@ public class StoryRviewCard {
             case 0:
                 return story.getId();
             case 1:
-                return "loading";
+                return StringUtils.loadingString;
             default:
-                return "bad";
+                return StringUtils.errorString;
         }
 
     }

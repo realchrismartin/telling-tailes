@@ -22,6 +22,7 @@ import com.telling.tailes.model.AuthorProfile;
 import com.telling.tailes.model.Story;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -74,39 +75,39 @@ public class ReadStoryActivity extends AppCompatActivity {
             public void handleMessage(Message msg) {
 
                 //Show a generic error instead if data wasn't retrieved properly
-                if (msg.getData() == null || msg.getData().getInt("result") > 0) {
+                if (msg.getData() == null || msg.getData().getInt(StringUtils.backgroundTaskResultResult) > 0) {
                     readStoryToast.setText(R.string.generic_error_notification);
                     readStoryToast.show();
                     return;
                 }
 
-                String type = msg.getData().getString("type");
+                String type = msg.getData().getString(StringUtils.backgroundTaskResultType);
 
                 switch(type) {
-                    case "authorProfile": {
+                    case (StringUtils.backgroundResultPropertyAuthorProfile): {
                         if (authorProfileDialogFragment != null) {
                             authorProfileDialogFragment.dismiss();
                         }
                         authorProfileDialogFragment = new AuthorProfileDialogFragment();
                         authorProfileDialogFragment.setArguments(msg.getData());
-                        authorProfileDialogFragment.show(getSupportFragmentManager(),"AuthorProfileDialogFragment");
+                        authorProfileDialogFragment.show(getSupportFragmentManager(), StringUtils.authorProfileDialogFragment);
                         break;
                     }
 
-                    case "love": {
-                        story = (Story)msg.getData().getSerializable("story");
+                    case (StringUtils.backgroundResultPropertyStoryLove): {
+                        story = (Story)msg.getData().getSerializable(StringUtils.backgroundTaskResultDataStory);
                         updateLoveButtonState();
                         break;
                     }
 
-                    case "bookmark" : {
-                        story = (Story)msg.getData().getSerializable("story");
+                    case (StringUtils.backgroundResultPropertyStoryBookmark) : {
+                        story = (Story)msg.getData().getSerializable(StringUtils.backgroundTaskResultDataStory);
                         updateBookmarkButtonState();
                         break;
                     }
 
-                    case "story" : {
-                        story = (Story) msg.getData().getSerializable("story");
+                    case (StringUtils.backgroundResultPropertyStory) : {
+                        story = (Story) msg.getData().getSerializable(StringUtils.backgroundTaskResultDataStory);
                         initViews(story);
                         break;
 
@@ -115,12 +116,12 @@ public class ReadStoryActivity extends AppCompatActivity {
             }
         };
 
-        if (getIntent().getSerializableExtra("story") !=null) {
-            story = (Story) getIntent().getSerializableExtra("story");
+        if (getIntent().getSerializableExtra(StringUtils.backgroundTaskResultDataStory) !=null) {
+            story = (Story) getIntent().getSerializableExtra(StringUtils.backgroundTaskResultDataStory);
             initViews(story);
         }
-        if (getIntent().getStringExtra("storyID")!= null) {
-            handleStory(getIntent().getStringExtra("storyID"));
+        if (getIntent().getStringExtra(StringUtils.intentExtraStoryId)!= null) {
+            handleStory(getIntent().getStringExtra(StringUtils.intentExtraStoryId));
         }
 
         initListeners();
@@ -137,9 +138,9 @@ public class ReadStoryActivity extends AppCompatActivity {
                     @Override
                     public void accept(Story story) {
                         Bundle resultData = new Bundle();
-                        resultData.putSerializable("story", story);
-                        resultData.putInt("result", story ==null? 1:0);
-                        resultData.putString("type", "story");
+                        resultData.putSerializable(StringUtils.backgroundTaskResultDataStory, story);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, story ==null? 1:0);
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStory);
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
@@ -246,15 +247,16 @@ public class ReadStoryActivity extends AppCompatActivity {
 
                         //Set up a bundle of author profile result data
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "authorProfile");
-                        resultData.putInt("result", authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyAuthorProfile);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, authorProfile != null ? 0 : 1); //If authorProfile, there's some issue - handle error
 
                         if (authorProfile != null) {
-                            resultData.putString("authorId", authorProfile.getAuthorId());
-                            resultData.putInt("storyCount", authorProfile.getStoryCount());
-                            resultData.putInt("loveCount", authorProfile.getLoveCount());
-                            resultData.putInt("profileIcon",authorProfile.getProfileIcon());
-                            resultData.putBoolean("following", authorProfile.following());
+                            resultData.putString(StringUtils.backgroundTaskResultDataAuthorId, authorProfile.getAuthorId());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon,authorProfile.getProfileIcon());
+                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
                         }
 
                         Message resultMessage = new Message();
@@ -277,9 +279,9 @@ public class ReadStoryActivity extends AppCompatActivity {
                        @Override
                        public void accept(Story result) {
                            Bundle resultData = new Bundle();
-                           resultData.putString("type", "bookmark");
-                           resultData.putInt("result", result != null ? 0 : 1);
-                           resultData.putSerializable("story",result);
+                           resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryBookmark);
+                           resultData.putInt(StringUtils.backgroundTaskResultResult, result != null ? 0 : 1);
+                           resultData.putSerializable(StringUtils.backgroundTaskResultDataStory, result);
 
                            Message resultMessage = new Message();
                            resultMessage.setData(resultData);
@@ -294,7 +296,7 @@ public class ReadStoryActivity extends AppCompatActivity {
     private void handleClickRecycle() {
         //Navigate to the Create Story activity with a recycled prompt
         Intent intent = new Intent(getApplicationContext(),CreateStoryActivity.class);
-        intent.putExtra("prompt",promptText);
+        intent.putExtra(StringUtils.intentExtraPrompt, promptText);
         startActivity(intent);
     }
 
@@ -316,9 +318,9 @@ public class ReadStoryActivity extends AppCompatActivity {
 
                         //Set up a bundle of data
                         Bundle resultData = new Bundle();
-                        resultData.putString("type", "love");
-                        resultData.putInt("result", result != null ? 0 : 1);
-                        resultData.putSerializable("story",result);
+                        resultData.putString(StringUtils.backgroundTaskResultType, StringUtils.backgroundResultPropertyStoryLove);
+                        resultData.putInt(StringUtils.backgroundTaskResultResult, result != null ? 0 : 1);
+                        resultData.putSerializable(StringUtils.backgroundTaskResultDataStory, result);
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);

@@ -16,6 +16,7 @@ import com.telling.tailes.model.User;
 import com.telling.tailes.util.AuthUtils;
 import com.telling.tailes.util.DrawableUtils;
 import com.telling.tailes.util.FBUtils;
+import com.telling.tailes.util.StringUtils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -39,7 +40,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                 }
                 TextView usernameView = findViewById(R.id.settings_user_name_view);
                 usernameView.setText(AuthUtils.getLoggedInUserID(getApplicationContext()));
-                int icon = msg.getData().getInt("icon");
+                int icon = msg.getData().getInt(StringUtils.backgroundTaskResultDataProfileIcon);
                 ImageView profileIconView = findViewById(R.id.settings_user_profile_image);
                 profileIconView.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), DrawableUtils.getProfileIconResourceId(icon, false)));
 
@@ -58,7 +59,7 @@ public class UserSettingsActivity extends AppCompatActivity {
                     public void accept(User user) {
                         //Set up a bundle
                         Bundle resultData = new Bundle();
-                        resultData.putInt("icon",user.getProfileIcon());
+                        resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon, user.getProfileIcon());
 
                         Message resultMessage = new Message();
                         resultMessage.setData(resultData);
