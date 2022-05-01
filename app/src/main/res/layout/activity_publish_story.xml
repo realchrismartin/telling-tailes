@@ -30,7 +30,8 @@
             android:inputType="textCapSentences"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/publishPromptTextView"
@@ -48,7 +49,8 @@
             android:src="@drawable/elipsis_pitch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView"
+            android:contentDescription="@string/elipsis"/>
 
         <EditText
             android:id="@+id/publishStoryTextView"
@@ -65,13 +67,15 @@
             app:layout_constraintBottom_toTopOf="@+id/publishButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/publishPromptTextView"
+            tools:ignore="SpeakableTextPresentCheck"
+            android:importantForAutofill="no" />
 
         <Button
             android:id="@+id/publishButton"
             style="@style/PrimaryButton"
             android:layout_marginBottom="20dp"
-            android:text="Publish"
+            android:text="@string/publish"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -89,7 +93,8 @@
             app:layout_constraintVertical_bias="0.94"
             app:srcCompat="@drawable/delete_outline_white"
             app:tint="#c85a54"
-            tools:ignore="DuplicateClickableBoundsCheck" />
+            tools:ignore="DuplicateClickableBoundsCheck"
+            android:contentDescription="@string/delete_this_tail" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishRecycleFAB"
@@ -104,7 +109,8 @@
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
             app:tint="#836fa9"
-            app:srcCompat="@drawable/reset_white" />
+            app:srcCompat="@drawable/reset_white"
+            android:contentDescription="@string/reuse_this_prompt"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/publishExtendFAB"
@@ -118,7 +124,8 @@
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.94"
             app:srcCompat="@drawable/extend_white"
-            app:tint="#4d82cb" />
+            app:tint="#4d82cb"
+            android:contentDescription="@string/extend_this_response"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/famFAB"
@@ -132,7 +139,8 @@
             app:layout_constraintTop_toTopOf="@+id/publishStoryTextView"
             app:layout_constraintVertical_bias="0.95"
             app:srcCompat="@drawable/expand_up_white"
-            app:tint="#263238" />
+            app:tint="#263238"
+            android:contentDescription="@string/more_options"/>
 
         <ProgressBar
             android:id="@+id/storyPublishLoadingWheel"

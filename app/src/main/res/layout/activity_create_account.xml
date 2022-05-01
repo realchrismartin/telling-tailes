@@ -30,7 +30,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         android:drawableTop="@drawable/profile_0_large"
-        android:text="(select profile icon)"
+        android:text="@string/select_profile_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appTitleView" />
@@ -42,7 +42,9 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createAccountIconButton" />
+        app:layout_constraintTop_toBottomOf="@+id/createAccountIconButton"
+        tools:ignore="TextContrastCheck"
+        android:autofillHints="username" />
 
     <EditText
         android:id="@+id/createPasswordConfirmView"
@@ -52,7 +54,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createPasswordView" />
+        app:layout_constraintTop_toBottomOf="@+id/createPasswordView"
+        tools:ignore="TextContrastCheck"
+        android:autofillHints="password" />
 
     <EditText
         android:id="@+id/createPasswordView"
@@ -62,7 +66,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createUsernameView" />
+        app:layout_constraintTop_toBottomOf="@+id/createUsernameView"
+        tools:ignore="TextContrastCheck"
+        android:autofillHints="confirm password" />
 
     <Button
         android:id="@+id/createAccountButton"
@@ -82,7 +88,7 @@
         android:textAllCaps="true"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="Already Have An Account?"
+        android:text="@string/already_have_an_account"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"

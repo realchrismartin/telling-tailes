@@ -58,7 +58,8 @@
                     android:src="@drawable/elipsis_pitch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/aboutTextPrompt" />
+                    app:layout_constraintTop_toBottomOf="@+id/aboutTextPrompt"
+                    android:contentDescription="@string/elipsis" />
 
                 <TextView
                     android:id="@+id/aboutTextBody"
@@ -71,8 +72,8 @@
                 <Button
                     android:id="@+id/createButton"
                     style="@style/PrimaryButton"
-                    android:contentDescription="Create New Tail"
-                    android:text="Tell Your T(ai)le"
+                    android:contentDescription="@string/create_new_tail"
+                    android:text="@string/tell_your_taile"
                     android:layout_marginTop="30dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

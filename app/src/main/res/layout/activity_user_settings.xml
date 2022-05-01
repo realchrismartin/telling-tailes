@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/settings_user_name_view"
             style="@style/AuthorProfileTitle"
-            android:text="AuthorName"
+            android:text="@string/authorname"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +37,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/settings_user_name_view" />
+            app:layout_constraintTop_toTopOf="@+id/settings_user_name_view"
+            android:contentDescription="@string/user_profile_icon"/>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

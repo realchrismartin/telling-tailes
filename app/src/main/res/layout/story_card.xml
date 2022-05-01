@@ -19,7 +19,7 @@
         <TextView
             android:id="@+id/storyCardTitle"
             style="@style/StoryTitle"
-            android:text="Title Placeholder"
+            android:text="@string/title_placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:text="author"
+            android:text="@string/author"
             android:textColor="@color/pitch"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/storyCardTitle" />
@@ -45,16 +45,19 @@
             android:text=""
             android:textColor="@color/pitch"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/storyCardTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/storyCardTitle"
+            android:contentDescription="@string/love_this_story"/>
 
         <ImageButton
             android:id="@+id/storyCardBookmarkButton"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/bookmark_this_story"
             android:src="@drawable/bookmark_outline_color"
             app:layout_constraintEnd_toStartOf="@+id/storyCardLoveButton"
-            app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton" />
+            app:layout_constraintTop_toTopOf="@+id/storyCardLoveButton"
+            tools:ignore="ImageContrastCheck" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
