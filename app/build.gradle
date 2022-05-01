@@ -4,10 +4,10 @@ apply plugin: 'com.google.gms.google-services'
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\whysg\\WRC_Keystore\\WRCKeystore.jks')
-            storePassword 'will0811'
-            keyAlias 'cs5520key'
-            keyPassword 'will0811'
+            storeFile file('C:\\Users\\Chris\\5520keystore.jks')
+            storePassword 'keystore'
+            keyAlias 'key0'
+            keyPassword 'keystore'
         }
     }
     compileSdk 32

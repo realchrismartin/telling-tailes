@@ -149,7 +149,9 @@ public class AuthUtils {
                     return;
                 }
 
-                if(user.getMessagingToken().equals(StringUtils.emptyString) && optionalExistingToken.equals(StringUtils.emptyString)) {
+                String messagingToken = user.getMessagingToken() != null ? user.getMessagingToken() : "";
+
+                if(messagingToken.equals(StringUtils.emptyString) && optionalExistingToken.equals(StringUtils.emptyString)) {
                     //Recurse and call this method to get an actual token, then return
                     updateUserToken(context, null, new Consumer<User>() {
                         @Override
@@ -162,7 +164,7 @@ public class AuthUtils {
                 }
 
                 //If no update is required because tokens are already equivalent, skip the update
-                if(user.getMessagingToken().equals(optionalExistingToken)) {
+                if(messagingToken.equals(optionalExistingToken)) {
                     callback.accept(user);
                     return;
                 }
