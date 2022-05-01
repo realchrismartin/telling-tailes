@@ -254,6 +254,7 @@ public class ReadStoryActivity extends AppCompatActivity {
                             resultData.putString(StringUtils.backgroundTaskResultDataAuthorId, authorProfile.getAuthorId());
                             resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
                             resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
+                            resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
                             resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon,authorProfile.getProfileIcon());
                             resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
                         }

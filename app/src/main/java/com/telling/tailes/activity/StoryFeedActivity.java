@@ -665,7 +665,7 @@ public class StoryFeedActivity extends AppCompatActivity implements AdapterView.
                             resultData.putInt(StringUtils.backgroundTaskResultDataStoryCount, authorProfile.getStoryCount());
                             resultData.putInt(StringUtils.backgroundTaskResultDataLoveCount, authorProfile.getLoveCount());
                             resultData.putInt(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.getFollowCount());
-                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowCount, authorProfile.following());
+                            resultData.putBoolean(StringUtils.backgroundTaskResultDataFollowing, authorProfile.following());
                             resultData.putInt(StringUtils.backgroundTaskResultDataProfileIcon, authorProfile.getProfileIcon());
                         }
                         Message resultMessage = new Message();
