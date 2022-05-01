@@ -71,7 +71,6 @@
     <string name="about_text_prompt">Friends, Romans, countrymen, lend me your ears....</string>
     <string name="about_text_body">Once upon a time, writers struggled with writers block. William Shakespeare wept. Hemingway hemmed and hawed. Dostoyevsky dithered. Lucky for us, this ancient problem now has a modern solution.\n\nFeinberg\'s Finest are proud to present Telling T(ai)les, a social story-generating app for a new generation.\n\nStory completion in Telling T(ai)les is powered by OpenAI\'s GPT-3, a machine learning model that uses its training (on over 175 billion parameters) to make statistics-based predictions to expound on your musings while matching the tone and structure of your writing. The longer the prompt you supply, the more the model will have to work with as it takes your T(ai)le in new and often unexpected directions.</string>
     <string name="learn_more_about_gpt_3">learn more about GPT-3</string>
-    <string name="create_new_tail">Create New Tail</string>
     <string name="tell_your_taile">Tell Your T(ai)le</string>
     <string name="elipsis">elipsis</string>
     <string name="select_profile_icon">(select profile icon)</string>
@@ -84,16 +83,12 @@
     <string name="more_options">More options</string>
     <string name="publish">Publish</string>
     <string name="create_new_tail">Create New Tail</string>
-    <string name="authorname">AuthorName</string>
     <string name="user_profile_icon">User Profile Icon</string>
-    <string name="authorname">AuthorName</string>
     <string name="unfollow">Unfollow</string>
     <string name="authorname">AuthorName</string>
     <string name="rating">Rating:</string>
     <string name="follow">Follow</string>
-    <string name="_0">0</string>
     <string name="followers">Followers:</string>
-    <string name="_0">0</string>
     <string name="all_loves">All Loves:</string>
     <string name="_0">0</string>
     <string name="author_s_tailes">Author\'s Tailes</string>
