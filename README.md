@@ -29,7 +29,7 @@ This project served as a way to get more familiar with Android SDK and also serv
 ### Tech Stack
 
 [![Java](https://img.shields.io/badge/Java-%23ED8B00.svg?logo=openjdk&logoColor=white)](#)
-[![Android SDK](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#)
+[![Android SDK](https://img.shields.io/badge/Android-3DDC84?logo=android&logoColor=white)](#)
 
 <!-- Features -->
 ### Features
