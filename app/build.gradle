@@ -3,12 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\Chris\\5520keystore.jks')
-            storePassword 'keystore'
-            keyAlias 'key0'
-            keyPassword 'keystore'
-        }
+
     }
     compileSdk 32
 
