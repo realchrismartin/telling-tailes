@@ -3,7 +3,7 @@
   <h1>Telling Tailes</h1>
   
   <p>
-    "The" AI Story Generation Social Network
+    The AI Story Generation Social Network Mobile App
   </p>
 
 </div>
